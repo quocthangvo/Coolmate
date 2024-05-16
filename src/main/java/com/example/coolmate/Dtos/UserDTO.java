@@ -44,13 +44,4 @@ public class UserDTO {
     @JsonProperty("role_id")
     private int roleId;
 
-//    public UserDTO(User user) {
-//        this.fullName = user.getFullname();
-//        this.phoneNumber = user.getPhoneNumber();
-//        this.address = user.getAddress();
-//        this.dateOfBirth = user.getDateOfBirth();
-//        this.active = user.isActive();
-//        this.googleAccountId = user.getGoogleAccountId();
-//        this.roleId = user.getRole() != null ? user.getRole().getId() : null; // Adjust as needed
-//    }
 }

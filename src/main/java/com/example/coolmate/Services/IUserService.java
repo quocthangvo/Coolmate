@@ -17,4 +17,5 @@ public interface IUserService {
     void deleteUserById(int id)throws DataNotFoundException;
 
     void lockUserById(int id) throws DataNotFoundException;
+    void unlockUserById(int id) throws DataNotFoundException;
 }

@@ -36,7 +36,10 @@ public class UserService implements IUserService {
         if (userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new DataNotFoundException("Phone number  " + phoneNumber + " đã tồn tại");
         }
-
+        // Kiểm tra độ dài số điện thoại
+        if (phoneNumber.length() != 10) {
+            throw new DataNotFoundException("Số điện thoại phải có 10 ký tự");
+        }
         //lấy quyền từ csdl
         Role role = roleRepository.findById(userDTO.getRoleId())
                 .orElseThrow(() -> new DataNotFoundException("Role not found"));
@@ -126,6 +129,18 @@ public class UserService implements IUserService {
         }
         // Nếu người dùng chưa bị vô hiệu hóa, thực hiện vô hiệu hóa và lưu lại vào cơ sở dữ liệu
         user.setActive(false);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void unlockUserById(int id) throws DataNotFoundException {
+        User user = userRepository.findById(id).orElseThrow(()
+                -> new DataNotFoundException("Không tìm thấy người dùng với ID " + id));
+        //kt trc khi kich hoạt lại
+        if (user.isActive()) {
+            throw new DataNotFoundException("Người dùng với ID " + id + " đã được kích hoạt.");
+        }
+        user.setActive(true);
         userRepository.save(user);
     }
 

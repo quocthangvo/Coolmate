@@ -5,6 +5,7 @@ package com.example.coolmate.Configrurations;
 import com.example.coolmate.Filters.JwtTokenFilter;
 import com.example.coolmate.Models.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,6 +19,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+    @Value("${api.prefix}")
+    private String apiPrefix;
+
     private final JwtTokenFilter jwtTokenFilter;
 
     // khi có requests gởi tớ sẽ chặn để kiểm tra, xem quyèn để đăng nhập
@@ -27,13 +31,16 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(requests -> {
                     requests.requestMatchers(
-                                    String.format("/%s/users/register", "api/v1"),
-                                    String.format("/%s/users/login", "api/v1")
+                                    String.format("/%s/users/register", apiPrefix),
+                                    String.format("/%s/users/login", apiPrefix)
                             )
                             .permitAll()
-//                            .requestMatchers(HttpMethod.PUT, String.format("%s/orders", "api/v1")).hasRole("ADMIN")
                             .requestMatchers(HttpMethod.GET,
-                                    String.format("%s/users?**", "api/v1")).hasRole(Role.ADMIN)
+                                    String.format("%s/users/**", apiPrefix)).hasAnyRole(Role.ADMIN)
+                            .requestMatchers(HttpMethod.DELETE,
+                                    String.format("%s/users/**", apiPrefix)).hasRole(Role.ADMIN) // vô hiệu hóa user
+
+
                             .anyRequest().authenticated();
                 });
         return http.build();

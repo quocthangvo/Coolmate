@@ -89,10 +89,20 @@ public class UserController {
         //không xóa mất đi user, mà chỉ xóa để active trở về 0
         try{
             userService.lockUserById(id);
-            return ResponseEntity.ok("Vô hiệu tài khoản id "+id+" thành công");
+            return ResponseEntity.ok("Vô hiệu hóa tài khoản id "+id+" thành công");
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> unlockUser(@Valid @PathVariable int id) {
+        try {
+            userService.unlockUserById(id);
+            return ResponseEntity.ok("Kích hoạt tài khoản id " + id + " thành công");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }

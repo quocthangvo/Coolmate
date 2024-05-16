@@ -13,19 +13,20 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse extends BaseResponse {
+    @JsonProperty("fullname")
     private String fullname;
 
     @JsonProperty("phone_number")
     private String phoneNumber;
 
+    @JsonProperty("address")
     private String address;
 
     @JsonProperty("date_of_birth")
     private Date dateOfBirth;
 
-
-//    @JsonProperty("google_account_id")
-//    private int googleAccountId;
+    @JsonProperty("google_account_id")
+    private int googleAccountId;
 
     public static UserResponse fromUser(User user) {
         UserResponse userResponse = UserResponse.builder()
@@ -33,6 +34,7 @@ public class UserResponse extends BaseResponse {
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
                 .dateOfBirth(user.getDateOfBirth())
+                .googleAccountId(user.getGoogleAccountId())
                 .build();
         userResponse.setCreatedAt(user.getCreatedAt());
         userResponse.setUpdatedAt(user.getUpdatedAt());

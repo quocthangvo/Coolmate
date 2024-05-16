@@ -26,9 +26,11 @@ import java.util.List;
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsService userDetailsService;
+
     @Value("${api.prefix}")
     private String apiPrefix;
 
+    //khi đăng nhập và gọi request khác sẽ đi qua filterInternal
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
@@ -36,7 +38,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             if (isByPassToken(request)) {
-                filterChain.doFilter(request, response);
+                filterChain.doFilter(request, response); //bỏ qua kích hoạt
                 return;
             }
             final String authHeader = request.getHeader("Authorization");
@@ -62,11 +64,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
         }
     }
 
     private boolean isByPassToken(@NonNull HttpServletRequest request) {
+        //ds các request dc cho sử dụng ko cần token
         final List<Pair<String, String>> byPassTokens = Arrays.asList(
                 Pair.of(String.format("%s/users/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST")
