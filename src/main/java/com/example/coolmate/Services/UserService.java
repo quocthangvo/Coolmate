@@ -3,6 +3,7 @@ package com.example.coolmate.Services;
 import com.example.coolmate.Components.JwtTokenUtil;
 import com.example.coolmate.Dtos.UserDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
+import com.example.coolmate.Exceptions.PermissionDenyException;
 import com.example.coolmate.Models.Role;
 import com.example.coolmate.Models.User;
 import com.example.coolmate.Repositories.RoleRepository;
@@ -10,10 +11,12 @@ import com.example.coolmate.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,31 +29,35 @@ public class UserService implements IUserService {
     private final JwtTokenUtil jwtTokenUtil;
 
     @Override
-    public User createUser(UserDTO userDTO) throws DataNotFoundException {
+    public User createUser(UserDTO userDTO) throws Exception {
         //đăng ký user
         String phoneNumber = userDTO.getPhoneNumber();
         //kt sdt có tồn tại chưa
         if (userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new DataNotFoundException("User with phone number " + phoneNumber + " already exists");
+            throw new DataNotFoundException("Phone number  " + phoneNumber + " đã tồn tại");
+        }
+
+        //lấy quyền từ csdl
+        Role role = roleRepository.findById(userDTO.getRoleId())
+                .orElseThrow(() -> new DataNotFoundException("Role not found"));
+        if (role.getName().toUpperCase().equals(Role.ADMIN)) {//kt có phải quyền admin k
+            throw new PermissionDenyException("Bạn không thể đăng ký tài khoản admin");
         }
         //chuyển đổi userDTo -> user
         User newUser = User.builder()
                 .fullname(userDTO.getFullName())
                 .phoneNumber(userDTO.getPhoneNumber())
-                .email(userDTO.getEmail())
                 .password(userDTO.getPassword())
                 .address(userDTO.getAddress())
                 .dateOfBirth(userDTO.getDateOfBirth())
-                .facebookAccountId(userDTO.getFacebookAccountId())
                 .googleAccountId(userDTO.getGoogleAccountId())
+                .active(true)
                 .build();
 
-        Role role = roleRepository.findById(userDTO.getRoleId())
-                .orElseThrow(() -> new DataNotFoundException("Role not found"));
         newUser.setRole(role);
 
         //kiểm tra nếu có accountId, k cần password
-        if (userDTO.getFacebookAccountId() == 0 && userDTO.getGoogleAccountId() == 0) {
+        if (userDTO.getGoogleAccountId() == 0) {
             String password = userDTO.getPassword();
             String encodedPassword = passwordEncoder.encode(password); // Mã hóa mật khẩu
             newUser.setPassword(encodedPassword);
@@ -62,14 +69,17 @@ public class UserService implements IUserService {
     public String login(String phoneNumber, String password) throws Exception {
         Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
         if (optionalUser.isEmpty()) {
-            throw new DataNotFoundException("Invalid phone number / password");
+            throw new DataNotFoundException("Tài khoản hoặc mật khẩu không tồn tại");
         }
         User existingUser = optionalUser.get();
-        //kiểm tra password
-        if (existingUser.getFacebookAccountId() == 0 &&
-                existingUser.getGoogleAccountId() == 0) {
+        // Kiểm tra trạng thái hoạt động của người dùng
+        if (!existingUser.isActive()) {
+            throw new DisabledException("Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ với quản trị viên.");
+        }
+        //kiểm tra password nếu không dùng gg account
+        if (existingUser.getGoogleAccountId() == 0) {
             if (!passwordEncoder.matches(password, existingUser.getPassword())) {
-                throw new BadCredentialsException("Wrong phone number or password");
+                throw new BadCredentialsException("Mật khẩu không chính xác");
             }
         }
 
@@ -80,6 +90,45 @@ public class UserService implements IUserService {
         authenticationManager.authenticate(authenticationToken);
         return jwtTokenUtil.generateToken(existingUser);
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public User getUserById(int userId) throws Exception {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy user Id = "
+                        + userId));
+    }
+    @Override
+    public void deleteUserById(int id) throws DataNotFoundException{
+        // Kiểm tra xem người dùng có tồn tại không
+        if (userRepository.existsById(id)) {
+            // Nếu tồn tại, thực hiện xóa người dùng
+            userRepository.deleteById(id);
+        } else {
+            // Nếu không tồn tại, bạn có thể bắt hoặc ném một ngoại lệ, hoặc thực hiện xử lý khác theo nhu cầu của bạn
+            throw new DataNotFoundException("Không tìm thấy người dùng với ID " + id);
+        }
+    }
+
+
+    @Override
+    public void lockUserById(int id) throws DataNotFoundException{
+        User user = userRepository.findById(id).orElseThrow(()
+                -> new DataNotFoundException("Không tìm thấy người dùng với ID " + id));
+
+        // Kiểm tra active trước khi vô hiệu hóa
+        if (!user.isActive()) {
+            throw new DataNotFoundException("Người dùng với ID " + id + " đã được vô hiệu hóa.");
+        }
+        // Nếu người dùng chưa bị vô hiệu hóa, thực hiện vô hiệu hóa và lưu lại vào cơ sở dữ liệu
+        user.setActive(false);
+        userRepository.save(user);
+    }
+
 }
 
 

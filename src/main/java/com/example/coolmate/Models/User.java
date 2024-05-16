@@ -1,6 +1,7 @@
 package com.example.coolmate.Models;
 
 import jakarta.persistence.*;
+
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,17 +39,11 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "password", length = 200)
     private String password;
 
-//    @Column(name = "retype_password", length = 200)
-//    private String retypePassword;
-
     @Column(name = "is_active")
     private boolean active;
 
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
-
-    @Column(name = "facebook_account_id")
-    private int facebookAccountId;
 
     @Column(name = "google_account_id")
     private int googleAccountId;
@@ -60,8 +55,8 @@ public class User extends BaseEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-//        authorityList.add(new SimpleGrantedAuthority("ROLE_ " + getRole().getName()));//kt xem quyền
-        authorityList.add(new SimpleGrantedAuthority("ADMIN"));
+        authorityList.add(new SimpleGrantedAuthority("ROLE_" + getRole().getName().toUpperCase()));//kt xem quyền
+//        authorityList.add(new SimpleGrantedAuthority("ADMIN"));
         return authorityList;
     }
 

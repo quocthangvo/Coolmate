@@ -11,10 +11,11 @@ import lombok.*;
 @Table(name = "roles")
 @Entity
 public class Role {
+    public static String ADMIN = "ADMIN";
+    public static String USER = "USER";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @Column(name = "name", length = 100)
+    @Column(name = "name", length = 100, nullable = false)
     private String name;
 }
