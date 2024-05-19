@@ -35,12 +35,20 @@ public class WebSecurityConfig {
                                     String.format("/%s/users/login", apiPrefix)
                             )
                             .permitAll()
+                            //request dc cấp quyền
                             .requestMatchers(HttpMethod.GET,
                                     String.format("%s/users/**", apiPrefix)).hasAnyRole(Role.ADMIN)
                             .requestMatchers(HttpMethod.DELETE,
                                     String.format("%s/users/**", apiPrefix)).hasRole(Role.ADMIN) // vô hiệu hóa user
 
-
+//                            .requestMatchers(HttpMethod.POST,
+//                                    String.format("%s/categories/**", apiPrefix)).hasRole(Role.ADMIN)
+//                            .requestMatchers(HttpMethod.GET,
+//                                    String.format("%s/categories/**", apiPrefix)).hasAnyRole(Role.ADMIN,Role.USER)
+//                            .requestMatchers(HttpMethod.DELETE,
+//                                    String.format("%s/categories/delete/**", apiPrefix)).hasRole(Role.ADMIN)
+//                            .requestMatchers(HttpMethod.PUT,
+//                                    String.format("%s/categories/**", apiPrefix)).hasRole(Role.ADMIN)
                             .anyRequest().authenticated();
                 });
         return http.build();

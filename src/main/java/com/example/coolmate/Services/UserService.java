@@ -8,6 +8,7 @@ import com.example.coolmate.Models.Role;
 import com.example.coolmate.Models.User;
 import com.example.coolmate.Repositories.RoleRepository;
 import com.example.coolmate.Repositories.UserRepository;
+import com.example.coolmate.Services.Impl.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -105,8 +106,9 @@ public class UserService implements IUserService {
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy user Id = "
                         + userId));
     }
+
     @Override
-    public void deleteUserById(int id) throws DataNotFoundException{
+    public void deleteUserById(int id) throws DataNotFoundException {
         // Kiểm tra xem người dùng có tồn tại không
         if (userRepository.existsById(id)) {
             // Nếu tồn tại, thực hiện xóa người dùng
@@ -119,7 +121,7 @@ public class UserService implements IUserService {
 
 
     @Override
-    public void lockUserById(int id) throws DataNotFoundException{
+    public void lockUserById(int id) throws DataNotFoundException {
         User user = userRepository.findById(id).orElseThrow(()
                 -> new DataNotFoundException("Không tìm thấy người dùng với ID " + id));
 

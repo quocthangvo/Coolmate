@@ -1,4 +1,4 @@
-package com.example.coolmate.Services;
+package com.example.coolmate.Services.Impl;
 
 import com.example.coolmate.Dtos.UserDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
@@ -14,8 +14,10 @@ public interface IUserService {
     List<User> getAllUsers();
 
     User getUserById(int id) throws Exception;
-    void deleteUserById(int id)throws DataNotFoundException;
+
+    void deleteUserById(int id) throws DataNotFoundException;
 
     void lockUserById(int id) throws DataNotFoundException;
+
     void unlockUserById(int id) throws DataNotFoundException;
 }

@@ -4,7 +4,7 @@ import com.example.coolmate.Dtos.UserDTO;
 import com.example.coolmate.Dtos.UserLoginDTO;
 import com.example.coolmate.Models.User;
 import com.example.coolmate.Responses.UserResponse;
-import com.example.coolmate.Services.IUserService;
+import com.example.coolmate.Services.Impl.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -52,7 +52,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    
+
     @GetMapping("")
     public ResponseEntity<List<User>> getAllCategories(
             // tham số bắt buộc
@@ -61,7 +61,7 @@ public class UserController {
     ) {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
-//        return ResponseEntity.ok(String.format("getAllCategories: page=%d, limit=%d", page, limit));
+//        return ResponseEntity.ok(String.format("getAllUsers: page=%d, limit=%d", page, limit));
     }
 
     @GetMapping("/{id}")
@@ -83,14 +83,15 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> lockUser(@Valid @PathVariable int id) {
         //xóa mềm => cập nhật trường active = false
         //không xóa mất đi user, mà chỉ xóa để active trở về 0
-        try{
+        try {
             userService.lockUserById(id);
-            return ResponseEntity.ok("Vô hiệu hóa tài khoản id "+id+" thành công");
-        }catch (Exception e){
+            return ResponseEntity.ok("Vô hiệu hóa tài khoản id " + id + " thành công");
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
