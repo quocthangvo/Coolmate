@@ -54,8 +54,7 @@ public class CategoryService implements ICategoryService {
     @Override
     public Category updateCategory(int categoryId, CategoryDTO categoryDTO) throws DataNotFoundException {
         Category existingCategory = getCategoryById(categoryId);
-
-      
+        
         existingCategory.setName(categoryDTO.getName());
         categoryRepository.save(existingCategory); //lưu data mới
         return existingCategory;

@@ -1,0 +1,28 @@
+package com.example.coolmate.Services.Impl;
+
+import com.example.coolmate.Dtos.ProductDTO;
+import com.example.coolmate.Dtos.ProductImageDTO;
+import com.example.coolmate.Exceptions.DataNotFoundException;
+import com.example.coolmate.Models.Product;
+import com.example.coolmate.Models.ProductImage;
+import com.example.coolmate.Responses.ProductResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
+public interface IProductService {
+    Product createProduct(ProductDTO productDTO) throws Exception;
+
+    Page<ProductResponse> getAllProducts(PageRequest pageRequest);
+
+    Product getProductById(int productId) throws Exception;
+
+    Product updateProduct(int id, ProductDTO productDTO) throws Exception;
+
+    void deleteProduct(int id) throws DataNotFoundException;
+
+    boolean existsByName(String name);
+
+    ProductImage createProductImage(
+            int productId,
+            ProductImageDTO productImageDTO) throws Exception;
+}
