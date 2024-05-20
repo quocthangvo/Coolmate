@@ -4,8 +4,8 @@ import com.example.coolmate.Components.JwtTokenUtil;
 import com.example.coolmate.Dtos.UserDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.PermissionDenyException;
-import com.example.coolmate.Models.Role;
-import com.example.coolmate.Models.User;
+import com.example.coolmate.Models.User.Role;
+import com.example.coolmate.Models.User.User;
 import com.example.coolmate.Repositories.RoleRepository;
 import com.example.coolmate.Repositories.UserRepository;
 import com.example.coolmate.Services.Impl.IUserService;
@@ -49,7 +49,7 @@ public class UserService implements IUserService {
         }
         //chuyển đổi userDTo -> user
         User newUser = User.builder()
-                .fullname(userDTO.getFullName())
+                .fullName(userDTO.getFullName())
                 .phoneNumber(userDTO.getPhoneNumber())
                 .password(userDTO.getPassword())
                 .address(userDTO.getAddress())

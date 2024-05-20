@@ -1,4 +1,4 @@
-package com.example.coolmate.Repositories;
+package com.example.coolmate.Repositories.Product;
 
 import com.example.coolmate.Models.ProductImage;
 import org.springframework.data.repository.CrudRepository;

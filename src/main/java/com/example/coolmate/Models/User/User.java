@@ -1,8 +1,7 @@
-package com.example.coolmate.Models;
+package com.example.coolmate.Models.User;
 
+import com.example.coolmate.Models.BaseEntity;
 import jakarta.persistence.*;
-
-
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,7 +25,7 @@ public class User extends BaseEntity implements UserDetails {
     private int id;
 
     @Column(name = "fullname", length = 100)
-    private String fullname;
+    private String fullName;
 
     @Column(name = "phone_number", length = 10, nullable = false)
     private String phoneNumber;

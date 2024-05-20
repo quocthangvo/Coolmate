@@ -1,6 +1,6 @@
 package com.example.coolmate.Responses;
 
-import com.example.coolmate.Models.User;
+import com.example.coolmate.Models.User.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -30,7 +30,7 @@ public class UserResponse extends BaseResponse {
 
     public static UserResponse fromUser(User user) {
         UserResponse userResponse = UserResponse.builder()
-                .fullname(user.getFullname())
+                .fullname(user.getFullName())
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
                 .dateOfBirth(user.getDateOfBirth())

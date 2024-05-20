@@ -50,7 +50,7 @@ public class CategoryController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable int id) {
         try {
             categoryService.deleteCategory(id);

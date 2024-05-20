@@ -1,7 +1,7 @@
 package com.example.coolmate.Filters;
 
 import com.example.coolmate.Components.JwtTokenUtil;
-import com.example.coolmate.Models.User;
+import com.example.coolmate.Models.User.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,8 +74,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/users/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST"),
                 Pair.of(String.format("%s/categories/**", apiPrefix), "GET"),
-                Pair.of(String.format("%s/products/**", apiPrefix), "POST"),
-                Pair.of(String.format("%s/products/**", apiPrefix), "GET")
+                Pair.of(String.format("%s/orders/**", apiPrefix), "GET"),
+                Pair.of(String.format("%s/orders_details/**/**", apiPrefix), "GET")
+
 
         );
         for (Pair<String, String> byPassToken : byPassTokens) {

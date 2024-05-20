@@ -1,7 +1,7 @@
 package com.example.coolmate.Components;
 
 import com.example.coolmate.Exceptions.InvalidParamException;
-import com.example.coolmate.Models.User;
+import com.example.coolmate.Models.User.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

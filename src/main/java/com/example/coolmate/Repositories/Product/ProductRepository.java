@@ -1,4 +1,4 @@
-package com.example.coolmate.Repositories;
+package com.example.coolmate.Repositories.Product;
 
 import com.example.coolmate.Models.Product;
 import org.springframework.data.domain.Page;

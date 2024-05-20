@@ -1,4 +1,4 @@
-package com.example.coolmate.Models;
+package com.example.coolmate.Models.User;
 
 import jakarta.persistence.*;
 import lombok.*;

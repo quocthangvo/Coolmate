@@ -2,7 +2,7 @@ package com.example.coolmate.Services.Impl;
 
 import com.example.coolmate.Dtos.UserDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
-import com.example.coolmate.Models.User;
+import com.example.coolmate.Models.User.User;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package com.example.coolmate.Controllers;
 
 import com.example.coolmate.Dtos.UserDTO;
 import com.example.coolmate.Dtos.UserLoginDTO;
-import com.example.coolmate.Models.User;
+import com.example.coolmate.Models.User.User;
 import com.example.coolmate.Responses.UserResponse;
 import com.example.coolmate.Services.Impl.IUserService;
 import jakarta.validation.Valid;

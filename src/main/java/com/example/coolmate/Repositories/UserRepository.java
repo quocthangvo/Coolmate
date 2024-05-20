@@ -1,6 +1,6 @@
 package com.example.coolmate.Repositories;
 
-import com.example.coolmate.Models.User;
+import com.example.coolmate.Models.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
