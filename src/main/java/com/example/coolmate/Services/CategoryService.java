@@ -23,7 +23,7 @@ public class CategoryService implements ICategoryService {
         Optional<Category> existingCategory = categoryRepository.findByName(categoryDTO.getName());
 
         if (existingCategory.isPresent()) {
-            throw new DataNotFoundException("Category đã tồn tại: " + categoryDTO.getName());
+            throw new DataNotFoundException("Danh mục đã tồn tại: " + categoryDTO.getName());
         } else {
             // Create a new Category entity
             Category newCategory = Category.builder()
@@ -46,7 +46,7 @@ public class CategoryService implements ICategoryService {
 
     public void deleteCategory(int id) throws DataNotFoundException {
         if (!categoryRepository.existsById(id)) {
-            throw new DataNotFoundException("Category not found with id: " + id);
+            throw new DataNotFoundException("Không tìm thấy danh mục id: " + id);
         }
         categoryRepository.deleteById(id);
     }
@@ -54,9 +54,22 @@ public class CategoryService implements ICategoryService {
     @Override
     public Category updateCategory(int categoryId, CategoryDTO categoryDTO) throws DataNotFoundException {
         Category existingCategory = getCategoryById(categoryId);
-        
+
+        // Kiểm tra nếu tên mới giống với tên hiện tại của danh mục
+        if (existingCategory.getName().equals(categoryDTO.getName())) {
+            throw new DataNotFoundException("Tên danh mục mới trùng với tên danh mục hiện tại: " + categoryDTO.getName());
+        }
+
+        // Kiểm tra trùng tên với các danh mục khác
+        Optional<Category> categoryWithSameName = categoryRepository.findByName(categoryDTO.getName());
+        if (categoryWithSameName.isPresent()) {
+            throw new DataNotFoundException("Danh mục đã tồn tại: " + categoryDTO.getName());
+        }
+
+        // Cập nhật thông tin danh mục
         existingCategory.setName(categoryDTO.getName());
-        categoryRepository.save(existingCategory); //lưu data mới
+        categoryRepository.save(existingCategory); // Lưu dữ liệu đã được cập nhật
+
         return existingCategory;
     }
 

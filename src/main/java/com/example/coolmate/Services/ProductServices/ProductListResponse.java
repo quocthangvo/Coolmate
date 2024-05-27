@@ -1,4 +1,4 @@
-package com.example.coolmate.Services;
+package com.example.coolmate.Services.ProductServices;
 
 import com.example.coolmate.Responses.ProductResponse;
 import lombok.AllArgsConstructor;

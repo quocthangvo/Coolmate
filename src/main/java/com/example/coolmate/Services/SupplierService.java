@@ -66,10 +66,30 @@ public class SupplierService implements ISupplierService {
     public Supplier updateSupplier(int supplierId, SupplierDTO supplierDTO) throws DataNotFoundException {
         Supplier existingSupplier = getSupplierById(supplierId);
 
+        // Kiểm tra trùng tên
+        if (!existingSupplier.getName().equals(supplierDTO.getName()) &&
+                supplierRepository.existsByName(supplierDTO.getName())) {
+            throw new DataNotFoundException("Nhà cung cấp đã tồn tại với tên: " + supplierDTO.getName());
+        }
+
+        // Kiểm tra trùng số điện thoại
+        if (!existingSupplier.getPhoneNumber().equals(supplierDTO.getPhoneNumber()) &&
+                supplierRepository.existsByPhoneNumber(supplierDTO.getPhoneNumber())) {
+            throw new DataNotFoundException("Nhà cung cấp đã tồn tại với số điện thoại: " + supplierDTO.getPhoneNumber());
+        }
+
+        // Kiểm tra trùng địa chỉ
+        if (!existingSupplier.getAddress().equals(supplierDTO.getAddress()) &&
+                supplierRepository.existsByAddress(supplierDTO.getAddress())) {
+            throw new DataNotFoundException("Nhà cung cấp đã tồn tại với địa chỉ: " + supplierDTO.getAddress());
+        }
+
+        // Cập nhật thông tin nhà cung cấp
         existingSupplier.setName(supplierDTO.getName());
         existingSupplier.setPhoneNumber(supplierDTO.getPhoneNumber());
         existingSupplier.setAddress(supplierDTO.getAddress());
-        supplierRepository.save(existingSupplier); // Save the updated data
+        supplierRepository.save(existingSupplier); // Lưu dữ liệu đã được cập nhật
+
         return existingSupplier;
     }
 

@@ -5,7 +5,8 @@ import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Supplier;
-import com.example.coolmate.Responses.ApiResponse;
+import com.example.coolmate.Responses.ApiResponses.ApiResponse;
+import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.Impl.ISupplierService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -78,15 +79,10 @@ public class SupplierController {
             @PathVariable int id,
             @Valid @RequestBody SupplierDTO supplierDTO) {
         try {
-            Supplier updatedSupplierDTO = supplierService.updateSupplier(id, supplierDTO);
-
-            // Tạo phản hồi với thông điệp và dữ liệu cập nhật
-            ApiResponse<Supplier> response = new ApiResponse<>("Supplier updated successfully", updatedSupplierDTO);
-            return ResponseEntity.ok(response);
-        } catch (DataNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            Supplier updatedSupplier = supplierService.updateSupplier(id, supplierDTO);
+            return ApiResponseUtil.successResponse("Category updated successfully", updatedSupplier);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 

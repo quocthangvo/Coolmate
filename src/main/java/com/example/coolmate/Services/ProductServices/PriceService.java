@@ -1,4 +1,4 @@
-package com.example.coolmate.Services;
+package com.example.coolmate.Services.ProductServices;
 
 import com.example.coolmate.Dtos.ProductDtos.PriceDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;

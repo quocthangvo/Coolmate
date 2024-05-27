@@ -2,10 +2,15 @@ package com.example.coolmate.Controllers;
 
 import com.example.coolmate.Dtos.CategoryDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
+import com.example.coolmate.Exceptions.Message.ErrorMessage;
+import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Category;
+import com.example.coolmate.Responses.ApiResponses.ApiResponse;
+import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.Impl.ICategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -23,11 +28,14 @@ public class CategoryController {
             @Valid @RequestBody CategoryDTO categoryDTO, BindingResult result) {
         try {
             Category createdCategory = categoryService.createCategory(categoryDTO);
-            return ResponseEntity.ok(createdCategory); // Trả về dữ liệu của danh mục được tạo
+            ApiResponse<Category> response = new ApiResponse<>(
+                    "Category created successfully", createdCategory);
+            return ResponseEntity.ok(response);
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorMessage("Đã xảy ra lỗi không xác định"));
         }
-
     }
 
 
@@ -46,7 +54,7 @@ public class CategoryController {
             Category category = categoryService.getCategoryById(id);
             return ResponseEntity.ok(category);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
@@ -54,9 +62,10 @@ public class CategoryController {
     public ResponseEntity<?> deleteCategory(@PathVariable int id) {
         try {
             categoryService.deleteCategory(id);
-            return ResponseEntity.ok("Xóa category có id " + id + " thành công");
+            String message = "Xóa nhà cung cấp có ID " + id + " thành công";
+            return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (DataNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
@@ -65,11 +74,13 @@ public class CategoryController {
             @PathVariable int id,
             @Valid @RequestBody CategoryDTO categoryDTO) {
         try {
-            categoryService.updateCategory(id, categoryDTO);
-            return ResponseEntity.ok("Cập nhật category thành công");
+            Category updatedCategory = categoryService.updateCategory(id, categoryDTO);
+            return ApiResponseUtil.successResponse("Category updated successfully", updatedCategory);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
+
 
 }

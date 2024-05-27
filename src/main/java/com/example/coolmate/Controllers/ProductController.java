@@ -6,7 +6,7 @@ import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
 import com.example.coolmate.Responses.ProductResponse;
 import com.example.coolmate.Services.Impl.IProductService;
-import com.example.coolmate.Services.ProductListResponse;
+import com.example.coolmate.Services.ProductServices.ProductListResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
