@@ -1,6 +1,6 @@
 package com.example.coolmate.Services;
 
-import com.example.coolmate.Dtos.OrderDTO;
+import com.example.coolmate.Dtos.OrderDtos.OrderDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Order.Order;
 import com.example.coolmate.Models.Order.OrderStatus;

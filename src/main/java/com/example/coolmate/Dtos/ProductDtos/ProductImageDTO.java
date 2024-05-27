@@ -1,4 +1,4 @@
-package com.example.coolmate.Dtos;
+package com.example.coolmate.Dtos.ProductDtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Size;

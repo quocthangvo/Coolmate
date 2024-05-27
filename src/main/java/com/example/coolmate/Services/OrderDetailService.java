@@ -1,10 +1,10 @@
 package com.example.coolmate.Services;
 
-import com.example.coolmate.Dtos.OrderDetailDTO;
+import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Order.Order;
 import com.example.coolmate.Models.Order.OrderDetail;
-import com.example.coolmate.Models.Product;
+import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Repositories.Order.OrderDetailRepository;
 import com.example.coolmate.Repositories.Order.OrderRepository;
 import com.example.coolmate.Repositories.Product.ProductRepository;

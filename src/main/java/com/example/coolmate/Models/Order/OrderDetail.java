@@ -1,6 +1,6 @@
 package com.example.coolmate.Models.Order;
 
-import com.example.coolmate.Models.Product;
+import com.example.coolmate.Models.Product.Product;
 import jakarta.persistence.*;
 import lombok.*;
 

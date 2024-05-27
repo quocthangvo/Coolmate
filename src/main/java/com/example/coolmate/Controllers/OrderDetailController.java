@@ -1,6 +1,6 @@
 package com.example.coolmate.Controllers;
 
-import com.example.coolmate.Dtos.OrderDetailDTO;
+import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
 import com.example.coolmate.Models.Order.OrderDetail;
 import com.example.coolmate.Responses.OrderDetailResponse;
 import com.example.coolmate.Services.OrderDetailService;

@@ -59,6 +59,13 @@ public class WebSecurityConfig {
                             .requestMatchers(HttpMethod.PUT,
                                     String.format("%s/categories/**", apiPrefix)).hasRole(Role.ADMIN)
 
+                            .requestMatchers(HttpMethod.POST,
+                                    String.format("%s/prices", apiPrefix)).hasRole(Role.ADMIN)
+                            .requestMatchers(HttpMethod.DELETE,
+                                    String.format("%s/prices/delete/**", apiPrefix)).hasRole(Role.ADMIN)
+                            .requestMatchers(HttpMethod.PUT,
+                                    String.format("%s/prices/**", apiPrefix)).hasRole(Role.ADMIN)
+
                             .anyRequest().authenticated();
                 });
         return http.build();

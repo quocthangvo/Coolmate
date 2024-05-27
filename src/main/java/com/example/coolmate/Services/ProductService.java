@@ -1,12 +1,12 @@
 package com.example.coolmate.Services;
 
-import com.example.coolmate.Dtos.ProductDTO;
-import com.example.coolmate.Dtos.ProductImageDTO;
+import com.example.coolmate.Dtos.ProductDtos.ProductDTO;
+import com.example.coolmate.Dtos.ProductDtos.ProductImageDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.InvalidParamException;
 import com.example.coolmate.Models.Category;
-import com.example.coolmate.Models.Product;
-import com.example.coolmate.Models.ProductImage;
+import com.example.coolmate.Models.Product.Product;
+import com.example.coolmate.Models.Product.ProductImage;
 import com.example.coolmate.Repositories.CategoryRepository;
 import com.example.coolmate.Repositories.Product.ProductImageRepository;
 import com.example.coolmate.Repositories.Product.ProductRepository;

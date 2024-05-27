@@ -1,6 +1,6 @@
 package com.example.coolmate.Responses;
 
-import com.example.coolmate.Models.Product;
+import com.example.coolmate.Models.Product.Product;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 

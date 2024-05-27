@@ -1,10 +1,10 @@
 package com.example.coolmate.Services.Impl;
 
-import com.example.coolmate.Dtos.ProductDTO;
-import com.example.coolmate.Dtos.ProductImageDTO;
+import com.example.coolmate.Dtos.ProductDtos.ProductDTO;
+import com.example.coolmate.Dtos.ProductDtos.ProductImageDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
-import com.example.coolmate.Models.Product;
-import com.example.coolmate.Models.ProductImage;
+import com.example.coolmate.Models.Product.Product;
+import com.example.coolmate.Models.Product.ProductImage;
 import com.example.coolmate.Responses.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

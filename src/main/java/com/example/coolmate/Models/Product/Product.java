@@ -1,5 +1,7 @@
-package com.example.coolmate.Models;
+package com.example.coolmate.Models.Product;
 
+import com.example.coolmate.Models.BaseEntity;
+import com.example.coolmate.Models.Category;
 import jakarta.persistence.*;
 import lombok.*;
 
