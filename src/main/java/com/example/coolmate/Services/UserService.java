@@ -121,7 +121,7 @@ public class UserService implements IUserService {
 
 
     @Override
-    public void lockUserById(int id) throws DataNotFoundException {
+    public void lockUserById(int id, UserDTO userDTO) throws DataNotFoundException {
         User user = userRepository.findById(id).orElseThrow(()
                 -> new DataNotFoundException("Không tìm thấy người dùng với ID " + id));
 
@@ -135,7 +135,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void unlockUserById(int id) throws DataNotFoundException {
+    public void unlockUserById(int id, UserDTO userDTO) throws DataNotFoundException {
         User user = userRepository.findById(id).orElseThrow(()
                 -> new DataNotFoundException("Không tìm thấy người dùng với ID " + id));
         //kt trc khi kich hoạt lại

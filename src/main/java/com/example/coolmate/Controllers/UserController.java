@@ -2,7 +2,10 @@ package com.example.coolmate.Controllers;
 
 import com.example.coolmate.Dtos.UserDtos.UserDTO;
 import com.example.coolmate.Dtos.UserDtos.UserLoginDTO;
+import com.example.coolmate.Exceptions.Message.ErrorMessage;
+import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.User.User;
+import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.UserResponse;
 import com.example.coolmate.Services.Impl.IUserService;
 import jakarta.validation.Valid;
@@ -34,22 +37,24 @@ public class UserController {
                         .toList();
                 return ResponseEntity.badRequest().body(errorMessages);
             }
-            User user = userService.createUser(userDTO);
-            return ResponseEntity.ok(user);
+            User createUser = userService.createUser(userDTO);
+            return ApiResponseUtil.successResponse("User created successfully", createUser);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(
+    public ResponseEntity<?> login(
             @Valid @RequestBody UserLoginDTO userLoginDTO) {
         //kt thông tin đăng nhập và tạo token
         try {
             String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
-            return ResponseEntity.ok(token);
+            return ApiResponseUtil.successResponse("Login successful", token);
+//            return ResponseEntity.ok(token);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
@@ -70,7 +75,7 @@ public class UserController {
             User existingUser = userService.getUserById(userId);
             return ResponseEntity.ok(UserResponse.fromUser(existingUser));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
@@ -78,31 +83,34 @@ public class UserController {
     public ResponseEntity<?> deleteUserById(@PathVariable int id) {
         try {
             userService.deleteUserById(id);
-            return ResponseEntity.ok(String.format("user with id %d deleted", id));
+            String message = "Xóa nhà cung cấp có ID " + id + " thành công";
+            return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> lockUser(@Valid @PathVariable int id) {
+    public ResponseEntity<?> lockUser(@Valid @PathVariable int id, UserDTO userDTO) {
         //xóa mềm => cập nhật trường active = false
         //không xóa mất đi user, mà chỉ xóa để active trở về 0
         try {
-            userService.lockUserById(id);
-            return ResponseEntity.ok("Vô hiệu hóa tài khoản id " + id + " thành công");
+            userService.lockUserById(id, userDTO);
+            return ApiResponseUtil.successResponse("Vô hiệu hóa thành công", id);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> unlockUser(@Valid @PathVariable int id) {
+    public ResponseEntity<?> unlockUser(@Valid @PathVariable int id, UserDTO userDTO) {
         try {
-            userService.unlockUserById(id);
-            return ResponseEntity.ok("Kích hoạt tài khoản id " + id + " thành công");
+            userService.unlockUserById(id, userDTO);
+            return ApiResponseUtil.successResponse("Mở khóa thành công", id);
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
 
