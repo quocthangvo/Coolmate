@@ -1,6 +1,7 @@
 package com.example.coolmate.Controllers;
 
 import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
+import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Models.Order.OrderDetail;
 import com.example.coolmate.Responses.OrderDetailResponse;
 import com.example.coolmate.Services.OrderDetailService;
@@ -26,7 +27,8 @@ public class OrderDetailController {
             OrderDetail newOrderDetail = orderDetailService.createOrderDetail(orderDetailDTO);
             return ResponseEntity.ok().body(OrderDetailResponse.fromOrderDetail(newOrderDetail));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
 
@@ -47,7 +49,8 @@ public class OrderDetailController {
             return ResponseEntity.ok().body(OrderDetailResponse.fromOrderDetail(orderDetail));// trả về theo from đã định dạng
             //        return ResponseEntity.ok(orderDetail);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
 
@@ -71,7 +74,8 @@ public class OrderDetailController {
             orderDetailService.deleteOrderDetail(id);
             return ResponseEntity.ok(String.format("order detail with id %d deleted", id));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
 }

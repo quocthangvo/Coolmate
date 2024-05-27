@@ -5,7 +5,6 @@ import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Supplier;
-import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.Impl.ISupplierService;
 import jakarta.validation.Valid;
@@ -33,8 +32,7 @@ public class SupplierController {
             }
 
             Supplier createdSupplier = supplierService.createSupplier(supplierDTO);
-            return ResponseEntity.ok(new ApiResponse<>(
-                    "Tạo nhà cung cấp thành công", createdSupplier)); // Trả về dữ liệu của danh mục được tạo
+            return ApiResponseUtil.successResponse("Supplier created successfully", createdSupplier); // Trả về dữ liệu của danh mục được tạo
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
         } catch (Exception e) {
@@ -80,7 +78,7 @@ public class SupplierController {
             @Valid @RequestBody SupplierDTO supplierDTO) {
         try {
             Supplier updatedSupplier = supplierService.updateSupplier(id, supplierDTO);
-            return ApiResponseUtil.successResponse("Category updated successfully", updatedSupplier);
+            return ApiResponseUtil.successResponse("Supplier updated successfully", updatedSupplier);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }

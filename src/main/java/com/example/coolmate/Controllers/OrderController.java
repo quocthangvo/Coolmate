@@ -1,7 +1,9 @@
 package com.example.coolmate.Controllers;
 
 import com.example.coolmate.Dtos.OrderDtos.OrderDTO;
+import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Models.Order.Order;
+import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.OrderResponse;
 import com.example.coolmate.Services.Impl.IOrderService;
 import jakarta.validation.Valid;
@@ -30,9 +32,10 @@ public class OrderController {
                 return ResponseEntity.badRequest().body(errorMessages);
             }
             Order orderResponse = orderService.createOrder(orderDTO);
-            return ResponseEntity.ok(orderResponse);
+            return ApiResponseUtil.successResponse("Order created successfully", orderResponse);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
 
@@ -42,7 +45,8 @@ public class OrderController {
             Order existingOrder = orderService.getOrderById(orderId);
             return ResponseEntity.ok(OrderResponse.fromOrder(existingOrder));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
 
@@ -53,7 +57,7 @@ public class OrderController {
             List<OrderResponse> response = OrderResponse.fromOrderList(orders);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
@@ -62,10 +66,10 @@ public class OrderController {
             @Valid @PathVariable int id,
             @Valid @RequestBody OrderDTO orderDTO) {
         try {
-            Order order = orderService.updateOrder(id, orderDTO);
-            return ResponseEntity.ok(order);
+            Order updateOrder = orderService.updateOrder(id, orderDTO);
+            return ApiResponseUtil.successResponse("Supplier updated successfully", updateOrder);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
 
     }
@@ -74,8 +78,13 @@ public class OrderController {
     public ResponseEntity<?> deleteOrder(@Valid @PathVariable int id) throws Exception {
         //xóa mềm => cập nhật trường active = false
         //không xóa mất đi order, mà chỉ xóa để active trở về 0
-        orderService.deleteOrder(id);
-        return ResponseEntity.ok("delete Order successfully");
+        try {
+            orderService.deleteOrder(id);
+            return ResponseEntity.ok("delete Order có id " + id + " thành công");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+        }
+
     }
 
 }

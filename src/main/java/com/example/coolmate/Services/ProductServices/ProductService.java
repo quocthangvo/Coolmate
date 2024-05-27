@@ -98,15 +98,9 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public boolean existsByName(String name) {
-        return productRepository.existsByName(name);
-        //kiểm tra sản phẩm có trong csdl
-    }
-
-    @Override
     public ProductImage createProductImage(int productId, ProductImageDTO productImageDTO) throws Exception {
         Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy product id: " + productId));
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy sản phẩm có id: " + productId));
 
         ProductImage newProductImage = ProductImage.builder()
                 .product(existingProduct)

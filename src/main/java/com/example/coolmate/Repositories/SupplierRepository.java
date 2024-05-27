@@ -21,4 +21,5 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
     boolean existsByAddress(String address);
 
+
 }

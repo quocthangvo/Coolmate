@@ -69,19 +69,19 @@ public class SupplierService implements ISupplierService {
         // Kiểm tra trùng tên
         if (!existingSupplier.getName().equals(supplierDTO.getName()) &&
                 supplierRepository.existsByName(supplierDTO.getName())) {
-            throw new DataNotFoundException("Nhà cung cấp đã tồn tại với tên: " + supplierDTO.getName());
+            throw new DataNotFoundException("Nhà cung cấp có tên '" + supplierDTO.getName() + "' đã tồn tại");
         }
 
         // Kiểm tra trùng số điện thoại
         if (!existingSupplier.getPhoneNumber().equals(supplierDTO.getPhoneNumber()) &&
                 supplierRepository.existsByPhoneNumber(supplierDTO.getPhoneNumber())) {
-            throw new DataNotFoundException("Nhà cung cấp đã tồn tại với số điện thoại: " + supplierDTO.getPhoneNumber());
+            throw new DataNotFoundException("Nhà cung cấp có số điện thoại '" + supplierDTO.getPhoneNumber() + "' đã tồn tại");
         }
 
         // Kiểm tra trùng địa chỉ
         if (!existingSupplier.getAddress().equals(supplierDTO.getAddress()) &&
                 supplierRepository.existsByAddress(supplierDTO.getAddress())) {
-            throw new DataNotFoundException("Nhà cung cấp đã tồn tại với địa chỉ: " + supplierDTO.getAddress());
+            throw new DataNotFoundException("Nhà cung cấp có địa chỉ'" + supplierDTO.getAddress() + "' đã tồn tại");
         }
 
         // Cập nhật thông tin nhà cung cấp

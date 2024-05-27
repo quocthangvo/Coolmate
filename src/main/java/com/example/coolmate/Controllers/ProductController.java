@@ -2,8 +2,11 @@ package com.example.coolmate.Controllers;
 
 import com.example.coolmate.Dtos.ProductDtos.ProductDTO;
 import com.example.coolmate.Dtos.ProductDtos.ProductImageDTO;
+import com.example.coolmate.Exceptions.Message.ErrorMessage;
+import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
+import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.ProductResponse;
 import com.example.coolmate.Services.Impl.IProductService;
 import com.example.coolmate.Services.ProductServices.ProductListResponse;
@@ -47,13 +50,16 @@ public class ProductController {
                         .map(FieldError::getDefaultMessage).toList();
                 return ResponseEntity.badRequest().body(errorMessages);
             }
-            //createProduct sẽ tạo sp mới
+            // Tạo sản phẩm mới
             Product newProduct = productService.createProduct(productDTO);
-            return ResponseEntity.ok(newProduct);
+            // Trả về cả thông điệp thành công và dữ liệu sản phẩm
+            return ApiResponseUtil.successResponse("Product create successfully", newProduct);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
+
 
     @GetMapping("")
     public ResponseEntity<ProductListResponse> getProducts(
@@ -80,7 +86,7 @@ public class ProductController {
             Product existingProduct = productService.getProductById(productId);
             return ResponseEntity.ok(ProductResponse.fromProduct(existingProduct));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
 
     }
@@ -89,9 +95,10 @@ public class ProductController {
     public ResponseEntity<?> deleteProduct(@PathVariable int id) {
         try {
             productService.deleteProduct(id);
-            return ResponseEntity.ok(String.format("Xóa product có id %d thành công", id));
+            String message = "Xóa sản phẩm có ID " + id + " thành công";
+            return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
@@ -100,9 +107,11 @@ public class ProductController {
                                            @RequestBody ProductDTO productDTO) {
         try {
             Product updatedProduct = productService.updateProduct(id, productDTO);
-            return ResponseEntity.ok(updatedProduct);
+            return ApiResponseUtil.successResponse("Product updated successfully", updatedProduct);
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
 

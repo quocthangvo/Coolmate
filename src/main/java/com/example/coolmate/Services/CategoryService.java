@@ -57,13 +57,13 @@ public class CategoryService implements ICategoryService {
 
         // Kiểm tra nếu tên mới giống với tên hiện tại của danh mục
         if (existingCategory.getName().equals(categoryDTO.getName())) {
-            throw new DataNotFoundException("Tên danh mục mới trùng với tên danh mục hiện tại: " + categoryDTO.getName());
+            throw new DataNotFoundException("Tên danh mục mới " + categoryDTO.getName() + " trùng với tên danh mục hiện tại: ");
         }
 
         // Kiểm tra trùng tên với các danh mục khác
         Optional<Category> categoryWithSameName = categoryRepository.findByName(categoryDTO.getName());
         if (categoryWithSameName.isPresent()) {
-            throw new DataNotFoundException("Danh mục đã tồn tại: " + categoryDTO.getName());
+            throw new DataNotFoundException("Danh mục" + categoryDTO.getName() + " đã tồn tại");
         }
 
         // Cập nhật thông tin danh mục

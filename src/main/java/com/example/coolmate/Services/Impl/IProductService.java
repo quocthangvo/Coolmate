@@ -20,7 +20,6 @@ public interface IProductService {
 
     void deleteProduct(int id) throws DataNotFoundException;
 
-    boolean existsByName(String name);
 
     ProductImage createProductImage(
             int productId,
