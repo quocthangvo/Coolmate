@@ -6,7 +6,7 @@ import com.example.coolmate.Models.Product.Price;
 import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Repositories.Product.PriceRepository;
 import com.example.coolmate.Repositories.Product.ProductRepository;
-import com.example.coolmate.Services.Impl.IPriceService;
+import com.example.coolmate.Services.Impl.Product.IPriceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

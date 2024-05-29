@@ -1,4 +1,4 @@
-package com.example.coolmate.Services;
+package com.example.coolmate.Services.Order;
 
 import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
@@ -8,7 +8,7 @@ import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Repositories.Order.OrderDetailRepository;
 import com.example.coolmate.Repositories.Order.OrderRepository;
 import com.example.coolmate.Repositories.Product.ProductRepository;
-import com.example.coolmate.Services.Impl.IOrderDetailService;
+import com.example.coolmate.Services.Impl.Order.IOrderDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

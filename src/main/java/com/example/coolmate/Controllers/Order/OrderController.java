@@ -1,11 +1,11 @@
-package com.example.coolmate.Controllers;
+package com.example.coolmate.Controllers.Order;
 
 import com.example.coolmate.Dtos.OrderDtos.OrderDTO;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Models.Order.Order;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.OrderResponse;
-import com.example.coolmate.Services.Impl.IOrderService;
+import com.example.coolmate.Services.Impl.Order.IOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

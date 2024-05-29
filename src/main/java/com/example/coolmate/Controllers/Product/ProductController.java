@@ -1,4 +1,4 @@
-package com.example.coolmate.Controllers;
+package com.example.coolmate.Controllers.Product;
 
 import com.example.coolmate.Dtos.ProductDtos.ProductDTO;
 import com.example.coolmate.Dtos.ProductDtos.ProductImageDTO;
@@ -8,7 +8,7 @@ import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.ProductResponse;
-import com.example.coolmate.Services.Impl.IProductService;
+import com.example.coolmate.Services.Impl.Product.IProductService;
 import com.example.coolmate.Services.ProductServices.ProductListResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

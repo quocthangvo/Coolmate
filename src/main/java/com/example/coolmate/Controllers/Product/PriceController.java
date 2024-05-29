@@ -1,9 +1,9 @@
-package com.example.coolmate.Controllers;
+package com.example.coolmate.Controllers.Product;
 
 import com.example.coolmate.Dtos.ProductDtos.PriceDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Product.Price;
-import com.example.coolmate.Services.Impl.IPriceService;
+import com.example.coolmate.Services.Impl.Product.IPriceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

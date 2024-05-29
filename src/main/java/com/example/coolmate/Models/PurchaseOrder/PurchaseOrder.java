@@ -1,9 +1,13 @@
 package com.example.coolmate.Models.PurchaseOrder;
 
+import com.example.coolmate.Models.BaseEntity;
+import com.example.coolmate.Models.Supplier;
+import com.example.coolmate.Models.User.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Date;
 
 @Builder
 @Getter
@@ -12,7 +16,7 @@ import java.sql.Date;
 @NoArgsConstructor
 @Table(name = "purchase_order")
 @Entity
-public class PurchaseOrder {
+public class PurchaseOrder extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -27,5 +31,15 @@ public class PurchaseOrder {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "shipping_date")
+    private LocalDate shippingDate;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "supplier_id", nullable = false)
+    private Supplier supplier;
 
 }

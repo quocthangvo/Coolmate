@@ -34,7 +34,7 @@ public class WebSecurityConfig {
                                     String.format("/%s/users/login", apiPrefix)
                             )
                             .permitAll()
-                            //request dc cấp quyền
+                            //request cần dc cấp quyền
                             .requestMatchers(HttpMethod.GET,
                                     String.format("%s/users/**", apiPrefix)).hasAnyRole(Role.ADMIN)
                             .requestMatchers(HttpMethod.DELETE,
@@ -65,6 +65,9 @@ public class WebSecurityConfig {
                                     String.format("%s/prices/delete/**", apiPrefix)).hasRole(Role.ADMIN)
                             .requestMatchers(HttpMethod.PUT,
                                     String.format("%s/prices/**", apiPrefix)).hasRole(Role.ADMIN)
+
+                            .requestMatchers(HttpMethod.POST,
+                                    String.format("%s/purchase_orders", apiPrefix)).hasRole(Role.ADMIN)
 
                             .anyRequest().authenticated();
                 });

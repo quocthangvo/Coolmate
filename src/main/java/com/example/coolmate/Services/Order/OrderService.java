@@ -1,4 +1,4 @@
-package com.example.coolmate.Services;
+package com.example.coolmate.Services.Order;
 
 import com.example.coolmate.Dtos.OrderDtos.OrderDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
@@ -7,7 +7,7 @@ import com.example.coolmate.Models.Order.OrderStatus;
 import com.example.coolmate.Models.User.User;
 import com.example.coolmate.Repositories.Order.OrderRepository;
 import com.example.coolmate.Repositories.UserRepository;
-import com.example.coolmate.Services.Impl.IOrderService;
+import com.example.coolmate.Services.Impl.Order.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class OrderService implements IOrderService {
         //tạo 1 lồng bảng ánh xạ riêng để kiểm soát việc ánh xạ
         modelMapper.typeMap(OrderDTO.class, Order.class)
                 .addMappings(mapper -> mapper.skip(Order::setId));
-//cập nhật các truòng của đơn hàng từ orderDTO
+        //cập nhật các truòng của đơn hàng từ orderDTO
         Order order = new Order();
         modelMapper.map(orderDTO, order);
         order.setUser(user);

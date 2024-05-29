@@ -1,4 +1,4 @@
-package com.example.coolmate.Services.Impl;
+package com.example.coolmate.Services.Impl.Order;
 
 import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;

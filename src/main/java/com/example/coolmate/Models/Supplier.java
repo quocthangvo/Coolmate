@@ -1,7 +1,10 @@
 package com.example.coolmate.Models;
 
+import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Builder
 @Getter
@@ -25,4 +28,6 @@ public class Supplier extends BaseEntity {
     @Column(name = "address")
     private String address;
 
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PurchaseOrder> purchaseOrders;
 }

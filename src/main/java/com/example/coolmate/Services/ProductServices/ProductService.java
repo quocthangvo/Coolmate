@@ -11,7 +11,7 @@ import com.example.coolmate.Repositories.CategoryRepository;
 import com.example.coolmate.Repositories.Product.ProductImageRepository;
 import com.example.coolmate.Repositories.Product.ProductRepository;
 import com.example.coolmate.Responses.ProductResponse;
-import com.example.coolmate.Services.Impl.IProductService;
+import com.example.coolmate.Services.Impl.Product.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
