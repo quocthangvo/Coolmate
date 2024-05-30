@@ -2,6 +2,7 @@ package com.example.coolmate.Controllers.Order;
 
 import com.example.coolmate.Dtos.OrderDtos.OrderDTO;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
+import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Order.Order;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.OrderResponse;
@@ -80,7 +81,8 @@ public class OrderController {
         //không xóa mất đi order, mà chỉ xóa để active trở về 0
         try {
             orderService.deleteOrder(id);
-            return ResponseEntity.ok("delete Order có id " + id + " thành công");
+            String message = "Xóa đơn hàng có ID " + id + " thành công";
+            return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }

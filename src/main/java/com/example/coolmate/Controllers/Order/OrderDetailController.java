@@ -2,6 +2,7 @@ package com.example.coolmate.Controllers.Order;
 
 import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
+import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Order.OrderDetail;
 import com.example.coolmate.Responses.OrderDetailResponse;
 import com.example.coolmate.Services.Order.OrderDetailService;
@@ -40,6 +41,7 @@ public class OrderDetailController {
                 .map(OrderDetailResponse::fromOrderDetail)
                 .toList();
         return ResponseEntity.ok(orderDetailResponses);
+
     }
 
     @GetMapping("/{id}")
@@ -47,7 +49,7 @@ public class OrderDetailController {
         try {
             OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
             return ResponseEntity.ok().body(OrderDetailResponse.fromOrderDetail(orderDetail));// trả về theo from đã định dạng
-            //        return ResponseEntity.ok(orderDetail);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
 
@@ -72,7 +74,8 @@ public class OrderDetailController {
             @Valid @PathVariable("id") int id) {
         try {
             orderDetailService.deleteOrderDetail(id);
-            return ResponseEntity.ok(String.format("order detail with id %d deleted", id));
+            String message = "Xóa chi tiết đơn hàng có ID " + id + " thành công";
+            return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
 

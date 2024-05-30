@@ -1,5 +1,6 @@
 package com.example.coolmate.Models.Product;
 
+import com.example.coolmate.Models.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Table(name = "product_details")
 @Entity
-public class ProductDetail {
+public class ProductDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

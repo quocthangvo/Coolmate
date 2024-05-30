@@ -24,7 +24,7 @@ public class User extends BaseEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "fullname", length = 100)
+    @Column(name = "fullname", length = 100, nullable = false)
     private String fullName;
 
     @Column(name = "phone_number", length = 10, nullable = false)

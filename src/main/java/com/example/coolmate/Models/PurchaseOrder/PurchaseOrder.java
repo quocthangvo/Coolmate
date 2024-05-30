@@ -34,6 +34,9 @@ public class PurchaseOrder extends BaseEntity {
     @Column(name = "shipping_date")
     private LocalDate shippingDate;
 
+    @Column(name = "is_active")
+    private boolean active;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

@@ -31,5 +31,12 @@ public class PurchaseOrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "product_detail_id", nullable = false)
-    private ProductDetail productDetail;
+    private ProductDetail productDetailId;
+
+    @ManyToOne
+    @JoinColumn(name = "purchase_order_id", nullable = false)
+    private PurchaseOrder purchaseOrderId;
+
+    @Column(name = "is_active")
+    private boolean active;
 }

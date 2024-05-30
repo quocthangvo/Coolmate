@@ -11,12 +11,12 @@ import com.example.coolmate.Repositories.SupplierRepository;
 import com.example.coolmate.Repositories.UserRepository;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,11 +25,11 @@ public class PurchaseOrderService implements IPurchaseOrderService {
 
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
     private final SupplierRepository supplierRepository;
 
     @Override
     public PurchaseOrder createPurchaseOrder(PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException {
+
         // Kiểm tra sự tồn tại của User
         User user = userRepository.findById(purchaseOrderDTO.getUserId())
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy người dùng với id: "
@@ -47,6 +47,13 @@ public class PurchaseOrderService implements IPurchaseOrderService {
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy nhà cung cấp với id: "
                         + purchaseOrderDTO.getSupplierId()));
 
+        // Kiểm tra sự tồn tại của mã đơn hàng (code)
+        boolean isCodeExist = purchaseOrderRepository.existsByCode(purchaseOrderDTO.getCode());
+        if (isCodeExist) {
+            throw new DataNotFoundException("Mã đơn hàng đã tồn tại: " + purchaseOrderDTO.getCode());
+        }
+
+
         // Tạo đối tượng PurchaseOrder và thiết lập các thuộc tính từ DTO và thông tin từ User
         PurchaseOrder newPurchaseOrder = new PurchaseOrder();
         newPurchaseOrder.setCode(purchaseOrderDTO.getCode());
@@ -55,6 +62,7 @@ public class PurchaseOrderService implements IPurchaseOrderService {
         newPurchaseOrder.setShippingDate(shippingDate);
         newPurchaseOrder.setSupplier(supplier);
         newPurchaseOrder.setUser(user);
+        newPurchaseOrder.setActive(true);
 
 
         // Lưu đơn hàng vào cơ sở dữ liệu
@@ -63,21 +71,66 @@ public class PurchaseOrderService implements IPurchaseOrderService {
 
 
     @Override
-    public PurchaseOrder getPurchaseOrderById(int id) {
-        return null;
+    public PurchaseOrder getPurchaseOrderById(int id) throws DataNotFoundException {
+        return purchaseOrderRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy purchase order id = "
+                        + id));
     }
 
     @Override
     public List<PurchaseOrder> getAllPurchaseOrders() {
-        return List.of();
+        return purchaseOrderRepository.findAll();
     }
+
 
     @Override
     public void deletePurchaseOrder(int id) throws DataNotFoundException {
+        Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderRepository.findById(id);
+        if (optionalPurchaseOrder.isPresent()) {
+            PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
+            if (purchaseOrder.isActive()) {
+                // Đánh dấu đơn hàng là không hoạt động (active = false)
+                purchaseOrder.setActive(false);
+                purchaseOrderRepository.save(purchaseOrder);
+
+            } else {
+                // Nếu đơn hàng đã được đánh dấu là không hoạt động, trả về thông báo đã xóa
+                throw new DataNotFoundException("Đơn hàng có ID " + id + " đã được xóa trước đó.");
+            }
+        } else {
+            // Nếu không tìm thấy đơn đặt hàng với ID đã cung cấp, trả về thông báo lỗi
+            throw new DataNotFoundException("Không tìm thấy order id: " + id);
+        }
     }
+
 
     @Override
     public PurchaseOrder updatePurchaseOrder(int purchaseOrderId, PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException {
-        return null;
+        // Tìm PurchaseOrder hiện tại bằng ID
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId).orElseThrow(() ->
+                new DataNotFoundException("Không tìm thấy order id " + purchaseOrderId));
+
+        // Kiểm tra nếu thuộc tính "code" trong PurchaseOrderDTO trùng với một PurchaseOrder khác
+        PurchaseOrder existingPurchaseOrderByCode = purchaseOrderRepository.findByCode(purchaseOrderDTO.getCode());
+        if (existingPurchaseOrderByCode != null && existingPurchaseOrderByCode.getId() != purchaseOrderId) {
+            throw new DataNotFoundException("Mã đơn hàng đã tồn tại cho đơn hàng khác");
+        }
+
+        // Tìm User hiện tại bằng ID
+        User existingUser = userRepository.findById(purchaseOrderDTO.getUserId()).orElseThrow(() ->
+                new DataNotFoundException("Không tìm thấy user id " + purchaseOrderDTO.getUserId()));
+
+        // Cập nhật các thuộc tính của PurchaseOrder từ PurchaseOrderDTO
+        purchaseOrder.setUser(existingUser);
+        purchaseOrder.setCode(purchaseOrderDTO.getCode());
+        purchaseOrder.setOrderDate(new Date());
+        purchaseOrder.setShippingDate(purchaseOrderDTO.getShippingDate());
+        // Các thuộc tính khác nếu có trong PurchaseOrderDTO cần được cập nhật
+        // purchaseOrder.setOtherProperty(purchaseOrderDTO.getOtherProperty());
+
+        // Lưu đối tượng PurchaseOrder đã cập nhật vào cơ sở dữ liệu
+        return purchaseOrderRepository.save(purchaseOrder);
     }
+
+
 }
