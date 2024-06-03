@@ -12,7 +12,7 @@ public class PurchaseOrderStatus {
 
     public static final String PROCESSING = "processing";
 
-    public static final String SHIPPER = "shipper";
+    public static final String SHIPPING = "shipping";
 
     public static final String DELIVERED = "delivered";
 

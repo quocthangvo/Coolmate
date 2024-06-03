@@ -135,27 +135,44 @@ public class PurchaseOrderService implements IPurchaseOrderService {
 
     @Override
     public PurchaseOrder updatePurchaseOrder(int purchaseOrderId, PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException {
-// Tìm PurchaseOrderDetail theo ID
+        // Tìm PurchaseOrder theo ID
         PurchaseOrder purchaseOrder = purchaseOrderRepository
                 .findById(purchaseOrderId)
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng với ID: " + purchaseOrderId));
 
+        // Kiểm tra nếu active là false thì không cho phép thay đổi trạng thái
+        if (!purchaseOrder.isActive()) {
+            throw new IllegalStateException("Không thể thay đổi trạng thái của đơn đặt hàng đã bị hủy.");
+        }
+
         // Các trạng thái hợp lệ
-        List<String> validStatuses = Arrays.asList("pending", "processing", "shipping", "delivered", "cancelled");
+        List<String> validStatuses = Arrays.asList(
+                PurchaseOrderStatus.PENDING,
+                PurchaseOrderStatus.PROCESSING,
+                PurchaseOrderStatus.SHIPPING,
+                PurchaseOrderStatus.DELIVERED,
+                PurchaseOrderStatus.CANCELLED
+        );
 
         // Lấy trạng thái mới từ DTO
         String newStatus = purchaseOrderDTO.getStatus();
 
-        // Kiểm tra xem status mới có hợp lệ không
+        // Kiểm tra xem trạng thái mới có hợp lệ không
         if (!validStatuses.contains(newStatus)) {
             throw new IllegalArgumentException("Trạng thái không hợp lệ: " + newStatus);
         }
 
-        // Cập nhật thuộc tính status
+        // Cập nhật thuộc tính trạng thái
         purchaseOrder.setStatus(newStatus);
+
+        // Nếu trạng thái mới là 'cancelled', đặt active thành false
+        if (PurchaseOrderStatus.CANCELLED.equals(newStatus)) {
+            purchaseOrder.setActive(false); // Giả sử phương thức setActive tồn tại và active là một thuộc tính kiểu boolean
+        }
 
         // Lưu lại thay đổi vào cơ sở dữ liệu
         return purchaseOrderRepository.save(purchaseOrder);
     }
+
 
 }

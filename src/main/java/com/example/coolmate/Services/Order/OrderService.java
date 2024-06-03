@@ -92,12 +92,12 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Order updateOrder(int id, OrderDTO orderDTO) throws DataNotFoundException {
+    public Order updateOrder(int orderId, OrderDTO orderDTO) throws DataNotFoundException {
 // Tìm PurchaseOrderDetail theo ID
         Order order = orderRepository
-                .findById(id)
+                .findById(orderId)
                 .orElseThrow(() -> new DataNotFoundException(
-                        "Không tìm thấy đơn hàng với ID: " + id));
+                        "Không tìm thấy chi tiết đơn đặt hàng với ID: " + orderId));
 
         // Các trạng thái hợp lệ
         List<String> validStatuses = Arrays.asList(
@@ -117,5 +117,6 @@ public class OrderService implements IOrderService {
         // Lưu lại thay đổi vào cơ sở dữ liệu
         return orderRepository.save(order);
     }
+
 
 }

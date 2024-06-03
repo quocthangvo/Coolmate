@@ -63,16 +63,17 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateOrder(
-            @Valid @PathVariable int id,
+    public ResponseEntity<?> updatePurchaseOrder(
+            @PathVariable int id,
             @Valid @RequestBody OrderDTO orderDTO) {
         try {
             Order updateOrder = orderService.updateOrder(id, orderDTO);
-            return ApiResponseUtil.successResponse("Order status updated successfully", updateOrder);
+            OrderResponse orderResponse = OrderResponse.fromOrder(updateOrder);
+            return ApiResponseUtil.successResponse(
+                    "Purchase Order Detail created successfully", orderResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
-
     }
 
     @DeleteMapping("/delete/{id}")
