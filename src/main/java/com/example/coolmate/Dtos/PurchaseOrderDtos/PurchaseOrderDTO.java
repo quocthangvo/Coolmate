@@ -24,5 +24,6 @@ public class PurchaseOrderDTO {
     @JsonProperty("supplier_id")
     private int supplierId;
 
+    private String status;
 
 }

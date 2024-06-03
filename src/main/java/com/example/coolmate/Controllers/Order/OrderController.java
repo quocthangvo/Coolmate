@@ -68,7 +68,7 @@ public class OrderController {
             @Valid @RequestBody OrderDTO orderDTO) {
         try {
             Order updateOrder = orderService.updateOrder(id, orderDTO);
-            return ApiResponseUtil.successResponse("Supplier updated successfully", updateOrder);
+            return ApiResponseUtil.successResponse("Order status updated successfully", updateOrder);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -104,33 +105,57 @@ public class PurchaseOrderService implements IPurchaseOrderService {
     }
 
 
+//    @Override
+//    public PurchaseOrder updatePurchaseOrder(int purchaseOrderId, PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException {
+//        // Tìm PurchaseOrder hiện tại bằng ID
+//        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId).orElseThrow(() ->
+//                new DataNotFoundException("Không tìm thấy order id " + purchaseOrderId));
+//
+//        // Kiểm tra nếu thuộc tính "code" trong PurchaseOrderDTO trùng với một PurchaseOrder khác
+//        PurchaseOrder existingPurchaseOrderByCode = purchaseOrderRepository.findByCode(purchaseOrderDTO.getCode());
+//        if (existingPurchaseOrderByCode != null && existingPurchaseOrderByCode.getId() != purchaseOrderId) {
+//            throw new DataNotFoundException("Mã đơn hàng đã tồn tại cho đơn hàng khác");
+//        }
+//
+//        // Tìm User hiện tại bằng ID
+//        User existingUser = userRepository.findById(purchaseOrderDTO.getUserId()).orElseThrow(() ->
+//                new DataNotFoundException("Không tìm thấy user id " + purchaseOrderDTO.getUserId()));
+//
+//        // Cập nhật các thuộc tính của PurchaseOrder từ PurchaseOrderDTO
+//        purchaseOrder.setUser(existingUser);
+//        purchaseOrder.setCode(purchaseOrderDTO.getCode());
+//        purchaseOrder.setOrderDate(new Date());
+//        purchaseOrder.setShippingDate(purchaseOrderDTO.getShippingDate());
+//        // Các thuộc tính khác nếu có trong PurchaseOrderDTO cần được cập nhật
+//        // purchaseOrder.setOtherProperty(purchaseOrderDTO.getOtherProperty());
+//
+//        // Lưu đối tượng PurchaseOrder đã cập nhật vào cơ sở dữ liệu
+//        return purchaseOrderRepository.save(purchaseOrder);
+//    }
+
     @Override
     public PurchaseOrder updatePurchaseOrder(int purchaseOrderId, PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException {
-        // Tìm PurchaseOrder hiện tại bằng ID
-        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId).orElseThrow(() ->
-                new DataNotFoundException("Không tìm thấy order id " + purchaseOrderId));
+// Tìm PurchaseOrderDetail theo ID
+        PurchaseOrder purchaseOrder = purchaseOrderRepository
+                .findById(purchaseOrderId)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng với ID: " + purchaseOrderId));
 
-        // Kiểm tra nếu thuộc tính "code" trong PurchaseOrderDTO trùng với một PurchaseOrder khác
-        PurchaseOrder existingPurchaseOrderByCode = purchaseOrderRepository.findByCode(purchaseOrderDTO.getCode());
-        if (existingPurchaseOrderByCode != null && existingPurchaseOrderByCode.getId() != purchaseOrderId) {
-            throw new DataNotFoundException("Mã đơn hàng đã tồn tại cho đơn hàng khác");
+        // Các trạng thái hợp lệ
+        List<String> validStatuses = Arrays.asList("pending", "processing", "shipping", "delivered", "cancelled");
+
+        // Lấy trạng thái mới từ DTO
+        String newStatus = purchaseOrderDTO.getStatus();
+
+        // Kiểm tra xem status mới có hợp lệ không
+        if (!validStatuses.contains(newStatus)) {
+            throw new IllegalArgumentException("Trạng thái không hợp lệ: " + newStatus);
         }
 
-        // Tìm User hiện tại bằng ID
-        User existingUser = userRepository.findById(purchaseOrderDTO.getUserId()).orElseThrow(() ->
-                new DataNotFoundException("Không tìm thấy user id " + purchaseOrderDTO.getUserId()));
+        // Cập nhật thuộc tính status
+        purchaseOrder.setStatus(newStatus);
 
-        // Cập nhật các thuộc tính của PurchaseOrder từ PurchaseOrderDTO
-        purchaseOrder.setUser(existingUser);
-        purchaseOrder.setCode(purchaseOrderDTO.getCode());
-        purchaseOrder.setOrderDate(new Date());
-        purchaseOrder.setShippingDate(purchaseOrderDTO.getShippingDate());
-        // Các thuộc tính khác nếu có trong PurchaseOrderDTO cần được cập nhật
-        // purchaseOrder.setOtherProperty(purchaseOrderDTO.getOtherProperty());
-
-        // Lưu đối tượng PurchaseOrder đã cập nhật vào cơ sở dữ liệu
+        // Lưu lại thay đổi vào cơ sở dữ liệu
         return purchaseOrderRepository.save(purchaseOrder);
     }
-
 
 }

@@ -49,4 +49,6 @@ public class OrderDTO {
 
     @JsonProperty("is_active")
     private boolean active;
+
+    private String status;
 }

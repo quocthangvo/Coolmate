@@ -24,4 +24,6 @@ public class PurchaseOrderDetailDTO {
 
     @JsonProperty("purchase_order_id")
     private int purchaseOrderId;
+
+
 }

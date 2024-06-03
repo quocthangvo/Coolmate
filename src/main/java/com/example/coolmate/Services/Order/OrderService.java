@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -66,21 +66,21 @@ public class OrderService implements IOrderService {
         return orderRepository.findByUserId(userId);
     }
 
-    @Override
-    public Order updateOrder(int id, OrderDTO orderDTO) throws DataNotFoundException {
-        Order order = orderRepository.findById(id).orElseThrow(() ->
-                new DataNotFoundException("Không tìm thấy order id " + id));
-        User exixtingUser = userRepository.findById(
-                orderDTO.getUserId()).orElseThrow(() ->
-                new DateTimeException("Không tìm thấy user id" + id));
-        //tạo 1 luồng ánh xạ
-        modelMapper.typeMap(OrderDTO.class, Order.class)
-                .addMappings(mapper -> mapper.skip(Order::setId));
-        //cập nhật  các trường của đơn hàng từ orderDTO
-        modelMapper.map(orderDTO, order);
-        order.setUser(exixtingUser);
-        return orderRepository.save(order);
-    }
+//    @Override
+//    public Order updateOrder(int id, OrderDTO orderDTO) throws DataNotFoundException {
+//        Order order = orderRepository.findById(id).orElseThrow(() ->
+//                new DataNotFoundException("Không tìm thấy order id " + id));
+//        User exixtingUser = userRepository.findById(
+//                orderDTO.getUserId()).orElseThrow(() ->
+//                new DateTimeException("Không tìm thấy user id" + id));
+//        //tạo 1 luồng ánh xạ
+//        modelMapper.typeMap(OrderDTO.class, Order.class)
+//                .addMappings(mapper -> mapper.skip(Order::setId));
+//        //cập nhật  các trường của đơn hàng từ orderDTO
+//        modelMapper.map(orderDTO, order);
+//        order.setUser(exixtingUser);
+//        return orderRepository.save(order);
+//    }
 
     @Override
     public void deleteOrder(int id) throws DataNotFoundException {
@@ -91,5 +91,31 @@ public class OrderService implements IOrderService {
         orderRepository.save(order);
     }
 
+    @Override
+    public Order updateOrder(int id, OrderDTO orderDTO) throws DataNotFoundException {
+// Tìm PurchaseOrderDetail theo ID
+        Order order = orderRepository
+                .findById(id)
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Không tìm thấy đơn hàng với ID: " + id));
+
+        // Các trạng thái hợp lệ
+        List<String> validStatuses = Arrays.asList(
+                "pending", "processing", "shipping", "delivered", "cancelled");
+
+        // Lấy trạng thái mới từ DTO
+        String newStatus = orderDTO.getStatus();
+
+        // Kiểm tra xem status mới có hợp lệ không
+        if (!validStatuses.contains(newStatus)) {
+            throw new IllegalArgumentException("Trạng thái không hợp lệ: " + newStatus);
+        }
+
+        // Cập nhật thuộc tính status
+        order.setStatus(newStatus);
+
+        // Lưu lại thay đổi vào cơ sở dữ liệu
+        return orderRepository.save(order);
+    }
 
 }
