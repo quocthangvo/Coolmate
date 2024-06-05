@@ -140,11 +140,6 @@ public class PurchaseOrderService implements IPurchaseOrderService {
                 .findById(purchaseOrderId)
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng với ID: " + purchaseOrderId));
 
-        // Kiểm tra nếu active là false thì không cho phép thay đổi trạng thái
-        if (!purchaseOrder.isActive()) {
-            throw new IllegalStateException("Không thể thay đổi trạng thái của đơn đặt hàng đã bị hủy.");
-        }
-
         // Các trạng thái hợp lệ
         List<String> validStatuses = Arrays.asList(
                 PurchaseOrderStatus.PENDING,
@@ -162,15 +157,22 @@ public class PurchaseOrderService implements IPurchaseOrderService {
             throw new IllegalArgumentException("Trạng thái không hợp lệ: " + newStatus);
         }
 
+        // Kiểm tra nếu trạng thái hiện tại là 'cancelled' hoặc 'delivered' thì không cho phép thay đổi trạng thái
+        if (!purchaseOrder.isActive() ||
+                PurchaseOrderStatus.DELIVERED.equals(purchaseOrder.getStatus())) {
+            throw new IllegalStateException(
+                    "Không thể thay đổi trạng thái của đơn đặt hàng đã bị hủy hoặc đã giao hàng thành công.");
+        }
+
         // Cập nhật thuộc tính trạng thái
         purchaseOrder.setStatus(newStatus);
 
         // Nếu trạng thái mới là 'cancelled', đặt active thành false
         if (PurchaseOrderStatus.CANCELLED.equals(newStatus)) {
-            purchaseOrder.setActive(false); // Giả sử phương thức setActive tồn tại và active là một thuộc tính kiểu boolean
+            purchaseOrder.setActive(false);
         }
 
-        // Lưu lại thay đổi vào cơ sở dữ liệu
+        // Lưu
         return purchaseOrderRepository.save(purchaseOrder);
     }
 
