@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Getter
 @Setter
@@ -27,4 +29,7 @@ public class ProductDTO {
 
     @JsonProperty("category_id")
     private int categoryId;
+
+    @JsonProperty("product_details")
+    private List<ProductDetailDTO> productDetails;
 }

@@ -2,14 +2,16 @@ package com.example.coolmate.Controllers.Product;
 
 import com.example.coolmate.Dtos.ProductDtos.ProductDTO;
 import com.example.coolmate.Dtos.ProductDtos.ProductImageDTO;
+import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
+import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.ProductResponse;
 import com.example.coolmate.Services.Impl.Product.IProductService;
-import com.example.coolmate.Services.ProductServices.ProductListResponse;
+import com.example.coolmate.Services.Product.ProductListResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -47,25 +49,34 @@ public class ProductController {
             if (result.hasErrors()) {
                 List<String> errorMessages = result.getFieldErrors()
                         .stream()
-                        .map(FieldError::getDefaultMessage).toList();
+                        .map(FieldError::getDefaultMessage)
+                        .toList();
                 return ResponseEntity.badRequest().body(errorMessages);
             }
+
             // Tạo sản phẩm mới
             Product newProduct = productService.createProduct(productDTO);
-            // Trả về cả thông điệp thành công và dữ liệu sản phẩm
-            return ApiResponseUtil.successResponse("Product create successfully", newProduct);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
 
+            // Ghi log chi tiết sản phẩm để kiểm tra nếu nó được tạo đúng
+            System.out.println("Created Product: " + newProduct);
+
+            // Tạo phản hồi API sử dụng ApiResponseUtil
+            return ApiResponseUtil.successResponse("Product created successfully", newProduct);
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();  // Ghi log ngoại lệ để gỡ lỗi
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorMessage("Đã xảy ra lỗi không xác định"));
         }
     }
 
 
     @GetMapping("")
-    public ResponseEntity<ProductListResponse> getProducts(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
+    public ResponseEntity<ProductListResponse> getAllProducts(
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "limit") int limit
     ) {
+
         PageRequest pageRequest = PageRequest.of(
                 page, limit,
                 Sort.by("createdAt").descending());
@@ -182,5 +193,24 @@ public class ProductController {
     private boolean isImageFile(MultipartFile file) {
         String contentType = file.getContentType();
         return contentType != null || contentType.startsWith("image/");
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchProductByName(@RequestParam("name") String name){
+      try{
+          String slugName =convertToSlug(name);
+          List<Product> products = productService.searchProductByName(name);
+          if(products.isEmpty()){
+              ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : "+name);
+              return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+          }
+          return ResponseEntity.ok(products);
+      }catch (Exception e){
+          return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
+                  +e.getMessage()));
+      }
+    }
+    private String convertToSlug(String name) {
+        return name.toLowerCase().replaceAll("\\s+", "-");
     }
 }

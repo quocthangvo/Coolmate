@@ -1,5 +1,6 @@
 package com.example.coolmate.Controllers;
 
+import com.example.coolmate.Dtos.UserDtos.ChangePasswordDTO;
 import com.example.coolmate.Dtos.UserDtos.UserDTO;
 import com.example.coolmate.Dtos.UserDtos.UserLoginDTO;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
@@ -8,9 +9,13 @@ import com.example.coolmate.Models.User.User;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.UserResponse;
 import com.example.coolmate.Services.Impl.IUserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +60,24 @@ public class UserController {
 //            return ResponseEntity.ok(token);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassWord(@RequestBody ChangePasswordDTO changePasswordDTO
+                                           ) throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String phoneNumber = authentication.getName();
+        try{
+            boolean isChanged = userService.changePassword(phoneNumber,changePasswordDTO);
+            if (isChanged) {
+                return ApiResponseUtil.successResponse("Thay đổi mật khẩu thành công", null);
+            } else {
+                return ResponseEntity.badRequest().body(new ErrorMessage("Không thể thay đổi mật khẩu"));
+            }
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi thay đổi mật khẩu : "
+                    +e.getMessage()));
         }
     }
 

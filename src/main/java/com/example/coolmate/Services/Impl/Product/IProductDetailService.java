@@ -15,7 +15,9 @@ public interface IProductDetailService {
 
     void deleteProductDetail(int id) throws DataNotFoundException;
 
+
 //    ProductDetail updateProductDetail(int id, ProductDetailDTO productDetailDTO) throws Exception;
-
-
+    ProductDetail getProductDetailByProductIdAndSizeId(int productId, int sizeId);
+    ProductDetail updateProductDetail(ProductDetail productDetail) throws Exception;
+    ProductDetail getProductDetailByProductIdSizeAndColor(int productId, int sizeId, int colorId);
 }

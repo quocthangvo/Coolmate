@@ -1,15 +1,14 @@
-package com.example.coolmate.Services.ProductServices;
+package com.example.coolmate.Services.Product;
 
 import com.example.coolmate.Dtos.ProductDtos.ProductDTO;
+import com.example.coolmate.Dtos.ProductDtos.ProductDetailDTO;
 import com.example.coolmate.Dtos.ProductDtos.ProductImageDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.InvalidParamException;
 import com.example.coolmate.Models.Category;
-import com.example.coolmate.Models.Product.Product;
-import com.example.coolmate.Models.Product.ProductImage;
+import com.example.coolmate.Models.Product.*;
 import com.example.coolmate.Repositories.CategoryRepository;
-import com.example.coolmate.Repositories.Product.ProductImageRepository;
-import com.example.coolmate.Repositories.Product.ProductRepository;
+import com.example.coolmate.Repositories.Product.*;
 import com.example.coolmate.Responses.ProductResponse;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +16,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final CategoryRepository categoryRepository;
+    private final SizeRepository sizeRepository;
+    private final ColorRepository colorRepository;
+    private final ProductDetailRepository productDetailRepository;
 
     @Override
     public Product createProduct(ProductDTO productDTO) throws Exception {
@@ -46,7 +50,16 @@ public class ProductService implements IProductService {
                 .build();
 
         // Lưu sản phẩm mới
-        return productRepository.save(newProduct);
+        newProduct =  productRepository.save(newProduct);
+
+        // Tạo và lưu các chi tiết của sản phẩm
+        if(productDTO.getProductDetails()!=null){
+            for (ProductDetailDTO detailDTO : productDTO.getProductDetails()){
+                detailDTO.setProductId(newProduct.getId());
+                createProductDetail(detailDTO);
+            }
+        }
+        return newProduct;
     }
 
 
@@ -98,6 +111,11 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    public List<Product> searchProductByName(String name) {
+        return productRepository.findByNameContaining(name);
+    }
+
+    @Override
     public ProductImage createProductImage(int productId, ProductImageDTO productImageDTO) throws Exception {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy sản phẩm có id: " + productId));
@@ -113,6 +131,25 @@ public class ProductService implements IProductService {
         }
 
         return productImageRepository.save(newProductImage);
+    }
+
+    @Override
+    public ProductDetail createProductDetail(ProductDetailDTO productDetailDTO) throws Exception {
+        Product existingProduct = productRepository.findById(productDetailDTO.getProductId())
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Cannot find product with id: " + productDetailDTO.getProductId()));
+
+        Size existingSize = sizeRepository.findById(productDetailDTO.getSizeId())
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy size có id: " + productDetailDTO.getSizeId()));
+
+        Color existingColor = colorRepository.findById(productDetailDTO.getColorId())
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy màu có id: " + productDetailDTO.getColorId()));
+        ProductDetail newProductDetail = ProductDetail.builder()
+                .product(existingProduct)
+                .size(existingSize)
+                .color(existingColor)
+                .build();
+        return productDetailRepository.save(newProductDetail);
     }
 
 }
