@@ -1,5 +1,6 @@
 package com.example.coolmate.Services.Impl;
 
+import com.example.coolmate.Dtos.UserDtos.ChangePasswordDTO;
 import com.example.coolmate.Dtos.UserDtos.UserDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.User.User;
@@ -20,4 +21,5 @@ public interface IUserService {
     void lockUserById(int id, UserDTO userDTO) throws DataNotFoundException;
 
     void unlockUserById(int id, UserDTO userDTO) throws DataNotFoundException;
+    boolean changePassword(String phoneNumber, ChangePasswordDTO changePasswordDTO) throws Exception;
 }

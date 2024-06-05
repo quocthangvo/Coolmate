@@ -4,34 +4,50 @@ import com.example.coolmate.Dtos.ProductDtos.ProductDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
+import com.example.coolmate.Models.Product.Color;
+import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductDetail;
+import com.example.coolmate.Models.Product.Size;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
+import com.example.coolmate.Services.Impl.Product.IColorService;
 import com.example.coolmate.Services.Impl.Product.IProductDetailService;
+import com.example.coolmate.Services.Impl.Product.IProductService;
+import com.example.coolmate.Services.Impl.Product.ISizeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/product_details")
 @RequiredArgsConstructor
 public class ProductDetailController {
     private final IProductDetailService productDetailService;
+    private final IProductService productService;
+    private  final ISizeService sizeService;
+    private  final IColorService colorService;
 
     @PostMapping("")
-    public ResponseEntity<?> createProductDetail(
+    public ResponseEntity<?> createOrUpdateProductDetail(
             @Valid @RequestBody ProductDetailDTO productDetailDTO, BindingResult result) {
-        try {
-            ProductDetail createdProductDetail = productDetailService.createProductDetail(productDetailDTO);
-            return ApiResponseUtil.successResponse("Product detail created successfully", createdProductDetail); // Trả về dữ liệu của danh mục được tạo
 
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body("Validation errors: " + result.toString());
         }
+        try {
+                ProductDetail newProductDetail = productDetailService.createProductDetail(productDetailDTO);
+                return ApiResponseUtil.successResponse("Product detail created successfully", newProductDetail);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Đã xảy ra lỗi khi tạo chi tiết sản phẩm: " + e.getMessage());
+        }
+
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductDetailById(@PathVariable int id) {

@@ -1,6 +1,7 @@
 package com.example.coolmate.Services;
 
 import com.example.coolmate.Components.JwtTokenUtil;
+import com.example.coolmate.Dtos.UserDtos.ChangePasswordDTO;
 import com.example.coolmate.Dtos.UserDtos.UserDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.PermissionDenyException;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -146,7 +148,23 @@ public class UserService implements IUserService {
         userRepository.save(user);
     }
 
+    @Override
+    public boolean changePassword(String phoneNumber, ChangePasswordDTO changePasswordDTO) throws Exception {
+        User user = userRepository.findByPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy người dùng"));
+        if (passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+            userRepository.save(user);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 }
+
+
 
 
 
