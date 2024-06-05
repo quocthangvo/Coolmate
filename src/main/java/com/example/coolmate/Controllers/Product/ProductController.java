@@ -198,7 +198,6 @@ public class ProductController {
     @GetMapping("/search")
     public ResponseEntity<?> searchProductByName(@RequestParam("name") String name){
       try{
-          String slugName =convertToSlug(name);
           List<Product> products = productService.searchProductByName(name);
           if(products.isEmpty()){
               ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : "+name);
@@ -210,7 +209,5 @@ public class ProductController {
                   +e.getMessage()));
       }
     }
-    private String convertToSlug(String name) {
-        return name.toLowerCase().replaceAll("\\s+", "-");
-    }
+
 }

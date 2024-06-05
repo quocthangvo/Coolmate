@@ -15,6 +15,7 @@ import com.example.coolmate.Services.Impl.Product.IProductService;
 import com.example.coolmate.Services.Impl.Product.ISizeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -80,6 +81,33 @@ public class ProductDetailController {
 
         }
     }
+
+    @GetMapping("/searchColor")
+    public ResponseEntity<?> searchProductDetailByColor(@RequestParam("color") String color){
+        try{
+            List<ProductDetail> productDetails = productDetailService.searchProductDetailsByColor(color);
+            if(productDetails.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm có màu : "+color);
+            }
+            return ResponseEntity.ok().body(productDetails);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Lỗi khi tìm kiếm màu sắc : "+e.getMessage());
+        }
+    }
+
+    @GetMapping("/searchSize")
+    public ResponseEntity<?> searchProductDetailBySize(@RequestParam("size") String size){
+        try{
+            List<ProductDetail> productDetails = productDetailService.searchProductDetailBySize(size);
+            if(productDetails.isEmpty()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm có size : "+size);
+            }
+            return ResponseEntity.ok().body(productDetails);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body("Đã có lỗi xảy ra khi tìm kiếm kích thước : "+e.getMessage());
+        }
+    }
+
 
 //    @PutMapping("/{id}")
 //    public ResponseEntity<?> updatePrice(
