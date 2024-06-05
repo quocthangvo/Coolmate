@@ -2,10 +2,14 @@ package com.example.coolmate.Controllers.Product;
 
 import com.example.coolmate.Dtos.ProductDtos.PriceDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
+import com.example.coolmate.Exceptions.Message.ErrorMessage;
+import com.example.coolmate.Models.Product.Color;
 import com.example.coolmate.Models.Product.Price;
+import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Services.Impl.Product.IPriceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +24,17 @@ public class PriceController {
 
     @PostMapping("")
     public ResponseEntity<?> createPrice(
-            @Valid @RequestBody PriceDTO priceDTO, BindingResult result) {
+            @Valid @RequestBody PriceDTO priceDTO) {
         try {
             Price createdPrice = priceService.createPrice(priceDTO);
+            ApiResponse<Price> response = new ApiResponse<>(
+                    "Price created successfully", createdPrice);
             return ResponseEntity.ok(createdPrice);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.badRequest().body("Đã có lỗi khi tạo Prices : "+e.getMessage());
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
+                    body(new ErrorMessage("Đã xảy ra lỗi không xác định"));
         }
 
     }
