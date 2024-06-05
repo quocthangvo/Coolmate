@@ -20,4 +20,9 @@ public interface IProductDetailService {
     ProductDetail getProductDetailByProductIdAndSizeId(int productId, int sizeId);
     ProductDetail updateProductDetail(ProductDetail productDetail) throws Exception;
     ProductDetail getProductDetailByProductIdSizeAndColor(int productId, int sizeId, int colorId);
+
+    // Search
+    List<ProductDetail> searchProductDetailsByColor(String color);
+    List<ProductDetail> searchProductDetailBySize(String size);
+
 }

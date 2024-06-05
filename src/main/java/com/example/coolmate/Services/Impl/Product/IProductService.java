@@ -32,4 +32,5 @@ public interface IProductService {
 
     ProductDetail createProductDetail(ProductDetailDTO productDetailDTO) throws Exception;
 
+
 }

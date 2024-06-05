@@ -94,6 +94,16 @@ public class ProductDetailService implements IProductDetailService {
         return productDetailRepository.findByProductIdAndSizeIdAndColorId(productId, sizeId, colorId);
     }
 
+    @Override
+    public List<ProductDetail> searchProductDetailsByColor(String color) {
+        return productDetailRepository.findByColorName(color);
+    }
+
+    @Override
+    public List<ProductDetail> searchProductDetailBySize(String size) {
+        return productDetailRepository.findBySizeName(size);
+    }
+
 //    @Override
 //    public ProductDetail updateProductDetail(int id, ProductDetailDTO productDetailDTO) throws Exception {
 //        ProductDetail existingProductDetail = getProductDetailById(id);
