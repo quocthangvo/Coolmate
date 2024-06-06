@@ -57,7 +57,8 @@ public class CategoryService implements ICategoryService {
 
         // Kiểm tra nếu tên mới giống với tên hiện tại của danh mục
         if (existingCategory.getName().equals(categoryDTO.getName())) {
-            throw new DataNotFoundException("Tên danh mục mới " + categoryDTO.getName() + " trùng với tên danh mục hiện tại: ");
+            throw new DataNotFoundException("Tên danh mục mới " +
+                    categoryDTO.getName() + " trùng với tên danh mục hiện tại: ");
         }
 
         // Kiểm tra trùng tên với các danh mục khác

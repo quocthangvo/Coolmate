@@ -27,17 +27,24 @@ public class ProductService implements IProductService {
     private final SizeRepository sizeRepository;
     private final ColorRepository colorRepository;
     private final ProductDetailRepository productDetailRepository;
+    private final BrandRepository brandRepository;
 
     @Override
     public Product createProduct(ProductDTO productDTO) throws Exception {
         // Kiểm tra sự tồn tại của sản phẩm trùng lặp
         if (productRepository.existsByName(productDTO.getName())) {
-            throw new DataNotFoundException("Product với tên '" + productDTO.getName() + "' đã tồn tại.");
+            throw new DataNotFoundException("Sản phẩm với tên '" + productDTO.getName() + "' đã tồn tại.");
         }
 
         // Tìm kiếm category theo id
         Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new DataNotFoundException("Cannot find category with id: " + productDTO.getCategoryId()));
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy danh mục với id: "
+                        + productDTO.getCategoryId()));
+
+        Brand existingBrand = brandRepository.findById(productDTO.getBrandId())
+                .orElseThrow(()->new DataNotFoundException("Không tìm thấy thương hiệu với id : "
+                        +productDTO.getBrandId()));
+
 
         // Tạo sản phẩm mới
         Product newProduct = Product.builder()
@@ -46,6 +53,7 @@ public class ProductService implements IProductService {
                 .promotionPrice(productDTO.getPromotionPrice())
                 .image(productDTO.getImage())
                 .description(productDTO.getDescription())
+                .brand(existingBrand)
                 .category(existingCategory)
                 .build();
 

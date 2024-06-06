@@ -2,6 +2,7 @@ package com.example.coolmate.Dtos.ProductDtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -27,9 +28,14 @@ public class ProductDTO {
 
     private String description;
 
-    @JsonProperty("category_id")
-    private int categoryId;
+    @JsonProperty("brand_id")
+    @NotNull(message = "Thương hiệu không được bỏ trống !")
+    private int brandId;
 
+    @JsonProperty("category_id")
+    @NotNull(message = "Danh mục không được bỏ trống")
+    private int categoryId;
+    
     @JsonProperty("product_details")
     private List<ProductDetailDTO> productDetails;
 }

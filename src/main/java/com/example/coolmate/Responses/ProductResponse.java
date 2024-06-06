@@ -15,6 +15,9 @@ public class ProductResponse extends BaseResponse {
     private String image;
     private String description;
 
+    @JsonProperty("brand_id")
+    private int brandId;
+
     @JsonProperty("category_id")
     private int categoryId;
 
@@ -24,10 +27,21 @@ public class ProductResponse extends BaseResponse {
                 .price(product.getPrice())
                 .image(product.getImage())
                 .description(product.getDescription())
-                .categoryId(product.getCategory().getId())
                 .build();
+
+        if (product.getBrand() != null) {
+            productResponse.setBrandId(product.getBrand().getId());
+        }
+
+        if (product.getCategory() != null) {
+            productResponse.setCategoryId(product.getCategory().getId());
+        }
+
         productResponse.setCreatedAt(product.getCreatedAt());
         productResponse.setUpdatedAt(product.getUpdatedAt());
+
         return productResponse;
     }
+
+
 }

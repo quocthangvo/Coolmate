@@ -123,8 +123,19 @@ public class WebSecurityConfig {
                             .requestMatchers(HttpMethod.PUT,
                                     String.format("%s/prices/**",
                                             apiPrefix)).hasAnyRole(Role.ADMIN)
-                            //
+                            //Brands
+                            .requestMatchers(HttpMethod.POST,
+                                    String.format("%s/brands",
+                                            apiPrefix)).hasAnyRole(Role.ADMIN)
+                            .requestMatchers(HttpMethod.DELETE,
+                                    String.format("%s/brands/delete/**",
+                                            apiPrefix)).hasAnyRole(Role.ADMIN)
 
+                            .requestMatchers(HttpMethod.PUT,
+                                    String.format("%s/brands/**",
+                                            apiPrefix)).hasAnyRole(Role.ADMIN)
+
+                            // -------------
                             .requestMatchers(HttpMethod.POST,
                                     String.format("%s/purchase_orders", apiPrefix)).hasRole(Role.ADMIN)
 

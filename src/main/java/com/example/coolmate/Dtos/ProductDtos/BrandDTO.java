@@ -1,4 +1,4 @@
-package com.example.coolmate.Dtos;
+package com.example.coolmate.Dtos.ProductDtos;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDTO {
-    @NotBlank(message = "Tên danh mục không để trống")
+public class BrandDTO {
+    @NotBlank(message = "Tên thương hệu không để trống")
     private String name;
 }
