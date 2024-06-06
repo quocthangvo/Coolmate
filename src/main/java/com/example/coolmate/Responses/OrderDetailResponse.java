@@ -33,11 +33,10 @@ public class OrderDetailResponse {
                 .builder()
                 .id(orderDetail.getId())
                 .orderId(orderDetail.getOrder().getId())
-                .productId(orderDetail.getProduct().getId())
+                .productId(orderDetail.getProductDetail().getId())
                 .price(orderDetail.getPrice())
                 .quantity(orderDetail.getQuantity())
                 .totalMoney(orderDetail.getTotalMoney())
-                .color(orderDetail.getColor())
                 .build();
     }
 }

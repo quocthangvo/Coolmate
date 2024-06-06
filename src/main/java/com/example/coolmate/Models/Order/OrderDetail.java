@@ -1,6 +1,6 @@
 package com.example.coolmate.Models.Order;
 
-import com.example.coolmate.Models.Product.Product;
+import com.example.coolmate.Models.Product.ProductDetail;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,8 +21,8 @@ public class OrderDetail {
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JoinColumn(name = "product_detail_id")
+    private ProductDetail productDetail;
 
     @Column(name = "price", nullable = false)
     private float price;
@@ -30,9 +30,7 @@ public class OrderDetail {
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
-    @Column(name = "total_money", nullable = false)
+    @Column(name = "total_money")
     private float totalMoney;
 
-    @Column(name = "color")
-    private String color;
 }

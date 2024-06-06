@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Builder
 @Getter
@@ -44,5 +45,12 @@ public class PurchaseOrder extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "purchase_order_purchase_order_detail",
+            joinColumns = @JoinColumn(name = "purchase_order_id"),
+            inverseJoinColumns = @JoinColumn(name = "purchase_order_detail_id"))
+    private List<PurchaseOrderDetail> purchaseOrderDetails;
+
 
 }

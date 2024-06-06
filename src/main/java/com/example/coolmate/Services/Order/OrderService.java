@@ -66,57 +66,60 @@ public class OrderService implements IOrderService {
         return orderRepository.findByUserId(userId);
     }
 
-//    @Override
-//    public Order updateOrder(int id, OrderDTO orderDTO) throws DataNotFoundException {
-//        Order order = orderRepository.findById(id).orElseThrow(() ->
-//                new DataNotFoundException("Không tìm thấy order id " + id));
-//        User exixtingUser = userRepository.findById(
-//                orderDTO.getUserId()).orElseThrow(() ->
-//                new DateTimeException("Không tìm thấy user id" + id));
-//        //tạo 1 luồng ánh xạ
-//        modelMapper.typeMap(OrderDTO.class, Order.class)
-//                .addMappings(mapper -> mapper.skip(Order::setId));
-//        //cập nhật  các trường của đơn hàng từ orderDTO
-//        modelMapper.map(orderDTO, order);
-//        order.setUser(exixtingUser);
-//        return orderRepository.save(order);
-//    }
 
     @Override
     public void deleteOrder(int id) throws DataNotFoundException {
         Order order = orderRepository.findById(id).orElseThrow(() ->
                 new DataNotFoundException("Không tìm thấy order id: " + id));
+
+        // Kiểm tra xem đơn hàng đã bị xóa mềm hay chưa
+        if (!order.isActive()) {
+            throw new IllegalStateException("Đơn hàng đã bị xóa.");
+        }
+
         // Không xóa cứng, chỉ xóa mềm
         order.setActive(false);
         orderRepository.save(order);
     }
 
+
     @Override
     public Order updateOrder(int orderId, OrderDTO orderDTO) throws DataNotFoundException {
-// Tìm PurchaseOrderDetail theo ID
+        // Tìm Order theo ID
         Order order = orderRepository
                 .findById(orderId)
-                .orElseThrow(() -> new DataNotFoundException(
-                        "Không tìm thấy chi tiết đơn đặt hàng với ID: " + orderId));
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng với ID: " + orderId));
 
         // Các trạng thái hợp lệ
         List<String> validStatuses = Arrays.asList(
-                "pending", "processing", "shipping", "delivered", "cancelled");
+                OrderStatus.PENDING,
+                OrderStatus.PROCESSING,
+                OrderStatus.SHIPPING,
+                OrderStatus.DELIVERED,
+                OrderStatus.CANCELLED
+        );
 
         // Lấy trạng thái mới từ DTO
         String newStatus = orderDTO.getStatus();
 
-        // Kiểm tra xem status mới có hợp lệ không
+        // Kiểm tra xem trạng thái mới có hợp lệ không
         if (!validStatuses.contains(newStatus)) {
             throw new IllegalArgumentException("Trạng thái không hợp lệ: " + newStatus);
         }
+        if (!order.isActive() || OrderStatus.DELIVERED.equals(order.getStatus())) {
+            throw new IllegalStateException(
+                    "Không thể thay đổi trạng thái của đơn đặt hàng đã bị hủy hoặc đã giao hàng thành công.");
+        }
 
-        // Cập nhật thuộc tính status
+        // Cập nhật thuộc tính trạng thái
         order.setStatus(newStatus);
 
-        // Lưu lại thay đổi vào cơ sở dữ liệu
+        // Nếu trạng thái mới là 'cancelled', đặt active thành false
+        if (OrderStatus.CANCELLED.equals(newStatus)) {
+            order.setActive(false);
+        }
+
+        // Lưu
         return orderRepository.save(order);
     }
-
-
 }

@@ -1,7 +1,6 @@
 //package com.example.coolmate.Models;
 //
 //import com.example.coolmate.Models.Product.ProductDetail;
-//import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
 //import jakarta.persistence.*;
 //import lombok.*;
 //
@@ -12,20 +11,22 @@
 //@NoArgsConstructor
 //@Table(name = "inventories")
 //@Entity
-//public class Inventory extends BaseEntity {
+//public class Inventory {
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    @Column(name = "id")
 //    private int id;
 //
-//    @Column(name = "inventory_quantity")
+//    @Column(name = "quantity")
 //    private int quantity;
 //
 //    @ManyToOne
-//    @JoinColumn(name = "purchase_order_id")
+//    @JoinColumn(name = "purchase_order_id", nullable = false)
 //    private PurchaseOrder purchaseOrderId;
 //
 //    @ManyToOne
-//    @JoinColumn(name = "product_detail_id")
+//    @JoinColumn(name = "product_detail_id", nullable = false)
 //    private ProductDetail productDetailId;
+//
+//
 //}

@@ -8,5 +8,5 @@ import java.util.List;
 public interface PurchaseOrderDetailRepository extends JpaRepository<PurchaseOrderDetail, Integer> {
     List<PurchaseOrderDetail> findPurchaseOrderById(int id);
 
-    
+
 }
