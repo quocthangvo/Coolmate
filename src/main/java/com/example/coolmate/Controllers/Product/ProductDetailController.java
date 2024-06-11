@@ -4,10 +4,7 @@ import com.example.coolmate.Dtos.ProductDtos.ProductDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
-import com.example.coolmate.Models.Product.Color;
-import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductDetail;
-import com.example.coolmate.Models.Product.Size;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.Impl.Product.IColorService;
 import com.example.coolmate.Services.Impl.Product.IProductDetailService;
@@ -20,18 +17,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/product_details")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
 public class ProductDetailController {
     private final IProductDetailService productDetailService;
     private final IProductService productService;
-    private  final ISizeService sizeService;
-    private  final IColorService colorService;
+    private final ISizeService sizeService;
+    private final IColorService colorService;
 
     @PostMapping("")
     public ResponseEntity<?> createOrUpdateProductDetail(
@@ -41,8 +37,8 @@ public class ProductDetailController {
             return ResponseEntity.badRequest().body("Validation errors: " + result.toString());
         }
         try {
-                ProductDetail newProductDetail = productDetailService.createProductDetail(productDetailDTO);
-                return ApiResponseUtil.successResponse("Product detail created successfully", newProductDetail);
+            ProductDetail newProductDetail = productDetailService.createProductDetail(productDetailDTO);
+            return ApiResponseUtil.successResponse("Product detail created successfully", newProductDetail);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Đã xảy ra lỗi khi tạo chi tiết sản phẩm: " + e.getMessage());
         }
@@ -82,29 +78,29 @@ public class ProductDetailController {
         }
     }
 
-    @GetMapping("/searchColor")
-    public ResponseEntity<?> searchProductDetailByColor(@RequestParam("color") String color){
-        try{
+    @GetMapping("/search_color")
+    public ResponseEntity<?> searchProductDetailByColor(@RequestParam("color") String color) {
+        try {
             List<ProductDetail> productDetails = productDetailService.searchProductDetailsByColor(color);
-            if(productDetails.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm có màu : "+color);
+            if (productDetails.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm có màu : " + color);
             }
             return ResponseEntity.ok().body(productDetails);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body("Lỗi khi tìm kiếm màu sắc : "+e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Lỗi khi tìm kiếm màu sắc : " + e.getMessage());
         }
     }
 
-    @GetMapping("/searchSize")
-    public ResponseEntity<?> searchProductDetailBySize(@RequestParam("size") String size){
-        try{
+    @GetMapping("/search_size")
+    public ResponseEntity<?> searchProductDetailBySize(@RequestParam("size") String size) {
+        try {
             List<ProductDetail> productDetails = productDetailService.searchProductDetailBySize(size);
-            if(productDetails.isEmpty()){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm có size : "+size);
+            if (productDetails.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm có size : " + size);
             }
             return ResponseEntity.ok().body(productDetails);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body("Đã có lỗi xảy ra khi tìm kiếm kích thước : "+e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Đã có lỗi xảy ra khi tìm kiếm kích thước : " + e.getMessage());
         }
     }
 

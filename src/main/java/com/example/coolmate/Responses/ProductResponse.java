@@ -21,7 +21,6 @@ public class ProductResponse extends BaseResponse {
     public static ProductResponse fromProduct(Product product) {
         ProductResponse productResponse = ProductResponse.builder()
                 .name(product.getName())
-                .price(product.getPrice())
                 .image(product.getImage())
                 .description(product.getDescription())
                 .categoryId(product.getCategory().getId())

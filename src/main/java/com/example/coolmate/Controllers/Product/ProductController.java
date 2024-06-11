@@ -7,7 +7,6 @@ import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
-import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.ProductResponse;
 import com.example.coolmate.Services.Impl.Product.IProductService;
@@ -38,6 +37,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/v1/products")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
+
 public class ProductController {
     private final IProductService productService;
 
@@ -196,18 +197,18 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> searchProductByName(@RequestParam("name") String name){
-      try{
-          List<Product> products = productService.searchProductByName(name);
-          if(products.isEmpty()){
-              ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : "+name);
-              return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
-          }
-          return ResponseEntity.ok(products);
-      }catch (Exception e){
-          return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
-                  +e.getMessage()));
-      }
+    public ResponseEntity<?> searchProductByName(@RequestParam("name") String name) {
+        try {
+            List<Product> products = productService.searchProductByName(name);
+            if (products.isEmpty()) {
+                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : " + name);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            }
+            return ResponseEntity.ok(products);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
+                    + e.getMessage()));
+        }
     }
 
 }

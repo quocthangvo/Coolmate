@@ -3,15 +3,14 @@ package com.example.coolmate.Controllers.Product;
 import com.example.coolmate.Dtos.ProductDtos.PriceDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
-import com.example.coolmate.Models.Product.Color;
+import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Product.Price;
-import com.example.coolmate.Responses.ApiResponses.ApiResponse;
+import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.Impl.Product.IPriceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,14 +26,12 @@ public class PriceController {
             @Valid @RequestBody PriceDTO priceDTO) {
         try {
             Price createdPrice = priceService.createPrice(priceDTO);
-            ApiResponse<Price> response = new ApiResponse<>(
-                    "Price created successfully", createdPrice);
-            return ResponseEntity.ok(createdPrice);
+            return ApiResponseUtil.successResponse("Supplier created successfully", createdPrice);
         } catch (DataNotFoundException e) {
-            return ResponseEntity.badRequest().body("Đã có lỗi khi tạo Prices : "+e.getMessage());
-        }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
-                    body(new ErrorMessage("Đã xảy ra lỗi không xác định"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorMessage("Đã xảy ra lỗi không xác định"));
         }
 
     }
@@ -55,7 +52,7 @@ public class PriceController {
             Price price = priceService.getPriceById(id);
             return ResponseEntity.ok(price);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
@@ -63,9 +60,11 @@ public class PriceController {
     public ResponseEntity<?> deletePrice(@PathVariable int id) {
         try {
             priceService.deletePrice(id);
-            return ResponseEntity.ok("Xóa price có id " + id + " thành công");
+            String message = "Xóa nhà cung cấp có ID " + id + " thành công";
+            return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (DataNotFoundException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
 
@@ -77,7 +76,8 @@ public class PriceController {
             priceService.updatePrice(id, priceDTO);
             return ResponseEntity.ok("Cập nhật price thành công");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+
         }
     }
 }

@@ -34,7 +34,6 @@ public class OrderDetailResponse {
                 .id(orderDetail.getId())
                 .orderId(orderDetail.getOrder().getId())
                 .productId(orderDetail.getProductDetail().getId())
-                .price(orderDetail.getPrice())
                 .quantity(orderDetail.getQuantity())
                 .totalMoney(orderDetail.getTotalMoney())
                 .build();

@@ -53,7 +53,7 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
 
         PurchaseOrderDetail purchaseOrderDetail = PurchaseOrderDetail.builder()
                 .purchaseOrderId(purchaseOrder)
-                .productDetailId(productDetail)
+                .productDetail(productDetail)
                 .quantity(purchaseOrderDetailDTO.getQuantity())
                 .price(purchaseOrderDetailDTO.getPrice())
                 .unit(purchaseOrderDetailDTO.getUnit())

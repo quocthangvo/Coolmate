@@ -31,7 +31,7 @@ public class PurchaseOrderDetail {
 
     @ManyToOne
     @JoinColumn(name = "product_detail_id", nullable = false)
-    private ProductDetail productDetailId;
+    private ProductDetail productDetail;
 
     @ManyToOne
     @JoinColumn(name = "purchase_order_id")

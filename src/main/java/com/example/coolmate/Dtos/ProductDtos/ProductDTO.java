@@ -18,11 +18,6 @@ public class ProductDTO {
     @Size(min = 3, max = 200, message = "title must be between 3 and 200 characters")
     private String name;
 
-    private float price;
-
-    @JsonProperty("promotion_price")
-    private float promotionPrice;
-
     private String image;
 
     private String description;

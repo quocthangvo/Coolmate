@@ -9,13 +9,11 @@ import com.example.coolmate.Models.User.User;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.UserResponse;
 import com.example.coolmate.Services.Impl.IUserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +23,8 @@ import java.util.List;
 @RestController
 @RequestMapping("${api.prefix}/users")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
+
 public class UserController {
 
     private final IUserService userService;
@@ -65,19 +65,19 @@ public class UserController {
 
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassWord(@RequestBody ChangePasswordDTO changePasswordDTO
-                                           ) throws Exception {
+    ) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String phoneNumber = authentication.getName();
-        try{
-            boolean isChanged = userService.changePassword(phoneNumber,changePasswordDTO);
+        try {
+            boolean isChanged = userService.changePassword(phoneNumber, changePasswordDTO);
             if (isChanged) {
                 return ApiResponseUtil.successResponse("Thay đổi mật khẩu thành công", null);
             } else {
                 return ResponseEntity.badRequest().body(new ErrorMessage("Không thể thay đổi mật khẩu"));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi thay đổi mật khẩu : "
-                    +e.getMessage()));
+                    + e.getMessage()));
         }
     }
 

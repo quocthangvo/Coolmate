@@ -20,19 +20,19 @@ public class Price {
     @Column(name = "price", nullable = false, length = 200)
     private float price; // giá gốc
 
-    @Column(name = "price_selling",nullable = false,length = 200)
+    @Column(name = "price_selling", nullable = false, length = 200)
     private float priceSelling; // giá bán
 
-    @Column(name = "promotion_price",nullable = false,length = 200)
+    @Column(name = "promotion_price", length = 200)
     private float promotionPrice; // giá khuyến mãi
 
-    @Column(name = "start_date",nullable = false)
+    @Column(name = "start_date")
     private LocalDateTime startDate;
 
-    @Column(name = "end_date",nullable = false)
-    private  LocalDateTime endDate;
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
 
     @ManyToOne
-    @JoinColumn(name = "product_detail_id",nullable = false)
+    @JoinColumn(name = "product_detail_id", nullable = false)
     private ProductDetail productDetail;
 }

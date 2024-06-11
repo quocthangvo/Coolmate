@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/colors")
 @RequiredArgsConstructor
+
 public class ColorController {
     private final IColorService colorService;
 

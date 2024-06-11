@@ -42,19 +42,17 @@ public class ProductService implements IProductService {
         // Tạo sản phẩm mới
         Product newProduct = Product.builder()
                 .name(productDTO.getName())
-                .price(productDTO.getPrice())
-                .promotionPrice(productDTO.getPromotionPrice())
                 .image(productDTO.getImage())
                 .description(productDTO.getDescription())
                 .category(existingCategory)
                 .build();
 
         // Lưu sản phẩm mới
-        newProduct =  productRepository.save(newProduct);
+        newProduct = productRepository.save(newProduct);
 
         // Tạo và lưu các chi tiết của sản phẩm
-        if(productDTO.getProductDetails()!=null){
-            for (ProductDetailDTO detailDTO : productDTO.getProductDetails()){
+        if (productDTO.getProductDetails() != null) {
+            for (ProductDetailDTO detailDTO : productDTO.getProductDetails()) {
                 detailDTO.setProductId(newProduct.getId());
                 createProductDetail(detailDTO);
             }
@@ -93,7 +91,6 @@ public class ProductService implements IProductService {
                             "Không tìm thấy category với id: " + productDTO.getCategoryId()));
             existingProduct.setName(productDTO.getName());
             existingProduct.setCategory(existingCategory);
-            existingProduct.setPrice(productDTO.getPrice());
             existingProduct.setDescription(productDTO.getDescription());
             existingProduct.setImage(productDTO.getImage());
             return productRepository.save(existingProduct);
