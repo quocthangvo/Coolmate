@@ -8,7 +8,7 @@ import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
-import com.example.coolmate.Responses.ProductResponse;
+import com.example.coolmate.Responses.Product.ProductResponse;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import com.example.coolmate.Services.Product.ProductListResponse;
 import jakarta.validation.Valid;
@@ -75,22 +75,17 @@ public class ProductController {
     @GetMapping("")
     public ResponseEntity<ProductListResponse> getAllProducts(
             @RequestParam(value = "page") int page,
-            @RequestParam(value = "limit") int limit
-    ) {
+            @RequestParam(value = "limit") int limit) {
 
-        PageRequest pageRequest = PageRequest.of(
-                page, limit,
-                Sort.by("createdAt").descending());
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
         Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
         int totalPages = productPage.getTotalPages();
         List<ProductResponse> products = productPage.getContent();
 
-        return ResponseEntity.ok(ProductListResponse
-                .builder()
-                .products(products)
-                .totalPage(totalPages)
-                .build());
+        return ResponseEntity.ok(ProductListResponse.builder()
+                .products(products).totalPage(totalPages).build());
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductById(@PathVariable("id") int productId) {

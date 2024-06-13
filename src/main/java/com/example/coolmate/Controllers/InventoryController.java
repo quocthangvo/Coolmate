@@ -26,7 +26,8 @@ public class InventoryController {
             Inventory createdInventory = inventoryService.createInventory(inventoryDTO);
             ApiResponse<Inventory> response = new ApiResponse<>(
                     "Category created successfully", createdInventory);
-            return ResponseEntity.ok(response);
+            return ApiResponseUtil.successResponse("Inventory created successfully", createdInventory);
+
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
         } catch (Exception e) {

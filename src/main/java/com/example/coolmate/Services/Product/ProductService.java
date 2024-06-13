@@ -9,7 +9,7 @@ import com.example.coolmate.Models.Category;
 import com.example.coolmate.Models.Product.*;
 import com.example.coolmate.Repositories.CategoryRepository;
 import com.example.coolmate.Repositories.Product.*;
-import com.example.coolmate.Responses.ProductResponse;
+import com.example.coolmate.Responses.Product.ProductResponse;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

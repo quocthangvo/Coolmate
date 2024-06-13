@@ -11,7 +11,7 @@ public interface ICategoryService {
 
     Category getCategoryById(int id);
 
-    List<Category> getAllCategories();
+    List<Category> getAllCategories(int page, int limit);
 
     void deleteCategory(int id) throws DataNotFoundException;
 

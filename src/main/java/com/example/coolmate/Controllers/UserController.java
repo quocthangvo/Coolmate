@@ -7,10 +7,14 @@ import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.User.User;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
-import com.example.coolmate.Responses.UserResponse;
+import com.example.coolmate.Responses.User.UserListResponse;
+import com.example.coolmate.Responses.User.UserResponse;
 import com.example.coolmate.Services.Impl.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -82,14 +86,17 @@ public class UserController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<User>> getAllCategories(
-            // tham số bắt buộc
+    public ResponseEntity<UserListResponse> getAllCategories(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-//        return ResponseEntity.ok(String.format("getAllUsers: page=%d, limit=%d", page, limit));
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+        Page<UserResponse> userPage = userService.getAllUsers(pageRequest);
+        int totalPages = userPage.getTotalPages();
+        List<UserResponse> users = userPage.getContent();
+
+        return ResponseEntity.ok(UserListResponse.builder()
+                .users(users).totalPage(totalPages).build());
     }
 
     @GetMapping("/{id}")

@@ -20,6 +20,8 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/sizes")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
+
 public class SizeController {
     private final ISizeService sizeService;
 
@@ -28,9 +30,7 @@ public class SizeController {
             @Valid @RequestBody SizeDTO sizeDTO, BindingResult result) {
         try {
             Size createSize = sizeService.createSize(sizeDTO);
-            ApiResponse<Size> response = new ApiResponse<>(
-                    "Size created successfully", createSize);
-            return ResponseEntity.ok(response);
+            return ApiResponseUtil.successResponse("Size created successfully", createSize);
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
         } catch (Exception e) {
@@ -40,19 +40,19 @@ public class SizeController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Size>> getAllSize(
+    public ResponseEntity<ApiResponse<List<Size>>> getAllSize(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<Size> sizes = sizeService.getAllSizes();
-        return ResponseEntity.ok(sizes);
+        List<Size> sizes = sizeService.getAllSizes(page, limit);
+        return ApiResponseUtil.successResponse("Successfully", sizes);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getSizeById(@PathVariable int id) {
         try {
             Size size = sizeService.getSizeById(id);
-            return ResponseEntity.ok(size);
+            return ApiResponseUtil.successResponse("Successfully", size);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }

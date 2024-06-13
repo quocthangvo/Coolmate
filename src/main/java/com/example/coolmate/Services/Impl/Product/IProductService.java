@@ -7,7 +7,7 @@ import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Models.Product.ProductImage;
-import com.example.coolmate.Responses.ProductResponse;
+import com.example.coolmate.Responses.Product.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 

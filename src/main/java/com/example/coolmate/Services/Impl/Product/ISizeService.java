@@ -8,8 +8,12 @@ import java.util.List;
 
 public interface ISizeService {
     Size createSize(SizeDTO sizeDTO) throws DataNotFoundException;
+
     Size getSizeById(int id);
-    List<Size> getAllSizes();
+
+    List<Size> getAllSizes(int page, int limit);
+
     void deleteSizeById(int id) throws DataNotFoundException;
-    Size updateSize(int sizeId,SizeDTO sizeDTO) throws  DataNotFoundException;
+
+    Size updateSize(int sizeId, SizeDTO sizeDTO) throws DataNotFoundException;
 }

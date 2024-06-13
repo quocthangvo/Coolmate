@@ -1,6 +1,6 @@
 package com.example.coolmate.Services.Product;
 
-import com.example.coolmate.Responses.ProductResponse;
+import com.example.coolmate.Responses.Product.ProductResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

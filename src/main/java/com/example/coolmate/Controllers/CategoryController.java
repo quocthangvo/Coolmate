@@ -20,6 +20,8 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/categories")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
+
 public class CategoryController {
     private final ICategoryService categoryService;
 
@@ -28,9 +30,8 @@ public class CategoryController {
             @Valid @RequestBody CategoryDTO categoryDTO, BindingResult result) {
         try {
             Category createdCategory = categoryService.createCategory(categoryDTO);
-            ApiResponse<Category> response = new ApiResponse<>(
-                    "Category created successfully", createdCategory);
-            return ResponseEntity.ok(response);
+            return ApiResponseUtil.successResponse("Color created successfully", createdCategory);
+
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
         } catch (Exception e) {
@@ -40,19 +41,20 @@ public class CategoryController {
 
 
     @GetMapping("")
-    public ResponseEntity<List<Category>> getAllCategories(
+    public ResponseEntity<ApiResponse<List<Category>>> getAllCategories(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<Category> categories = categoryService.getAllCategories();
-        return ResponseEntity.ok(categories);
+        List<Category> categories = categoryService.getAllCategories(page, limit);
+        return ApiResponseUtil.successResponse("Successfully", categories);
+
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable int id) {
         try {
             Category category = categoryService.getCategoryById(id);
-            return ResponseEntity.ok(category);
+            return ApiResponseUtil.successResponse("Successfully", category);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }

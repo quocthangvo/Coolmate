@@ -9,17 +9,18 @@ import com.example.coolmate.Models.User.Role;
 import com.example.coolmate.Models.User.User;
 import com.example.coolmate.Repositories.RoleRepository;
 import com.example.coolmate.Repositories.UserRepository;
+import com.example.coolmate.Responses.User.UserResponse;
 import com.example.coolmate.Services.Impl.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -98,8 +99,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public Page<UserResponse> getAllUsers(PageRequest pageRequest) {
+        return userRepository
+                .findAll(pageRequest)
+                .map(UserResponse::fromUser);
     }
 
     @Override

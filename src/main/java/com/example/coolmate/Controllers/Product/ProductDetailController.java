@@ -6,6 +6,7 @@ import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
+import com.example.coolmate.Responses.Product.ProductDetailResponse;
 import com.example.coolmate.Services.Impl.Product.IColorService;
 import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
@@ -50,7 +51,7 @@ public class ProductDetailController {
     public ResponseEntity<?> getProductDetailById(@PathVariable int id) {
         try {
             ProductDetail productDetail = productDetailService.getProductDetailById(id);
-            return ResponseEntity.ok(productDetail);
+            return ApiResponseUtil.successResponse("Successfully", productDetail);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
 
@@ -58,12 +59,15 @@ public class ProductDetailController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ProductDetail>> getAllProductDetails(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
-    ) {
-        List<ProductDetail> productDetails = productDetailService.getAllProductDetails();
-        return ResponseEntity.ok(productDetails);
+    public ResponseEntity<?> getAllProductDetails(
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "limit") int limit) {
+        try {
+            List<ProductDetailResponse> responses = productDetailService.getAllProductDetails(page, limit);
+            return ApiResponseUtil.successResponse("Successfully", responses);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+        }
     }
 
     @DeleteMapping("/delete/{id}")

@@ -1,6 +1,7 @@
-package com.example.coolmate.Responses;
+package com.example.coolmate.Responses.User;
 
 import com.example.coolmate.Models.User.User;
+import com.example.coolmate.Responses.BaseResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -28,6 +29,13 @@ public class UserResponse extends BaseResponse {
     @JsonProperty("google_account_id")
     private int googleAccountId;
 
+    @JsonProperty("is_active")
+    private boolean active;
+
+    private String status;
+
+    private String roleName;
+
     public static UserResponse fromUser(User user) {
         UserResponse userResponse = UserResponse.builder()
                 .fullname(user.getFullName())
@@ -35,7 +43,10 @@ public class UserResponse extends BaseResponse {
                 .address(user.getAddress())
                 .dateOfBirth(user.getDateOfBirth())
                 .googleAccountId(user.getGoogleAccountId())
+                .active(user.isActive())
+                .roleName(user.getRole().getName())
                 .build();
+        userResponse.setStatus(user.isActive() ? "Đang hoạt động" : "Vô hiệu hóa");
         userResponse.setCreatedAt(user.getCreatedAt());
         userResponse.setUpdatedAt(user.getUpdatedAt());
         return userResponse;

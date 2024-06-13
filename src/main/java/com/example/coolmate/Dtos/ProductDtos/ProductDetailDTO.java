@@ -16,6 +16,12 @@ public class ProductDetailDTO {
     @JsonProperty("size_id")
     private int sizeId;
 
+    @JsonProperty("size_name")
+    private String sizeName;
+
     @JsonProperty("color_id")
     private int colorId;
+
+    @JsonProperty("color_name")
+    private String colorName;
 }

@@ -10,8 +10,10 @@ import com.example.coolmate.Repositories.Product.ColorRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Repositories.Product.ProductRepository;
 import com.example.coolmate.Repositories.Product.SizeRepository;
+import com.example.coolmate.Responses.Product.ProductDetailResponse;
 import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,14 +45,21 @@ public class ProductDetailService implements IProductDetailService {
                 .build();
 
 
-       productDetailRepository.save(newProductDetail);
+        productDetailRepository.save(newProductDetail);
 
         return newProductDetail;
     }
 
+
     @Override
-    public List<ProductDetail> getAllProductDetails() {
-        return productDetailRepository.findAll();
+    public List<ProductDetailResponse> getAllProductDetails(int page, int limit) {
+        // Tạo một đối tượng PageRequest với trang và giới hạn
+        PageRequest pageRequest = PageRequest.of(page, limit);
+
+        // Lấy danh sách sản phẩm theo trang và giới hạn, sau đó chuyển đổi sang ProductDetailResponse
+        return productDetailRepository.findAll(pageRequest)
+                .map(ProductDetailResponse::fromProductDetail)
+                .getContent();
     }
 
     @Override
@@ -70,7 +79,7 @@ public class ProductDetailService implements IProductDetailService {
 
     @Override
     public ProductDetail getProductDetailByProductIdAndSizeId(int productId, int sizeId) {
-        return productDetailRepository.findByProductIdAndSizeId(productId,sizeId);
+        return productDetailRepository.findByProductIdAndSizeId(productId, sizeId);
     }
 
     @Override
@@ -82,7 +91,7 @@ public class ProductDetailService implements IProductDetailService {
         // Cập nhật thông tin
         existingProductDetail.setColor(productDetail.getColor());
         // Cập nhật thông tin kích thước nếu cần
-         existingProductDetail.setSize(productDetail.getSize());
+        existingProductDetail.setSize(productDetail.getSize());
 
         // Lưu chi tiết sản phẩm đã cập nhật và trả về
         return productDetailRepository.save(existingProductDetail);

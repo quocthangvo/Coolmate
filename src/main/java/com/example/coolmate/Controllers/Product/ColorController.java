@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/colors")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
 
 public class ColorController {
     private final IColorService colorService;
@@ -29,9 +30,8 @@ public class ColorController {
             @Valid @RequestBody ColorDTO colorDTO, BindingResult result) {
         try {
             Color createColor = colorService.createColor(colorDTO);
-            ApiResponse<Color> response = new ApiResponse<>(
-                    "Color created successfully", createColor);
-            return ResponseEntity.ok(response);
+            return ApiResponseUtil.successResponse("Color created successfully", createColor);
+
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
         } catch (Exception e) {
@@ -40,19 +40,20 @@ public class ColorController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Color>> getAllColors(
+    public ResponseEntity<ApiResponse<List<Color>>> getAllColors(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<Color> colors = colorService.getAllColors();
-        return ResponseEntity.ok(colors);
+        List<Color> colors = colorService.getAllColors(page, limit);
+        return ApiResponseUtil.successResponse("Successfully", colors);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getColorById(@PathVariable int id) {
         try {
             Color color = colorService.getColorById(id);
-            return ResponseEntity.ok(color);
+            return ApiResponseUtil.successResponse("Successfully", color);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }

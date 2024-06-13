@@ -61,6 +61,7 @@ public class User extends BaseEntity implements UserDetails {
         return authorityList;
     }
 
+
     @Override
     public String getUsername() {
         //giá trị để đăng nhập

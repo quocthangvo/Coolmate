@@ -15,12 +15,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ColorService implements IColorService {
     private final ColorRepository colorRepository;
+
     @Override
     public Color createColor(ColorDTO colorDTO) throws DataNotFoundException {
         Optional<Color> existingColor = colorRepository.findByName(colorDTO.getName());
-        if(existingColor.isPresent()){
-            throw new DataNotFoundException("Màu sắc đã tồn tại : "+colorDTO.getName());
-        }else{
+        if (existingColor.isPresent()) {
+            throw new DataNotFoundException("Màu sắc đã tồn tại : " + colorDTO.getName());
+        } else {
             Color newColor = Color.builder()
                     .name(colorDTO.getName())
                     .build();
@@ -36,7 +37,7 @@ public class ColorService implements IColorService {
     }
 
     @Override
-    public List<Color> getAllColors() {
+    public List<Color> getAllColors(int page, int limit) {
         return colorRepository.findAll();
     }
 

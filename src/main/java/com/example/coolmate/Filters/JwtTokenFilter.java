@@ -30,7 +30,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Value("${api.prefix}")
     private String apiPrefix;
 
-    //khi đăng nhập và gọi request khác sẽ đi qua filterInternal
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
@@ -38,7 +37,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             if (isByPassToken(request)) {
-                filterChain.doFilter(request, response); //bỏ qua kích hoạt
+                filterChain.doFilter(request, response);
                 return;
             }
             final String authHeader = request.getHeader("Authorization");
@@ -48,8 +47,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
             final String token = authHeader.substring(7);
             final String phoneNumber = jwtTokenUtil.extractPhoneNumber(token);
-            if (phoneNumber != null
-                    && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (phoneNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 User userDetails = (User) userDetailsService.loadUserByUsername(phoneNumber);
                 if (jwtTokenUtil.validateToken(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authenticationToken =
@@ -69,22 +67,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     private boolean isByPassToken(@NonNull HttpServletRequest request) {
-        //ds các request dc cho sử dụng ko cần token
+        // Bỏ qua tất cả các request GET, kh cần token
+        if ("GET".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
+        // Danh sách các request cụ thể không cần token
         final List<Pair<String, String>> byPassTokens = Arrays.asList(
                 Pair.of(String.format("%s/users/register", apiPrefix), "POST"),
-                Pair.of(String.format("%s/users/login", apiPrefix), "POST"),
-                Pair.of(String.format("%s/categories/**", apiPrefix), "GET"),
-                Pair.of(String.format("%s/orders/**", apiPrefix), "GET"),
-                Pair.of(String.format("%s/orders_details/**/**", apiPrefix), "GET"),
-                Pair.of(String.format("%s/prices/**", apiPrefix), "GET"),
-
-                Pair.of(String.format("%s/products/**", apiPrefix), "GET"),
-                Pair.of(String.format("%s/product_details/**", apiPrefix), "GET")
-
-
+                Pair.of(String.format("%s/users/login", apiPrefix), "POST")
         );
         for (Pair<String, String> byPassToken : byPassTokens) {
-            if (request.getServletPath().contains(byPassToken.getFirst()) &&
+            if (request.getServletPath().matches(byPassToken.getFirst().replace("/**", "(/.*)?")) &&
                     request.getMethod().equals(byPassToken.getSecond())) {
                 return true;
             }

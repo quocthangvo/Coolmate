@@ -2,7 +2,6 @@ package com.example.coolmate.Services.Product;
 
 import com.example.coolmate.Dtos.ProductDtos.SizeDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
-import com.example.coolmate.Models.Category;
 import com.example.coolmate.Models.Product.Size;
 import com.example.coolmate.Repositories.Product.SizeRepository;
 import com.example.coolmate.Services.Impl.Product.ISizeService;
@@ -17,17 +16,18 @@ import java.util.Optional;
 public class SizeService implements ISizeService {
 
     private final SizeRepository sizeRepository;
+
     @Override
     public Size createSize(SizeDTO sizeDTO) throws DataNotFoundException {
-       Optional<Size> existingSize = sizeRepository.findByName(sizeDTO.getName());
-       if(existingSize.isPresent()){
-           throw new DataNotFoundException("Kích thước đã tồn tại : "+sizeDTO.getName());
-       }else{
-           Size newSize = Size.builder()
-                   .name(sizeDTO.getName())
-                   .build();
-           return sizeRepository.save(newSize);
-       }
+        Optional<Size> existingSize = sizeRepository.findByName(sizeDTO.getName());
+        if (existingSize.isPresent()) {
+            throw new DataNotFoundException("Kích thước đã tồn tại : " + sizeDTO.getName());
+        } else {
+            Size newSize = Size.builder()
+                    .name(sizeDTO.getName())
+                    .build();
+            return sizeRepository.save(newSize);
+        }
     }
 
     @Override
@@ -37,7 +37,7 @@ public class SizeService implements ISizeService {
     }
 
     @Override
-    public List<Size> getAllSizes() {
+    public List<Size> getAllSizes(int page, int limit) {
         return sizeRepository.findAll();
     }
 
