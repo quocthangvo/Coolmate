@@ -68,7 +68,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private boolean isByPassToken(@NonNull HttpServletRequest request) {
         // Bỏ qua tất cả các request GET, kh cần token
-        if ("GET".equalsIgnoreCase(request.getMethod())) {
+        if ("GET".equalsIgnoreCase(request.getMethod()) || "POST".equalsIgnoreCase(request.getMethod())) {
             return true;
         }
 

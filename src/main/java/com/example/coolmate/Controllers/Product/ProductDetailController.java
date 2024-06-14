@@ -6,7 +6,6 @@ import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
-import com.example.coolmate.Responses.Product.ProductDetailResponse;
 import com.example.coolmate.Services.Impl.Product.IColorService;
 import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
@@ -63,7 +62,7 @@ public class ProductDetailController {
             @RequestParam(value = "page") int page,
             @RequestParam(value = "limit") int limit) {
         try {
-            List<ProductDetailResponse> responses = productDetailService.getAllProductDetails(page, limit);
+            List<ProductDetail> responses = productDetailService.getAllProductDetails(page, limit);
             return ApiResponseUtil.successResponse("Successfully", responses);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));

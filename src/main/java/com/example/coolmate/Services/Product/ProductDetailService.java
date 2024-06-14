@@ -10,10 +10,8 @@ import com.example.coolmate.Repositories.Product.ColorRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Repositories.Product.ProductRepository;
 import com.example.coolmate.Repositories.Product.SizeRepository;
-import com.example.coolmate.Responses.Product.ProductDetailResponse;
 import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,14 +50,9 @@ public class ProductDetailService implements IProductDetailService {
 
 
     @Override
-    public List<ProductDetailResponse> getAllProductDetails(int page, int limit) {
-        // Tạo một đối tượng PageRequest với trang và giới hạn
-        PageRequest pageRequest = PageRequest.of(page, limit);
-
+    public List<ProductDetail> getAllProductDetails(int page, int limit) {
         // Lấy danh sách sản phẩm theo trang và giới hạn, sau đó chuyển đổi sang ProductDetailResponse
-        return productDetailRepository.findAll(pageRequest)
-                .map(ProductDetailResponse::fromProductDetail)
-                .getContent();
+        return productDetailRepository.findAll();
     }
 
     @Override

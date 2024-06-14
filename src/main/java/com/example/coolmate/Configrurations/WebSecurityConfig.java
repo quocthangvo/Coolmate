@@ -29,7 +29,8 @@ public class WebSecurityConfig {
                                     String.format("%s/users/register", apiPrefix),
                                     String.format("%s/users/login", apiPrefix)
                             ).permitAll()
-                            .requestMatchers(HttpMethod.GET).permitAll() // Cho phép tất cả các request GET
+                            .requestMatchers(HttpMethod.GET).permitAll()// Cho phép tất cả các request GET
+                            .requestMatchers(HttpMethod.POST).permitAll() //khi phân quyền r bỏ này
 //                            .requestMatchers(HttpMethod.PUT,
 //                                    String.format("%s/product_details/**", apiPrefix)).hasRole(Role.ADMIN)
                             .anyRequest().authenticated(); // yêu cầu các request khác có quyền
