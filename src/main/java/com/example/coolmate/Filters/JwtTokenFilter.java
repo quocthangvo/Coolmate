@@ -68,7 +68,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private boolean isByPassToken(@NonNull HttpServletRequest request) {
         // Bỏ qua tất cả các request GET, kh cần token
-        if ("GET".equalsIgnoreCase(request.getMethod()) || "POST".equalsIgnoreCase(request.getMethod())) {
+        if ("GET".equalsIgnoreCase(request.getMethod()) ||
+                "POST".equalsIgnoreCase(request.getMethod()) ||
+                "DELETE".equalsIgnoreCase(request.getMethod())
+        ) {
             return true;
         }
 
@@ -78,7 +81,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST")
         );
         for (Pair<String, String> byPassToken : byPassTokens) {
-            if (request.getServletPath().matches(byPassToken.getFirst().replace("/**", "(/.*)?")) &&
+            if (request.getServletPath().equals(byPassToken.getFirst()) &&
                     request.getMethod().equals(byPassToken.getSecond())) {
                 return true;
             }

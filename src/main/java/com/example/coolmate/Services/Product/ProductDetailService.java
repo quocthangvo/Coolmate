@@ -27,8 +27,7 @@ public class ProductDetailService implements IProductDetailService {
     @Override
     public ProductDetail createProductDetail(ProductDetailDTO productDetailDTO) throws Exception {
         Product existingProduct = productRepository.findById(productDetailDTO.getProductId())
-                .orElseThrow(() -> new DataNotFoundException(
-                        "Cannot find product with id: " + productDetailDTO.getProductId()));
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy product có id: " + productDetailDTO.getProductId()));
 
         Size existingSize = sizeRepository.findById(productDetailDTO.getSizeId())
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy size có id: " + productDetailDTO.getSizeId()));
@@ -41,7 +40,6 @@ public class ProductDetailService implements IProductDetailService {
                 .size(existingSize)
                 .color(existingColor)
                 .build();
-
 
         productDetailRepository.save(newProductDetail);
 

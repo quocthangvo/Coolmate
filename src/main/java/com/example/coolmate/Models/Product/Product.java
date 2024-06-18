@@ -30,4 +30,11 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "size_id")
+    private Size sizeId;
+
+    @ManyToOne
+    @JoinColumn(name = "color_id")
+    private Color colorId;
 }

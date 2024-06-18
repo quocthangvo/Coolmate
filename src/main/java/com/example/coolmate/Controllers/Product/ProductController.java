@@ -10,12 +10,8 @@ import com.example.coolmate.Models.Product.ProductImage;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.Product.ProductResponse;
 import com.example.coolmate.Services.Impl.Product.IProductService;
-import com.example.coolmate.Services.Product.ProductListResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -73,17 +69,14 @@ public class ProductController {
 
 
     @GetMapping("")
-    public ResponseEntity<ProductListResponse> getAllProducts(
+    public ResponseEntity<?> getAllProducts(
             @RequestParam(value = "page") int page,
             @RequestParam(value = "limit") int limit) {
 
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
-        Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
-        int totalPages = productPage.getTotalPages();
-        List<ProductResponse> products = productPage.getContent();
+//        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+        List<Product> productPage = productService.getAllProducts(page, limit);
 
-        return ResponseEntity.ok(ProductListResponse.builder()
-                .products(products).totalPage(totalPages).build());
+        return ApiResponseUtil.successResponse("Successfully", productPage);
     }
 
 

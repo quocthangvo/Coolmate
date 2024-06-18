@@ -1,19 +1,18 @@
 package com.example.coolmate.Services.Product;
 
 import com.example.coolmate.Dtos.ProductDtos.ProductDTO;
-import com.example.coolmate.Dtos.ProductDtos.ProductDetailDTO;
 import com.example.coolmate.Dtos.ProductDtos.ProductImageDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.InvalidParamException;
 import com.example.coolmate.Models.Category;
-import com.example.coolmate.Models.Product.*;
+import com.example.coolmate.Models.Product.Color;
+import com.example.coolmate.Models.Product.Product;
+import com.example.coolmate.Models.Product.ProductImage;
+import com.example.coolmate.Models.Product.Size;
 import com.example.coolmate.Repositories.CategoryRepository;
 import com.example.coolmate.Repositories.Product.*;
-import com.example.coolmate.Responses.Product.ProductResponse;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +36,16 @@ public class ProductService implements IProductService {
 
         // Tìm kiếm category theo id
         Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new DataNotFoundException("Cannot find category with id: " + productDTO.getCategoryId()));
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Cannot find category with id: " + productDTO.getCategoryId()));
+
+        Size existingSize = sizeRepository.findById(productDTO.getSizeId())
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Không tìm thấy size có id: " + productDTO.getSizeId()));
+
+        Color existingColor = colorRepository.findById(productDTO.getColorId())
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Không tìm thấy màu có id: " + productDTO.getColorId()));
 
         // Tạo sản phẩm mới
         Product newProduct = Product.builder()
@@ -45,28 +53,29 @@ public class ProductService implements IProductService {
                 .image(productDTO.getImage())
                 .description(productDTO.getDescription())
                 .category(existingCategory)
+                .sizeId(existingSize)
+                .colorId(existingColor)
                 .build();
 
         // Lưu sản phẩm mới
         newProduct = productRepository.save(newProduct);
 
         // Tạo và lưu các chi tiết của sản phẩm
-        if (productDTO.getProductDetails() != null) {
-            for (ProductDetailDTO detailDTO : productDTO.getProductDetails()) {
-                detailDTO.setProductId(newProduct.getId());
-                createProductDetail(detailDTO);
-            }
-        }
+//        if (productDTO.getProductDetails() != null) {
+//            for (ProductDetailDTO detailDTO : productDTO.getProductDetails()) {
+//                detailDTO.setProductId(newProduct.getId());
+//                createProductDetail(detailDTO);
+//            }
+//        }
         return newProduct;
     }
 
 
     @Override
-    public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
+    public List<Product> getAllProducts(int page, int limit) {
         //láy ds sp theo page và limit
-        return productRepository
-                .findAll(pageRequest)
-                .map(ProductResponse::fromProduct);
+        return productRepository.findAll();
+
     }
 
     @Override
@@ -130,24 +139,24 @@ public class ProductService implements IProductService {
         return productImageRepository.save(newProductImage);
     }
 
-    @Override
-    public ProductDetail createProductDetail(ProductDetailDTO productDetailDTO) throws Exception {
-        Product existingProduct = productRepository.findById(productDetailDTO.getProductId())
-                .orElseThrow(() -> new DataNotFoundException(
-                        "Cannot find product with id: " + productDetailDTO.getProductId()));
-
-        Size existingSize = sizeRepository.findById(productDetailDTO.getSizeId())
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy size có id: " + productDetailDTO.getSizeId()));
-
-        Color existingColor = colorRepository.findById(productDetailDTO.getColorId())
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy màu có id: " + productDetailDTO.getColorId()));
-        ProductDetail newProductDetail = ProductDetail.builder()
-                .product(existingProduct)
-                .size(existingSize)
-                .color(existingColor)
-                .build();
-        return productDetailRepository.save(newProductDetail);
-    }
+//    @Override
+//    public ProductDetail createProductDetail(ProductDetailDTO productDetailDTO) throws Exception {
+//        Product existingProduct = productRepository.findById(productDetailDTO.getProductId())
+//                .orElseThrow(() -> new DataNotFoundException(
+//                        "Cannot find product with id: " + productDetailDTO.getProductId()));
+//
+//        Size existingSize = sizeRepository.findById(productDetailDTO.getSizeId())
+//                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy size có id: " + productDetailDTO.getSizeId()));
+//
+//        Color existingColor = colorRepository.findById(productDetailDTO.getColorId())
+//                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy màu có id: " + productDetailDTO.getColorId()));
+//        ProductDetail newProductDetail = ProductDetail.builder()
+//                .product(existingProduct)
+//                .size(existingSize)
+//                .color(existingColor)
+//                .build();
+//        return productDetailRepository.save(newProductDetail);
+//    }
 
 
 }
