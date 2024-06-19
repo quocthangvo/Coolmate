@@ -70,7 +70,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         // Bỏ qua tất cả các request GET, kh cần token
         if ("GET".equalsIgnoreCase(request.getMethod()) ||
                 "POST".equalsIgnoreCase(request.getMethod()) ||
-                "DELETE".equalsIgnoreCase(request.getMethod())
+                "DELETE".equalsIgnoreCase(request.getMethod()) ||
+                "PUT".equalsIgnoreCase(request.getMethod())
         ) {
             return true;
         }

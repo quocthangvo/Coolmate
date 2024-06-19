@@ -19,7 +19,4 @@ public class Size {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product productId;
 }

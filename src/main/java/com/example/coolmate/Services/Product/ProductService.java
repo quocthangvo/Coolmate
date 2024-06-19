@@ -5,10 +5,7 @@ import com.example.coolmate.Dtos.ProductDtos.ProductImageDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.InvalidParamException;
 import com.example.coolmate.Models.Category;
-import com.example.coolmate.Models.Product.Color;
-import com.example.coolmate.Models.Product.Product;
-import com.example.coolmate.Models.Product.ProductImage;
-import com.example.coolmate.Models.Product.Size;
+import com.example.coolmate.Models.Product.*;
 import com.example.coolmate.Repositories.CategoryRepository;
 import com.example.coolmate.Repositories.Product.*;
 import com.example.coolmate.Services.Impl.Product.IProductService;
@@ -53,20 +50,21 @@ public class ProductService implements IProductService {
                 .image(productDTO.getImage())
                 .description(productDTO.getDescription())
                 .category(existingCategory)
-                .sizeId(existingSize)
-                .colorId(existingColor)
                 .build();
 
         // Lưu sản phẩm mới
         newProduct = productRepository.save(newProduct);
 
-        // Tạo và lưu các chi tiết của sản phẩm
-//        if (productDTO.getProductDetails() != null) {
-//            for (ProductDetailDTO detailDTO : productDTO.getProductDetails()) {
-//                detailDTO.setProductId(newProduct.getId());
-//                createProductDetail(detailDTO);
-//            }
-//        }
+        // Tạo và lưu ProductDetail
+        ProductDetail productDetail = new ProductDetail();
+        productDetail.setProduct(newProduct);
+        productDetail.setSize(existingSize);
+        productDetail.setColor(existingColor);
+
+
+        // Lưu ProductDetail vào cơ sở dữ liệu
+        productDetail = productDetailRepository.save(productDetail);
+
         return newProduct;
     }
 
@@ -87,21 +85,30 @@ public class ProductService implements IProductService {
 
     @Override
     public Product updateProduct(int id, ProductDTO productDTO) throws Exception {
+        // Lấy sản phẩm hiện tại từ cơ sở dữ liệu
         Product existingProduct = getProductById(id);
         if (existingProduct != null) {
-            // Kiểm tra sự tồn tại của sản phẩm khác có cùng tên
-            if (productRepository.existsByName(productDTO.getName())) {
-                throw new DataNotFoundException("Product với tên '" + productDTO.getName() + "' bị trùng.");
+            // Kiểm tra xem tên sản phẩm mới có trùng với tên của các sản phẩm khác hay không
+            Product productName = productRepository.findByName(productDTO.getName());
+            if (productName != null && productName.getId() != id) {
+                throw new DataNotFoundException("Product với tên '" + productDTO.getName() + "' đã tồn tại.");
             }
 
-            Category existingCategory = categoryRepository
-                    .findById(productDTO.getCategoryId())
+            // Tìm kiếm các thực thể liên quan như Color, Size, Category theo ID
+
+
+            Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
                     .orElseThrow(() -> new DataNotFoundException(
                             "Không tìm thấy category với id: " + productDTO.getCategoryId()));
+
+            // Cập nhật các thông tin của sản phẩm
             existingProduct.setName(productDTO.getName());
             existingProduct.setCategory(existingCategory);
+
             existingProduct.setDescription(productDTO.getDescription());
             existingProduct.setImage(productDTO.getImage());
+
+            // Lưu các thay đổi vào cơ sở dữ liệu
             return productRepository.save(existingProduct);
         }
         throw new DataNotFoundException("Không tìm thấy product với id = " + id);
@@ -139,7 +146,7 @@ public class ProductService implements IProductService {
         return productImageRepository.save(newProductImage);
     }
 
-//    @Override
+
 //    public ProductDetail createProductDetail(ProductDetailDTO productDetailDTO) throws Exception {
 //        Product existingProduct = productRepository.findById(productDetailDTO.getProductId())
 //                .orElseThrow(() -> new DataNotFoundException(

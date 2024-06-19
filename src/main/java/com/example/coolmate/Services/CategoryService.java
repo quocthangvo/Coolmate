@@ -6,9 +6,6 @@ import com.example.coolmate.Models.Category;
 import com.example.coolmate.Repositories.CategoryRepository;
 import com.example.coolmate.Services.Impl.ICategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,9 +40,7 @@ public class CategoryService implements ICategoryService {
     }
 
     public List<Category> getAllCategories(int page, int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
-        Page<Category> categoryPage = categoryRepository.findAll(pageable);
-        return categoryPage.getContent();
+        return categoryRepository.findAll();
     }
 
 

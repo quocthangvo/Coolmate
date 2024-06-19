@@ -31,7 +31,8 @@ public class WebSecurityConfig {
                             ).permitAll()
                             .requestMatchers(HttpMethod.GET).permitAll()// Cho phép tất cả các request GET
                             .requestMatchers(HttpMethod.POST).permitAll()
-                            .requestMatchers(HttpMethod.DELETE).permitAll() //khi phân quyền r bỏ này
+                            .requestMatchers(HttpMethod.DELETE).permitAll()
+                            .requestMatchers(HttpMethod.PUT).permitAll() //khi phân quyền r bỏ này
 //                            .requestMatchers(HttpMethod.PUT,
 //                                    String.format("%s/product_details/**", apiPrefix)).hasRole(Role.ADMIN)
                             .anyRequest().authenticated(); // yêu cầu các request khác có quyền
