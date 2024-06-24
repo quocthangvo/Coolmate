@@ -1,5 +1,6 @@
 package com.example.coolmate.Repositories.Product;
 
+import com.example.coolmate.Models.Category;
 import com.example.coolmate.Models.Product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,5 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findByNameContaining(String name);
 
     Product findByName(String name);
+
+    List<Product> findByCategoryId(Category category);
 
 }

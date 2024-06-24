@@ -66,9 +66,6 @@ public class ProductService implements IProductService {
                                 .color(existingColor)
                                 .build();
                 productDetailRepository.save(newProductDetail);
-//
-//                ProductDetailDTO productDetailDTO =
-//                        productDetailsDto.add(productDetailDTO);
             }
         }
 
@@ -163,24 +160,13 @@ public class ProductService implements IProductService {
         return productImageRepository.save(newProductImage);
     }
 
-//    @Override
-//    public ProductDetail createProductDetail(ProductDetailDTO productDetailDTO) throws Exception {
-//        Product existingProduct = productRepository.findById(productDetailDTO.getProductId())
-//                .orElseThrow(() -> new DataNotFoundException(
-//                        "Cannot find product with id: " + productDetailDTO.getProductId()));
-//
-//        Size existingSize = sizeRepository.findById(productDetailDTO.getSizeId())
-//                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy size có id: " + productDetailDTO.getSizeId()));
-//
-//        Color existingColor = colorRepository.findById(productDetailDTO.getColorId())
-//                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy màu có id: " + productDetailDTO.getColorId()));
-//        ProductDetail newProductDetail = ProductDetail.builder()
-//                .product(existingProduct)
-//                .size(existingSize)
-//                .color(existingColor)
-//                .build();
-//        return productDetailRepository.save(newProductDetail);
-//    }
+    public List<Product> findByCategoryId(int categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+        if (category != null) {
+            return productRepository.findByCategoryId(category);
+        }
+        return List.of();
+    }
 
 
 }

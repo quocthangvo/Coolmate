@@ -19,9 +19,13 @@ public class ProductDetailDTO {
     @JsonProperty("sizes")
     private List<Integer> sizes;
 
+    @JsonProperty("size_name")
+    private String sizeName;
 
     @JsonProperty("colors")
     private List<Integer> colors;
 
+    @JsonProperty("color_name")
+    private String colorName;
 
 }
