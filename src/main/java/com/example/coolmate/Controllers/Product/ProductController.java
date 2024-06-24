@@ -9,6 +9,7 @@ import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.Product.ProductResponse;
+import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ import java.util.UUID;
 
 public class ProductController {
     private final IProductService productService;
+    private final IProductDetailService productDetailService;
 
     @PostMapping("")
     public ResponseEntity<?> createProduct(
@@ -55,14 +57,14 @@ public class ProductController {
             Product newProduct = productService.createProduct(productDTO);
 
             // Ghi log chi tiết sản phẩm để kiểm tra nếu nó được tạo đúng
-            System.out.println("Created Product: " + newProduct);
+//            System.out.println("Created Product: " + newProduct);
 
             // Tạo phản hồi API sử dụng ApiResponseUtil
             return ApiResponseUtil.successResponse("Product created successfully", newProduct);
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
         } catch (Exception e) {
-            e.printStackTrace();  // Ghi log ngoại lệ để gỡ lỗi
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorMessage("Đã xảy ra lỗi không xác định"));
         }
     }
@@ -95,7 +97,7 @@ public class ProductController {
     public ResponseEntity<?> deleteProduct(@PathVariable int id) {
         try {
             productService.deleteProduct(id);
-            String message = "Xóa sản phẩm có ID " + id + " thành công";
+            String message = "Xóa sản phẩm thành công";
             return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));

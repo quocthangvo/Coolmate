@@ -8,6 +8,7 @@ import com.example.coolmate.Models.Category;
 import com.example.coolmate.Models.Product.*;
 import com.example.coolmate.Repositories.CategoryRepository;
 import com.example.coolmate.Repositories.Product.*;
+import com.example.coolmate.Services.CategoryService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,46 +25,69 @@ public class ProductService implements IProductService {
     private final ColorRepository colorRepository;
     private final ProductDetailRepository productDetailRepository;
 
+    private final CategoryService categoryService;
+
     @Override
     public Product createProduct(ProductDTO productDTO) throws Exception {
-        // Kiểm tra sự tồn tại của sản phẩm trùng lặp
+        // Check for duplicate product
         if (productRepository.existsByName(productDTO.getName())) {
-            throw new DataNotFoundException("Product với tên '" + productDTO.getName() + "' đã tồn tại.");
+            throw new DataNotFoundException("Sản phẩm với tên '" + productDTO.getName() + "' đã tồn tại.");
         }
 
-        // Tìm kiếm category theo id
+        // Find category by ID
         Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(() -> new DataNotFoundException(
-                        "Cannot find category with id: " + productDTO.getCategoryId()));
+                        "Không tìm thấy danh mục với ID: " + productDTO.getCategoryId()));
 
-        Size existingSize = sizeRepository.findById(productDTO.getSizeId())
-                .orElseThrow(() -> new DataNotFoundException(
-                        "Không tìm thấy size có id: " + productDTO.getSizeId()));
 
-        Color existingColor = colorRepository.findById(productDTO.getColorId())
-                .orElseThrow(() -> new DataNotFoundException(
-                        "Không tìm thấy màu có id: " + productDTO.getColorId()));
-
-        // Tạo sản phẩm mới
+        // Create new product
         Product newProduct = Product.builder()
                 .name(productDTO.getName())
                 .image(productDTO.getImage())
                 .description(productDTO.getDescription())
-                .category(existingCategory)
+                .categoryId(existingCategory)
                 .build();
 
-        // Lưu sản phẩm mới
+        // Save the product to the database
         newProduct = productRepository.save(newProduct);
 
-        // Tạo và lưu ProductDetail
-        ProductDetail productDetail = new ProductDetail();
-        productDetail.setProduct(newProduct);
-        productDetail.setSize(existingSize);
-        productDetail.setColor(existingColor);
+
+//duyệt vòng lập để truyền list
+        for (Integer size : productDTO.getSizeId()) {
+            for (Integer color : productDTO.getColorId()) {
+                Size existingSize = sizeRepository.findById(size).orElseThrow(()
+                        -> new DataNotFoundException("not found" + productDTO.getSizeId()));
+                Color existingColor = colorRepository.findById(color).orElseThrow(()
+                        -> new DataNotFoundException("not found" + productDTO.getColorId()));
+                ProductDetail newProductDetail =
+                        ProductDetail.builder()
+                                .product(newProduct)
+                                .size(existingSize)
+                                .color(existingColor)
+                                .build();
+                productDetailRepository.save(newProductDetail);
+//
+//                ProductDetailDTO productDetailDTO =
+//                        productDetailsDto.add(productDetailDTO);
+            }
+        }
+
+//        Integer colorId = 1;
+//        Integer sizeId = 1;
+//
+//        Size size = sizeRepository.findById(sizeId).orElseThrow(() -> new DateTimeException("not found id"));
+//        Color color = colorRepository.findById(colorId).orElseThrow(() -> new DateTimeException("not found id"));
+//
+//        ProductDetail newProductDetail = ProductDetail.builder()
+//                .product(newProduct)
+//                .size(existingSize)
+//                .color(existingColor)
+//                .build();
+//
+//        productDetailRepository.save(newProductDetail);
 
 
-        // Lưu ProductDetail vào cơ sở dữ liệu
-        productDetail = productDetailRepository.save(productDetail);
+//
 
         return newProduct;
     }
@@ -85,30 +109,23 @@ public class ProductService implements IProductService {
 
     @Override
     public Product updateProduct(int id, ProductDTO productDTO) throws Exception {
-        // Lấy sản phẩm hiện tại từ cơ sở dữ liệu
         Product existingProduct = getProductById(id);
         if (existingProduct != null) {
-            // Kiểm tra xem tên sản phẩm mới có trùng với tên của các sản phẩm khác hay không
-            Product productName = productRepository.findByName(productDTO.getName());
-            if (productName != null && productName.getId() != id) {
-                throw new DataNotFoundException("Product với tên '" + productDTO.getName() + "' đã tồn tại.");
+            // Kiểm tra sự tồn tại của sản phẩm khác có cùng tên
+            if (productRepository.existsByName(productDTO.getName())) {
+                throw new DataNotFoundException("Product với tên '" + productDTO.getName() + "' bị trùng.");
             }
 
-            // Tìm kiếm các thực thể liên quan như Color, Size, Category theo ID
 
-
-            Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
+            Category existingCategory = categoryRepository
+                    .findById(productDTO.getCategoryId())
                     .orElseThrow(() -> new DataNotFoundException(
                             "Không tìm thấy category với id: " + productDTO.getCategoryId()));
-
-            // Cập nhật các thông tin của sản phẩm
             existingProduct.setName(productDTO.getName());
-            existingProduct.setCategory(existingCategory);
+            existingProduct.setCategoryId(existingCategory);
 
             existingProduct.setDescription(productDTO.getDescription());
             existingProduct.setImage(productDTO.getImage());
-
-            // Lưu các thay đổi vào cơ sở dữ liệu
             return productRepository.save(existingProduct);
         }
         throw new DataNotFoundException("Không tìm thấy product với id = " + id);
@@ -146,7 +163,7 @@ public class ProductService implements IProductService {
         return productImageRepository.save(newProductImage);
     }
 
-
+//    @Override
 //    public ProductDetail createProductDetail(ProductDetailDTO productDetailDTO) throws Exception {
 //        Product existingProduct = productRepository.findById(productDetailDTO.getProductId())
 //                .orElseThrow(() -> new DataNotFoundException(

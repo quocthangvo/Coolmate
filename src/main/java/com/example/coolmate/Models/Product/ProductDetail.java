@@ -21,11 +21,12 @@ public class ProductDetail extends BaseEntity {
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "size_id", nullable = false)
+    @JoinColumn(name = "size_id")
     private Size size;
 
     @ManyToOne
-    @JoinColumn(name = "color_id", nullable = false)
+    @JoinColumn(name = "color_id")
     private Color color;
+
 
 }

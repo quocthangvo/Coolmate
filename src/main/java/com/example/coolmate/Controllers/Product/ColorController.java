@@ -63,7 +63,7 @@ public class ColorController {
     public ResponseEntity<?> deleteColorById(@PathVariable int id) {
         try {
             colorService.deleteColorById(id);
-            String message = "Xóa màu sắc có ID " + id + " thành công";
+            String message = "Xóa màu sắc thành công";
             return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (DataNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));

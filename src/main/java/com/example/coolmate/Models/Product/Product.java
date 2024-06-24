@@ -5,6 +5,8 @@ import com.example.coolmate.Models.Category;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -28,13 +30,10 @@ public class Product extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private Category category;
+    private Category categoryId;
+    
+    @OneToMany
+    @JoinColumn(name = "product_details")
+    private List<ProductDetail> productDetails;
 
-    @ManyToOne
-    @JoinColumn(name = "size_id")
-    private Size sizeId;
-
-    @ManyToOne
-    @JoinColumn(name = "color_id")
-    private Color colorId;
 }

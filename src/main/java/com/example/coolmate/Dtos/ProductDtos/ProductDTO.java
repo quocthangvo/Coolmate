@@ -25,12 +25,9 @@ public class ProductDTO {
     @JsonProperty("category_id")
     private int categoryId;
 
-    @JsonProperty("size_id")
-    private int sizeId;
+    @JsonProperty("sizes")
+    private List<Integer> sizeId;
 
-    @JsonProperty("color_id")
-    private int colorId;
-
-    @JsonProperty("product_details")
-    private List<ProductDetailDTO> productDetails;
+    @JsonProperty("colors")
+    private List<Integer> colorId;
 }

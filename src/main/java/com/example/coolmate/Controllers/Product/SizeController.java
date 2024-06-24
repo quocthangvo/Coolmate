@@ -62,7 +62,7 @@ public class SizeController {
     public ResponseEntity<?> deleteSizeById(@PathVariable int id) {
         try {
             sizeService.deleteSizeById(id);
-            String message = "Xóa kích thước có ID " + id + " thành công";
+            String message = "Xóa kích thước thành công";
             return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (DataNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));

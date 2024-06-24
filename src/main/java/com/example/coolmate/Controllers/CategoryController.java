@@ -64,7 +64,7 @@ public class CategoryController {
     public ResponseEntity<?> deleteCategory(@PathVariable int id) {
         try {
             categoryService.deleteCategory(id);
-            String message = "Xóa nhà cung cấp có ID " + id + " thành công";
+            String message = "Xóa nhà cung cấp thành công";
             return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (DataNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));

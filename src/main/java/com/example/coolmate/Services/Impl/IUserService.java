@@ -15,13 +15,15 @@ public interface IUserService {
 
     Page<UserResponse> getAllUsers(PageRequest pageRequest);
 
-    User getUserById(int id) throws Exception;
+//    List<User> getAllUsers(int page, int limit);
+
+    UserResponse getUserById(int id) throws Exception;
 
     void deleteUserById(int id) throws DataNotFoundException;
 
-    void lockUserById(int id, UserDTO userDTO) throws DataNotFoundException;
+    void lockUserById(int id, UserResponse userResponse) throws DataNotFoundException;
 
-    void unlockUserById(int id, UserDTO userDTO) throws DataNotFoundException;
+    void unlockUserById(int id, UserResponse userResponse) throws DataNotFoundException;
 
     boolean changePassword(String phoneNumber, ChangePasswordDTO changePasswordDTO) throws Exception;
 }

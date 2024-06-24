@@ -12,5 +12,4 @@ public class ColorDTO {
     @NotBlank(message = "Color name không để trống")
     private String name;
 
-
 }

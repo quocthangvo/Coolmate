@@ -98,12 +98,21 @@ public class UserController {
         return ResponseEntity.ok(UserListResponse.builder()
                 .users(users).totalPage(totalPages).build());
     }
+//    @GetMapping("")
+//    public ResponseEntity<ApiResponse<List<User>>> getAllUsers(
+//            @RequestParam("page") int page,
+//            @RequestParam("limit") int limit
+//    ) {
+//        List<User> users = userService.getAllUsers(page, limit);
+//        return ApiResponseUtil.successResponse("Successfully", users);
+//
+//    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable("id") int userId) {
+    public ResponseEntity<?> getUserById(@PathVariable int id) {
         try {
-            User existingUser = userService.getUserById(userId);
-            return ResponseEntity.ok(UserResponse.fromUser(existingUser));
+            UserResponse user = userService.getUserById(id);
+            return ApiResponseUtil.successResponse("Successfully", user);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
@@ -113,7 +122,7 @@ public class UserController {
     public ResponseEntity<?> deleteUserById(@PathVariable int id) {
         try {
             userService.deleteUserById(id);
-            String message = "Xóa nhà cung cấp có ID " + id + " thành công";
+            String message = "Xóa user có ID " + id + " thành công";
             return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
@@ -121,11 +130,11 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> lockUser(@Valid @PathVariable int id, UserDTO userDTO) {
+    public ResponseEntity<?> lockUser(@Valid @PathVariable int id, UserResponse userResponse) {
         //xóa mềm => cập nhật trường active = false
         //không xóa mất đi user, mà chỉ xóa để active trở về 0
         try {
-            userService.lockUserById(id, userDTO);
+            userService.lockUserById(id, userResponse);
             return ApiResponseUtil.successResponse("Vô hiệu hóa thành công", id);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
@@ -133,9 +142,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> unlockUser(@Valid @PathVariable int id, UserDTO userDTO) {
+    public ResponseEntity<?> unlockUser(@Valid @PathVariable int id, UserResponse userResponse) {
         try {
-            userService.unlockUserById(id, userDTO);
+            userService.unlockUserById(id, userResponse);
             return ApiResponseUtil.successResponse("Mở khóa thành công", id);
 
         } catch (Exception e) {

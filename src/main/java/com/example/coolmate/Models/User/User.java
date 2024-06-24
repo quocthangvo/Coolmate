@@ -2,12 +2,12 @@ package com.example.coolmate.Models.User;
 
 import com.example.coolmate.Models.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,17 +33,12 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "email", length = 200)
     private String email;
 
-    @Column(name = "address", length = 200)
-    private String address;
-
     @Column(name = "password", length = 200)
+    @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
     private String password;
 
     @Column(name = "is_active")
     private boolean active;
-
-    @Column(name = "date_of_birth")
-    private Date dateOfBirth;
 
     @Column(name = "google_account_id")
     private int googleAccountId;
@@ -52,6 +47,12 @@ public class User extends BaseEntity implements UserDetails {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @Column(name = "address", length = 200)
+    private String address;
+
+
+//    @Column(name = "date_of_birth")
+//    private Date dateOfBirth;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

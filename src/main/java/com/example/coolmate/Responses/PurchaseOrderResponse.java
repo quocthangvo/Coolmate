@@ -45,7 +45,7 @@ public class PurchaseOrderResponse extends BaseResponse {
                 .shippingDate(purchaseOrder.getShippingDate())
                 .userName(purchaseOrder.getUser().getFullName())
                 .phoneNumber(purchaseOrder.getUser().getPhoneNumber())
-                .address(purchaseOrder.getUser().getAddress())
+//                .address(purchaseOrder.getUser().getAddress())
                 .supplierName(purchaseOrder.getSupplier().getName())
                 .build();
         purchaseOrderResponse.setCreatedAt(purchaseOrder.getCreatedAt());
