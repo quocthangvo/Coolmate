@@ -201,4 +201,15 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<?> getProductsByCategoryId(@PathVariable int categoryId) {
+        try {
+            List<Product> products = productService.findByCategoryId(categoryId);
+            return ApiResponseUtil.successResponse("successfully", products);
+
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(ex);
+
+        }
+    }
 }

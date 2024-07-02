@@ -26,7 +26,7 @@ public interface IProductService {
             int productId,
             ProductImageDTO productImageDTO) throws Exception;
 
-//    ProductDetail createProductDetail(ProductDetailDTO productDetailDTO) throws Exception;
+    List<Product> findByCategoryId(int categoryId);
 
 
 }
