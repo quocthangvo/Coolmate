@@ -1,5 +1,6 @@
 package com.example.coolmate.Controllers.Product;
 
+import com.example.coolmate.Dtos.ProductDtos.ProductDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
@@ -26,22 +27,6 @@ public class ProductDetailController {
     private final ISizeService sizeService;
     private final IColorService colorService;
 
-//    @PostMapping("")
-//    public ResponseEntity<?> createOrUpdateProductDetail(
-//            @Valid @RequestBody ProductDetailDTO productDetailDTO, BindingResult result) {
-//
-//        if (result.hasErrors()) {
-//            return ResponseEntity.badRequest().body("Validation errors: " + result.toString());
-//        }
-//        try {
-//            ProductDetail newProductDetail = productDetailService.createProductDetail(productDetailDTO);
-//            return ApiResponseUtil.successResponse("Product detail created successfully", newProductDetail);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Đã xảy ra lỗi khi tạo chi tiết sản phẩm: " + e.getMessage());
-//        }
-//
-//    }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductDetailById(@PathVariable int id) {
@@ -58,12 +43,8 @@ public class ProductDetailController {
     public ResponseEntity<?> getAllProductDetails(
             @RequestParam(value = "page") int page,
             @RequestParam(value = "limit") int limit) {
-        try {
-            List<ProductDetail> responses = productDetailService.getAllProductDetails(page, limit);
-            return ApiResponseUtil.successResponse("Successfully", responses);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
-        }
+        List<ProductDetailDTO> productDetails = productDetailService.getAllProductDetails(page, limit);
+        return ResponseEntity.ok(productDetails);
     }
 
     @GetMapping("/product/{productId}")

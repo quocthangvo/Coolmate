@@ -6,12 +6,15 @@ import com.example.coolmate.Models.Product.Price;
 import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Repositories.Product.PriceRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
+import com.example.coolmate.Responses.Product.PriceReponse;
 import com.example.coolmate.Services.Impl.Product.IPriceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -20,29 +23,40 @@ public class PriceService implements IPriceService {
     private final PriceRepository priceRepository;
     private final ProductDetailRepository productDetailRepository;
 
+    private PriceReponse convertToPriceResponse(Price price) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return PriceReponse.builder()
+                .id(price.getId())
+                .price(price.getPrice())
+                .priceSelling(price.getPriceSelling())
+                .promotionPrice(price.getPromotionPrice())
+                .startDate(price.getStartDate().format(formatter))
+                .endDate(price.getEndDate().format(formatter))
+                .productDetailId(price.getProductDetail().getId())
+                .build();
+    }
+
     @Override
-    public Price createPrice(PriceDTO priceDTO) throws DataNotFoundException {
+    public PriceReponse createPrice(PriceDTO priceDTO) throws DataNotFoundException {
 
         ProductDetail existingProductDetail = productDetailRepository.findById(priceDTO.getProductDetailID())
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết sản phẩm"));
 
-        // Kiểm tra xem có giá nào tồn tại cho sản phẩm này không
         Price existingPrice = priceRepository.findByProductDetail(existingProductDetail);
 
         if (existingPrice != null) {
-            // Nếu đã có giá cho sản phẩm, chỉ cần trả về giá hiện có
             throw new DataNotFoundException("Sản phẩm đã có giá ");
         } else {
-            // Nếu chưa có giá, tạo một bản ghi giá mới
             Price newPrice = Price.builder()
                     .productDetail(existingProductDetail)
                     .price(priceDTO.getPrice())
                     .priceSelling(priceDTO.getPriceSelling())
                     .promotionPrice(priceDTO.getPromotionPrice())
-                    .startDate(LocalDateTime.now()) // Giả sử bắt đầu từ thời điểm hiện tại
-                    .endDate(LocalDateTime.now().plusMonths(1)) // Giả sử kết thúc sau 1 tháng
+                    .startDate(LocalDateTime.now())
+                    .endDate(LocalDateTime.now().plusMonths(1))
                     .build();
-            return priceRepository.save(newPrice);
+            Price savedPrice = priceRepository.save(newPrice);
+            return convertToPriceResponse(savedPrice);
         }
     }
 
@@ -50,18 +64,20 @@ public class PriceService implements IPriceService {
     @Override
     public Price getPriceById(int id) {
         return priceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Price không tồn tại với ID : " + id));
+                .orElseThrow(() -> new RuntimeException("Không tồn tại giá có id : " + id));
     }
 
     @Override
-    public List<Price> getAllPrices() {
-        return priceRepository.findAll();
+    public List<PriceReponse> getAllPrices() {
+        return priceRepository.findAll().stream()
+                .map(this::convertToPriceResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     public void deletePrice(int id) throws DataNotFoundException {
         if (!priceRepository.existsById(id)) {
-            throw new DataNotFoundException("Price không tồn tại với ID : " + id);
+            throw new DataNotFoundException("Không tồn tại giá có id : " + id);
         }
         priceRepository.deleteById(id);
     }

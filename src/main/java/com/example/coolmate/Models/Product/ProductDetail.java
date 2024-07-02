@@ -1,8 +1,11 @@
 package com.example.coolmate.Models.Product;
 
 import com.example.coolmate.Models.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Builder
 @Getter
@@ -18,6 +21,7 @@ public class ProductDetail extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
+    @JsonIgnore // không trùng lập data
     private Product product;
 
     @ManyToOne
@@ -28,5 +32,6 @@ public class ProductDetail extends BaseEntity {
     @JoinColumn(name = "color_id")
     private Color color;
 
-
+    @OneToMany(mappedBy = "productDetail", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Price> prices;
 }

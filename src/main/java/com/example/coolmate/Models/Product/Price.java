@@ -24,7 +24,7 @@ public class Price {
     private float priceSelling; // giá bán
 
     @Column(name = "promotion_price", length = 200)
-    private float promotionPrice; // giá khuyến mãi
+    private Float promotionPrice; // giá khuyến mãi
 
     @Column(name = "start_date")
     private LocalDateTime startDate;
@@ -35,4 +35,16 @@ public class Price {
     @ManyToOne
     @JoinColumn(name = "product_detail_id", nullable = false)
     private ProductDetail productDetail;
+
+    // Phương thức tiện ích để kiểm tra nếu khuyến mãi đang hoạt động
+    public boolean isPromotionActive() {
+        LocalDateTime now = LocalDateTime.now();
+        return promotionPrice != null && startDate != null && endDate != null &&
+                now.isAfter(startDate) && now.isBefore(endDate);
+    }
+
+    // Phương thức để lấy giá hiện tại
+    public float getCurrentPrice() {
+        return isPromotionActive() ? promotionPrice : priceSelling;
+    }
 }

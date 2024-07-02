@@ -31,9 +31,9 @@ public class Product extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category categoryId;
-    
-    @OneToMany
-    @JoinColumn(name = "product_details")
+
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductDetail> productDetails;
 
 }

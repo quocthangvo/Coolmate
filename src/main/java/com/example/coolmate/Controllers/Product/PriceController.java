@@ -6,6 +6,7 @@ import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Product.Price;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
+import com.example.coolmate.Responses.Product.PriceReponse;
 import com.example.coolmate.Services.Impl.Product.IPriceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class PriceController {
     public ResponseEntity<?> createPrice(
             @Valid @RequestBody PriceDTO priceDTO) {
         try {
-            Price createdPrice = priceService.createPrice(priceDTO);
+            PriceReponse createdPrice = priceService.createPrice(priceDTO);
             return ApiResponseUtil.successResponse("Supplier created successfully", createdPrice);
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
@@ -38,11 +39,11 @@ public class PriceController {
 
 
     @GetMapping("")
-    public ResponseEntity<List<Price>> getAllPrices(
+    public ResponseEntity<List<PriceReponse>> getAllPrices(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<Price> prices = priceService.getAllPrices();
+        List<PriceReponse> prices = priceService.getAllPrices();
         return ResponseEntity.ok(prices);
     }
 

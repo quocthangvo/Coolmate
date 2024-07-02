@@ -8,12 +8,14 @@ import com.example.coolmate.Models.Category;
 import com.example.coolmate.Models.Product.*;
 import com.example.coolmate.Repositories.CategoryRepository;
 import com.example.coolmate.Repositories.Product.*;
+import com.example.coolmate.Responses.Product.ProductResponse;
 import com.example.coolmate.Services.CategoryService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -94,10 +96,11 @@ public class ProductService implements IProductService {
 
 
     @Override
-    public List<Product> getAllProducts(int page, int limit) {
-        //láy ds sp theo page và limit
-        return productRepository.findAll();
-
+    public List<ProductResponse> getAllProducts(int page, int limit) {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(ProductResponse::fromProduct)
+                .collect(Collectors.toList());
     }
 
     @Override

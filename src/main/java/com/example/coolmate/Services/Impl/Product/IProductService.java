@@ -5,13 +5,14 @@ import com.example.coolmate.Dtos.ProductDtos.ProductImageDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
+import com.example.coolmate.Responses.Product.ProductResponse;
 
 import java.util.List;
 
 public interface IProductService {
     Product createProduct(ProductDTO productDTO) throws Exception;
 
-    List<Product> getAllProducts(int page, int limit);
+    List<ProductResponse> getAllProducts(int page, int limit);
 
     Product getProductById(int productId) throws Exception;
 

@@ -1,15 +1,16 @@
 package com.example.coolmate.Services.Product;
 
+import com.example.coolmate.Dtos.ProductDtos.PriceDTO;
+import com.example.coolmate.Dtos.ProductDtos.ProductDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
+import com.example.coolmate.Models.Product.Price;
 import com.example.coolmate.Models.Product.ProductDetail;
-import com.example.coolmate.Repositories.Product.ColorRepository;
-import com.example.coolmate.Repositories.Product.ProductDetailRepository;
-import com.example.coolmate.Repositories.Product.ProductRepository;
-import com.example.coolmate.Repositories.Product.SizeRepository;
+import com.example.coolmate.Repositories.Product.*;
 import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,52 +20,18 @@ public class ProductDetailService implements IProductDetailService {
     private final ProductRepository productRepository;
     private final SizeRepository sizeRepository;
     private final ColorRepository colorRepository;
-
-//    @Override
-//    public ProductDetail createProductDetail(ProductDetailDTO productDetailDTO) throws Exception {
-//        // Tìm sản phẩm tồn tại theo ID
-//        Product existingProduct = productRepository.findById(productDetailDTO.getProductId())
-//                .orElseThrow(() -> new DataNotFoundException(
-//                        "Không tìm thấy sản phẩm có id: " + productDetailDTO.getProductId()));
-//        Color existingColor = colorRepository.findById(productDetailDTO.getColors())
-//                .orElseThrow(() -> new DataNotFoundException(
-//                        "Không tìm thấy sản phẩm có id: " + productDetailDTO.getColors()));
-//        //tạo
-//        ProductDetail newProductDetail = new ProductDetail();
-//        newProductDetail.setProduct(existingProduct); // Thiết lập sản phẩm cho ProductDetail
-//
-//        // Tìm kích cỡ tồn tại theo ID
-//        List<Size> sizes = new ArrayList<>();
-//        for (Integer sizeId : productDetailDTO.getSizes()) {
-//            Size existingSize = sizeRepository.findById(sizeId)
-//                    .orElseThrow(() -> new DataNotFoundException(
-//                            "Không tìm thấy kích cỡ có id: " + sizeId));
-//            sizes.add(existingSize);
-//        }
-//        newProductDetail.setSize(sizes);
-//
-//        // Tìm màu sắc tồn tại theo ID
-//        List<Color> colors = new ArrayList<>();
-//        for (Integer colorId : productDetailDTO.getColors()) {
-//            Color existingColor = colorRepository.findById(colorId)
-//                    .orElseThrow(() -> new DataNotFoundException(
-//                            "Không tìm thấy kích cỡ có id: " + colorId));
-//            colors.add(existingColor);
-//        }
-//        newProductDetail.setColor(colors);
-//
-//
-//        // Lưu ProductDetail mới vào cơ sở dữ liệu
-//        productDetailRepository.save(newProductDetail);
-//
-//        return newProductDetail;
-//    }
-
+    private final PriceRepository priceRepository ;
 
     @Override
-    public List<ProductDetail> getAllProductDetails(int page, int limit) {
-        // Lấy danh sách sản phẩm theo trang và giới hạn, sau đó chuyển đổi sang ProductDetailResponse
-        return productDetailRepository.findAll();
+    public List<ProductDetailDTO> getAllProductDetails(int page, int limit) {
+        List<ProductDetail> productDetails = productDetailRepository.findAll();
+        List<ProductDetailDTO> productDetailDTOs = new ArrayList<>();
+
+        for (ProductDetail productDetail : productDetails) {
+            productDetailDTOs.add(convertToProductDetailDTO(productDetail));
+        }
+
+        return productDetailDTOs;
     }
 
     @Override
@@ -96,34 +63,28 @@ public class ProductDetailService implements IProductDetailService {
 
     @Override
     public ProductDetail updateProductDetail(ProductDetail productDetail) throws Exception {
-//        // Kiểm tra xem chi tiết sản phẩm có tồn tại trong cơ sở dữ liệu không
-//        ProductDetail existingProductDetail = productDetailRepository.findById(productDetail.getId())
-//                .orElseThrow(() -> new DataNotFoundException("Product detail not found with id: " + productDetail.getId()));
-//
-//        // Cập nhật thông tin kích thước và màu sắc
-//        if (productDetail.getSize() != null && !productDetail.getSize().isEmpty()) {
-//            existingProductDetail.getSize().clear(); // Xóa danh sách kích thước hiện tại
-//            for (Size newSize : productDetail.getSize()) {
-//                Size existingSize = sizeRepository.findById(newSize.getId())
-//                        .orElseThrow(() -> new DataNotFoundException(
-//                                "Không tìm thấy size có id: " + newSize.getId()));
-//                existingProductDetail.getSizes().add(existingSize);
-//            }
-//        }
-//
-//        if (productDetail.getColors() != null && !productDetail.getColors().isEmpty()) {
-//            existingProductDetail.getColors().clear(); // Xóa danh sách màu sắc hiện tại
-//            for (Color newColor : productDetail.getColors()) {
-//                Color existingColor = colorRepository.findById(newColor.getId())
-//                        .orElseThrow(() -> new DataNotFoundException(
-//                                "Không tìm thấy màu có id: " + newColor.getId()));
-//                existingProductDetail.getColors().add(existingColor);
-//            }
-//        }
-//
-//        // Lưu chi tiết sản phẩm đã cập nhật và trả về
-//        return productDetailRepository.save(existingProductDetail);
         return null;
+    }
+
+    private ProductDetailDTO convertToProductDetailDTO(ProductDetail productDetail) {
+        Price price = priceRepository.findByProductDetail(productDetail);
+
+        PriceDTO priceDTO = null;
+        if (price != null) {
+            priceDTO = PriceDTO.builder()
+                    .price(price.getPrice())
+                    .priceSelling(price.getPriceSelling())
+                    .promotionPrice(price.getPromotionPrice())
+                    .productDetailID(productDetail.getId())
+                    .build();
+        }
+
+        return ProductDetailDTO.builder()
+                .productId(productDetail.getProduct().getId())
+                .sizes(List.of(productDetail.getSize().getId()))
+                .colors(List.of(productDetail.getColor().getId()))
+                .price(priceDTO)
+                .build();
     }
 
 //    @Override

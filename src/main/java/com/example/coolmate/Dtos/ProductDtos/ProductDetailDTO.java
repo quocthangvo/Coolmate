@@ -15,13 +15,12 @@ public class ProductDetailDTO {
     @JsonProperty("product_id")
     private int productId;
 
-
     @JsonProperty("sizes")
     private List<Integer> sizes;
-
 
     @JsonProperty("colors")
     private List<Integer> colors;
 
-
+    @JsonProperty("price")
+    private PriceDTO price; // thông tin về giá
 }

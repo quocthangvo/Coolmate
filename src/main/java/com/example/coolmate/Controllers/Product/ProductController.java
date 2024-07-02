@@ -76,9 +76,9 @@ public class ProductController {
             @RequestParam(value = "limit") int limit) {
 
 //        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
-        List<Product> productPage = productService.getAllProducts(page, limit);
+        List<ProductResponse> productResponses = productService.getAllProducts(page, limit);
 
-        return ApiResponseUtil.successResponse("Successfully", productPage);
+        return ApiResponseUtil.successResponse("Successfully", productResponses);
     }
 
 
