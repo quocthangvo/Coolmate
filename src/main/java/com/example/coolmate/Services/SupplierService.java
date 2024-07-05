@@ -50,7 +50,7 @@ public class SupplierService implements ISupplierService {
     }
 
     @Override
-    public List<Supplier> getAllSuppliers() {
+    public List<Supplier> getAllSuppliers(int page, int limit) {
         return supplierRepository.findAll();
     }
 

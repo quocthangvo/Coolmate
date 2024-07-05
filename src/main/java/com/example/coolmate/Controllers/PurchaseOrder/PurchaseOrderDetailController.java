@@ -17,6 +17,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/purchase_order_details")
+@CrossOrigin("http://localhost:3000")
+
+
 public class PurchaseOrderDetailController {
     private final IPurchaseOrderDetailService purchaseOrderDetailService;
     private final PurchaseOrderDetailRepository purchaseOrderDetailRepository;
@@ -27,15 +30,15 @@ public class PurchaseOrderDetailController {
             @Valid @RequestBody PurchaseOrderDetailDTO purchaseOrderDetailDTO
     ) {
         try {
-            PurchaseOrderDetail newPurchaseOrderDetail = purchaseOrderDetailService
+            List<PurchaseOrderDetail> newPurchaseOrderDetails = purchaseOrderDetailService
                     .createPurchaseOrderDetail(purchaseOrderDetailDTO);
-            return ApiResponseUtil.successResponse("Purchase Order Detail created successfully", newPurchaseOrderDetail);
+            return ApiResponseUtil.successResponse("Purchase Order Details created successfully", newPurchaseOrderDetails);
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
-
         }
     }
+
 
     @GetMapping("/purchase_order/{purchaseOrderId}")
     public ResponseEntity<?> getpurchaseOrderId(@Valid @PathVariable("purchaseOrderId") int purchaseOrderId) {

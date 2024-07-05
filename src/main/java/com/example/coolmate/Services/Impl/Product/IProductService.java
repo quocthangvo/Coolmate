@@ -28,4 +28,8 @@ public interface IProductService {
     List<Product> findByCategoryId(int categoryId);
 
 
+    List<ProductImage> getImageUrlByProductId(int productId);
+
+    ProductImage getImageById(int id) throws DataNotFoundException;
+
 }

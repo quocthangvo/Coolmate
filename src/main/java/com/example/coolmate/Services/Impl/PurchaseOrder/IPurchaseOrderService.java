@@ -11,7 +11,7 @@ public interface IPurchaseOrderService {
 
     PurchaseOrder getPurchaseOrderById(int id) throws DataNotFoundException;
 
-    List<PurchaseOrder> getAllPurchaseOrders();
+    List<PurchaseOrder> getAllPurchaseOrders(int page, int limit);
 
 
     void deletePurchaseOrder(int id) throws DataNotFoundException;

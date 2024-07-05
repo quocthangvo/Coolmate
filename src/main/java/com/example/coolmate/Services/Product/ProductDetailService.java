@@ -1,7 +1,9 @@
 package com.example.coolmate.Services.Product;
 
 import com.example.coolmate.Exceptions.DataNotFoundException;
+import com.example.coolmate.Models.Product.Color;
 import com.example.coolmate.Models.Product.ProductDetail;
+import com.example.coolmate.Models.Product.Size;
 import com.example.coolmate.Repositories.Product.ColorRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Repositories.Product.ProductRepository;
@@ -126,10 +128,46 @@ public class ProductDetailService implements IProductDetailService {
         return null;
     }
 
-//    @Override
-//    public ProductDetail getProductDetailByProductIdAndSizeId(int productId, int sizeId) {
-//        return productDetailRepository.findByProductIdAndSizeId(productId, sizeId);
-//    }
+    @Override
+    public List<ProductDetail> searchProductDetailByName(String name) {
+        return productDetailRepository.findByNameContaining(name);
+    }
+
+
+    @Override
+    public List<ProductDetail> findBySizeId(int sizeId) {
+        Size size = sizeRepository.findById(sizeId).orElse(null);
+        if (size != null) {
+            System.out.println("Size found: " + size);
+            return productDetailRepository.findBySizeId(sizeId);
+        }
+        return List.of();
+    }
+
+    @Override
+    public List<ProductDetail> findByColorId(int colorId) {
+        Color color = colorRepository.findById(colorId).orElse(null);
+        if (color != null) {
+            System.out.println("Color found: " + color);
+            return productDetailRepository.findByColorId(colorId);
+        }
+        return List.of();
+    }
+
+
+    @Override
+    public List<ProductDetail> findBySizeIdAndColorId(int sizeId, int colorId) {
+        Size size = sizeRepository.findById(sizeId).orElse(null);
+        Color color = colorRepository.findById(colorId).orElse(null);
+        if (size != null && color != null) {
+            System.out.println("Size found: " + size);
+            System.out.println("Color found: " + color);
+            return productDetailRepository.findBySizeAndColor(size, color);
+        }
+        return List.of();
+    }
+
+
 //    @Override
 //    public ProductDetail getProductDetailByProductIdSizeAndColor(int productId, int sizeId, int colorId) {
 //        return productDetailRepository.findByProductIdAndSizeIdAndColorId(productId, sizeId, colorId);

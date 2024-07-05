@@ -22,13 +22,16 @@ public class ProductResponse extends BaseResponse {
     @JsonProperty("category_name")
     private String categoryName;
 
+
     public static ProductResponse fromProduct(Product product) {
+
         ProductResponse productResponse = ProductResponse.builder()
                 .name(product.getName())
                 .image(product.getImage())
                 .description(product.getDescription())
                 .categoryId(product.getCategoryId().getId())
                 .categoryName(product.getCategoryId().getName())
+
                 .build();
         productResponse.setCreatedAt(product.getCreatedAt());
         productResponse.setUpdatedAt(product.getUpdatedAt());

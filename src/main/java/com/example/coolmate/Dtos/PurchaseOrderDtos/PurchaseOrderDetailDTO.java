@@ -3,6 +3,8 @@ package com.example.coolmate.Dtos.PurchaseOrderDtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Getter
 @Setter
@@ -19,11 +21,10 @@ public class PurchaseOrderDetailDTO {
 
     private boolean active;
 
-    @JsonProperty("product_detail_id")
-    private int productDetailId;
+    @JsonProperty("product_details")
+    private List<Integer> productDetailId;
 
     @JsonProperty("purchase_order_id")
     private int purchaseOrderId;
-
 
 }

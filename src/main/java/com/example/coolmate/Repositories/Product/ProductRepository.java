@@ -9,14 +9,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
+
+
     boolean existsByName(String name);
 
     Page<Product> findAll(Pageable pageable); //phân trang
 
     List<Product> findByNameContaining(String name);
 
-    Product findByName(String name);
-
     List<Product> findByCategoryId(Category category);
+
 
 }

@@ -7,7 +7,7 @@ import com.example.coolmate.Models.PurchaseOrder.PurchaseOrderDetail;
 import java.util.List;
 
 public interface IPurchaseOrderDetailService {
-    PurchaseOrderDetail createPurchaseOrderDetail(PurchaseOrderDetailDTO purchaseOrderDetailDTO) throws DataNotFoundException;
+    List<PurchaseOrderDetail> createPurchaseOrderDetail(PurchaseOrderDetailDTO purchaseOrderDetailDTO) throws DataNotFoundException;
 
     PurchaseOrderDetail getPurchaseOrderDetailById(int id) throws DataNotFoundException;
 

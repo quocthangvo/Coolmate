@@ -17,7 +17,8 @@ public class ProductImage {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
+//    @JsonIgnore// bỏ qua trường
     private Product product;
 
     @Column(name = "image_url", length = 250)

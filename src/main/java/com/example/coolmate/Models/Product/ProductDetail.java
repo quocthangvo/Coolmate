@@ -17,16 +17,16 @@ public class ProductDetail extends BaseEntity {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id")
+//    @JsonIgnore// bỏ qua trường này
     private Product product;
 
     @ManyToOne
     @JoinColumn(name = "size_id")
     private Size size;
-    
+
     @ManyToOne
     @JoinColumn(name = "color_id")
     private Color color;
-
 
 }

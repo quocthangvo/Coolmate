@@ -11,7 +11,7 @@ public interface ISupplierService {
 
     Supplier getSupplierById(int id);
 
-    List<Supplier> getAllSuppliers();
+    List<Supplier> getAllSuppliers(int page, int limit);
 
     void deleteSupplier(int id) throws DataNotFoundException;
 

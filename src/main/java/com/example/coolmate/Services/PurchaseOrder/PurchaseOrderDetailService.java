@@ -13,6 +13,7 @@ import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderDetailServ
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
     private final ProductDetailRepository productDetailRepository;
     private final PurchaseOrderDetailRepository purchaseOrderDetailRepository;
 
-    public PurchaseOrderDetail createPurchaseOrderDetail(PurchaseOrderDetailDTO purchaseOrderDetailDTO) throws DataNotFoundException {
+    public List<PurchaseOrderDetail> createPurchaseOrderDetail(PurchaseOrderDetailDTO purchaseOrderDetailDTO) throws DataNotFoundException {
         // Tìm xem order có tồn tại không
         PurchaseOrder purchaseOrder = purchaseOrderRepository
                 .findById(purchaseOrderDetailDTO.getPurchaseOrderId())
@@ -44,23 +45,30 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
                     "Không thể thêm chi tiết đơn đặt hàng cho đơn hàng không ở trạng thái pending.");
         }
 
-        // Tìm product theo id
-        ProductDetail productDetail = productDetailRepository
-                .findById(purchaseOrderDetailDTO.getProductDetailId())
-                .orElseThrow(() -> new DataNotFoundException(
-                        "Không tìm thấy chi tiết sản phẩm id: " +
-                                purchaseOrderDetailDTO.getProductDetailId()));
+        List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
 
-        PurchaseOrderDetail purchaseOrderDetail = PurchaseOrderDetail.builder()
-                .purchaseOrderId(purchaseOrder)
-                .productDetail(productDetail)
-                .quantity(purchaseOrderDetailDTO.getQuantity())
-                .price(purchaseOrderDetailDTO.getPrice())
-                .unit(purchaseOrderDetailDTO.getUnit())
-                .active(true)
-                .build();
-        // Lưu vào db
-        return purchaseOrderDetailRepository.save(purchaseOrderDetail);
+        for (Integer productDetailId : purchaseOrderDetailDTO.getProductDetailId()) {
+            // Tìm product theo id
+            ProductDetail productDetail = productDetailRepository
+                    .findById(productDetailId)
+                    .orElseThrow(() -> new DataNotFoundException(
+                            "Không tìm thấy chi tiết sản phẩm id: " + productDetailId));
+
+            PurchaseOrderDetail purchaseOrderDetail = PurchaseOrderDetail.builder()
+                    .purchaseOrderId(purchaseOrder)
+                    .productDetail(productDetail)
+                    .quantity(purchaseOrderDetailDTO.getQuantity())
+                    .price(purchaseOrderDetailDTO.getPrice())
+                    .unit(purchaseOrderDetailDTO.getUnit())
+                    .active(purchaseOrderDetailDTO.isActive())
+                    .build();
+
+            // Lưu vào danh sách chi tiết đơn đặt hàng
+            purchaseOrderDetails.add(purchaseOrderDetail);
+        }
+
+        // Lưu tất cả các chi tiết đơn đặt hàng vào cơ sở dữ liệu
+        return purchaseOrderDetailRepository.saveAll(purchaseOrderDetails);
     }
 
 

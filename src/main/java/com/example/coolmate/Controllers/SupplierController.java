@@ -5,6 +5,7 @@ import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Supplier;
+import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.Impl.ISupplierService;
 import jakarta.validation.Valid;
@@ -19,6 +20,8 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/suppliers")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
+
 public class SupplierController {
     private final ISupplierService supplierService;
 
@@ -42,19 +45,21 @@ public class SupplierController {
 
 
     @GetMapping("")
-    public ResponseEntity<List<Supplier>> getAllSuppliers(
+    public ResponseEntity<ApiResponse<List<Supplier>>> getAllSuppliers(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<Supplier> suppliers = supplierService.getAllSuppliers();
-        return ResponseEntity.ok(suppliers);
+        List<Supplier> suppliers = supplierService.getAllSuppliers(page, limit);
+        return ApiResponseUtil.successResponse("Successfully", suppliers);
+
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getSupplierById(@PathVariable int id) {
         try {
             Supplier supplier = supplierService.getSupplierById(id);
-            return ResponseEntity.ok(supplier);
+            return ApiResponseUtil.successResponse("Successfully", supplier);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
@@ -64,7 +69,7 @@ public class SupplierController {
     public ResponseEntity<?> deleteSupplier(@PathVariable int id) {
         try {
             supplierService.deleteSupplier(id);
-            String message = "Xóa nhà cung cấp có ID " + id + " thành công";
+            String message = "Xóa nhà cung cấp thành công";
             return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (DataNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));

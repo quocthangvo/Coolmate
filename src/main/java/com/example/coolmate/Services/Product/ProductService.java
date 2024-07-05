@@ -68,6 +68,8 @@ public class ProductService implements IProductService {
                 productDetailRepository.save(newProductDetail);
             }
         }
+        return newProduct;
+    }
 
 //        Integer colorId = 1;
 //        Integer sizeId = 1;
@@ -85,9 +87,6 @@ public class ProductService implements IProductService {
 
 
 //
-
-        return newProduct;
-    }
 
 
     @Override
@@ -166,6 +165,18 @@ public class ProductService implements IProductService {
             return productRepository.findByCategoryId(category);
         }
         return List.of();
+    }
+
+    @Override
+    public List<ProductImage> getImageUrlByProductId(int productId) {
+        return productImageRepository.findByProductId(productId);
+    }
+
+    @Override
+    public ProductImage getImageById(int id) throws DataNotFoundException {
+        return productImageRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy  id = "
+                        + id));
     }
 
 

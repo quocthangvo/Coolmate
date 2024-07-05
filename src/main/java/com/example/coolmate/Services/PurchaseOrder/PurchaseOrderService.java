@@ -17,15 +17,24 @@ import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PurchaseOrderService implements IPurchaseOrderService {
+
+
+    // Hằng số để định dạng mã đơn hàng
+    private static final String ORDER_CODE_PREFIX = "DH";
+    private static final int ORDER_CODE_LENGTH = 6; // Độ dài của mã đơn hàng (bao gồm cả prefix)
+    private static final int ORDER_CODE_NUMBER_LENGTH = 4; // Số lượng chữ số trong mã số đơn hàng
+    // Biến để lưu số thứ tự hiện tại
+    private static int currentOrderNumber = 0;
 
 
     private final PurchaseOrderRepository purchaseOrderRepository;
@@ -39,41 +48,30 @@ public class PurchaseOrderService implements IPurchaseOrderService {
 
     @Override
     public PurchaseOrder createPurchaseOrder(PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException {
+        User user = userRepository.findByRoleId(2)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy người dùng có quyền admin"));
 
-        // Kiểm tra sự tồn tại của User
-        User user = userRepository.findById(purchaseOrderDTO.getUserId())
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy người dùng với id: "
-                        + purchaseOrderDTO.getUserId()));
+        // Ngày đặt hàng bắt đầu từ hôm nay
+        LocalDateTime orderDate = LocalDateTime.now();
 
-        // Kiểm tra shipping date phải >= ngày hôm nay
-        LocalDate shippingDate = purchaseOrderDTO.getShippingDate() == null ? LocalDate.now()
-                : purchaseOrderDTO.getShippingDate();
-        if (shippingDate.isBefore(LocalDate.now())) {
-            throw new DataNotFoundException("Ngày giao bắt đầu từ hôm nay");
-        }
+        // Ngày giao hàng dự kiến là 3 ngày sau khi đặt hàng
+        LocalDate shippingDate = orderDate.plusDays(3).toLocalDate();
 
-        // Kiểm tra sự tồn tại của Supplier
         Supplier supplier = supplierRepository.findById(purchaseOrderDTO.getSupplierId())
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy nhà cung cấp với id: "
                         + purchaseOrderDTO.getSupplierId()));
 
-        // Kiểm tra sự tồn tại của mã đơn hàng (code)
-        boolean isCodeExist = purchaseOrderRepository.existsByCode(purchaseOrderDTO.getCode());
-        if (isCodeExist) {
-            throw new DataNotFoundException("Mã đơn hàng đã tồn tại: " + purchaseOrderDTO.getCode());
-        }
-
-
         // Tạo đối tượng PurchaseOrder và thiết lập các thuộc tính từ DTO và thông tin từ User
         PurchaseOrder newPurchaseOrder = new PurchaseOrder();
-        newPurchaseOrder.setCode(purchaseOrderDTO.getCode());
-        newPurchaseOrder.setOrderDate(new Date());
+
+        String orderCode = generateOrderCode();
+        newPurchaseOrder.setCode(orderCode);
+        newPurchaseOrder.setOrderDate(orderDate);
         newPurchaseOrder.setStatus(PurchaseOrderStatus.PENDING);
         newPurchaseOrder.setShippingDate(shippingDate);
         newPurchaseOrder.setSupplier(supplier);
         newPurchaseOrder.setUser(user);
         newPurchaseOrder.setActive(true);
-
 
         // Lưu đơn hàng vào cơ sở dữ liệu
         return purchaseOrderRepository.save(newPurchaseOrder);
@@ -88,7 +86,7 @@ public class PurchaseOrderService implements IPurchaseOrderService {
     }
 
     @Override
-    public List<PurchaseOrder> getAllPurchaseOrders() {
+    public List<PurchaseOrder> getAllPurchaseOrders(int page, int limit) {
         return purchaseOrderRepository.findAll();
     }
 
@@ -214,4 +212,23 @@ public class PurchaseOrderService implements IPurchaseOrderService {
     }
 
 
+    // Hàm để sinh mã đơn hàng mới
+    public String generateOrderCode() {
+        // Tăng số thứ tự lên mỗi khi tạo đơn hàng mới
+        currentOrderNumber++;
+
+        // Định dạng chuỗi số thứ tự với số lượng chữ số quy định
+        DecimalFormat df = new DecimalFormat("0".repeat(ORDER_CODE_NUMBER_LENGTH));
+        String orderNumber = df.format(currentOrderNumber);
+
+        // Kiểm tra và đảm bảo mã đơn hàng không trùng lặp
+        String orderCode = ORDER_CODE_PREFIX + orderNumber;
+        while (purchaseOrderRepository.existsByCode(orderCode)) {
+            currentOrderNumber++;
+            orderNumber = df.format(currentOrderNumber);
+            orderCode = ORDER_CODE_PREFIX + orderNumber;
+        }
+
+        return orderCode;
+    }
 }

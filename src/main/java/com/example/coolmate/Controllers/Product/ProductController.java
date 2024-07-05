@@ -40,6 +40,7 @@ public class ProductController {
     private final IProductService productService;
     private final IProductDetailService productDetailService;
 
+
     @PostMapping("")
     public ResponseEntity<?> createProduct(
             @Valid @RequestBody ProductDTO productDTO,
@@ -117,7 +118,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping(value = "uploads/{id}")
+    @PostMapping(value = "/uploads/{id}")
     public ResponseEntity<?> uploadImages(
             @PathVariable("id") int productId,
             @ModelAttribute("files") List<MultipartFile> files) {
@@ -154,7 +155,8 @@ public class ProductController {
                                 .build());
                 productImages.add(productImage);
             }
-            return ResponseEntity.ok().body(productImages);
+            return ApiResponseUtil.successResponse("successfully", productImages);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -201,6 +203,14 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/images/{productId}")
+    public ResponseEntity<?> getProductImagesByProductId(
+            @PathVariable int productId) {
+        List<ProductImage> images = productService.getImageUrlByProductId(productId);
+        return ApiResponseUtil.successResponse("successfully", images);
+    }
+
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<?> getProductsByCategoryId(@PathVariable int categoryId) {
         try {
@@ -211,5 +221,17 @@ public class ProductController {
             return ResponseEntity.badRequest().body(ex);
 
         }
+    }
+
+    @GetMapping("/image/{id}")
+    public ResponseEntity<?> getImageById(@PathVariable("id") int id) {
+        try {
+            ProductImage existing = productService.getImageById(id);
+            return ApiResponseUtil.successResponse("successfully", existing);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+        }
+
     }
 }

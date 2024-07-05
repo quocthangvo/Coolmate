@@ -19,6 +19,14 @@ public interface IProductDetailService {
 
     ProductDetail updateProductDetail(ProductDetail productDetail) throws Exception;
 
+    List<ProductDetail> searchProductDetailByName(String name);
+
+    List<ProductDetail> findBySizeId(int sizeId);
+
+    List<ProductDetail> findByColorId(int colorId);
+
+    List<ProductDetail> findBySizeIdAndColorId(int sizeId, int colorId);
+
 //    ProductDetail updateProductDetail(int id, ProductDetailDTO productDetailDTO) throws Exception;
 //    ProductDetail getProductDetailByProductIdAndSizeId(int productId, int sizeId);
 //

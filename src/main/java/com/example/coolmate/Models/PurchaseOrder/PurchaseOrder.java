@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -27,7 +27,7 @@ public class PurchaseOrder extends BaseEntity {
     private String code;
 
     @Column(name = "order_date", nullable = false)
-    private Date orderDate;
+    private LocalDateTime orderDate;
 
     @Column(name = "status")
     private String status;
