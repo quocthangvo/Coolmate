@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,6 +98,7 @@ public class PurchaseOrderService implements IPurchaseOrderService {
             if (purchaseOrder.isActive()) {
                 // Đánh dấu đơn hàng là không hoạt động (active = false)
                 purchaseOrder.setActive(false);
+                purchaseOrder.setStatus(PurchaseOrderStatus.CANCELLED);
                 purchaseOrderRepository.save(purchaseOrder);
 
             } else {
@@ -167,50 +167,29 @@ public class PurchaseOrderService implements IPurchaseOrderService {
 //        return purchaseOrderRepository.save(purchaseOrder);
 //    }
 
-
     @Override
     public PurchaseOrder updatePurchaseOrder(int purchaseOrderId, PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException {
         // Tìm PurchaseOrder theo ID
-        PurchaseOrder purchaseOrder = purchaseOrderRepository
-                .findById(purchaseOrderId)
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng với ID: " + purchaseOrderId));
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy đơn đặt hàng với ID: " + purchaseOrderId));
 
-        // Các trạng thái hợp lệ
-        List<String> validStatuses = Arrays.asList(
-                PurchaseOrderStatus.PENDING,
-                PurchaseOrderStatus.PROCESSING,
-                PurchaseOrderStatus.SHIPPING,
-                PurchaseOrderStatus.DELIVERED,
-                PurchaseOrderStatus.CANCELLED
-        );
-
-        // Lấy trạng thái mới từ DTO
-        String newStatus = purchaseOrderDTO.getStatus();
-
-        // Kiểm tra xem trạng thái mới có hợp lệ không
-        if (!validStatuses.contains(newStatus)) {
-            throw new IllegalArgumentException("Trạng thái không hợp lệ: " + newStatus);
+        // Kiểm tra xem nếu đơn đặt hàng đã được hủy hoặc đã giao hàng, không cho phép thay đổi trạng thái
+        if (!purchaseOrder.isActive() || PurchaseOrderStatus.DELIVERED.equals(purchaseOrder.getStatus())) {
+            throw new IllegalStateException("Không thể thay đổi trạng thái của đơn đặt hàng đã bị hủy hoặc đã giao hàng thành công.");
         }
 
-        // Kiểm tra nếu trạng thái hiện tại là 'cancelled' hoặc 'delivered' thì không cho phép thay đổi trạng thái
-        if (!purchaseOrder.isActive() ||
-                PurchaseOrderStatus.DELIVERED.equals(purchaseOrder.getStatus())) {
-            throw new IllegalStateException(
-                    "Không thể thay đổi trạng thái của đơn đặt hàng đã bị hủy hoặc đã giao hàng thành công.");
-        }
+        // Cập nhật trạng thái thành 'delivered'
+        purchaseOrder.setStatus(PurchaseOrderStatus.DELIVERED);
 
-        // Cập nhật thuộc tính trạng thái
-        purchaseOrder.setStatus(newStatus);
-
-        // Nếu trạng thái mới là 'cancelled', đặt active thành false
-        if (PurchaseOrderStatus.CANCELLED.equals(newStatus)) {
-            purchaseOrder.setActive(false);
-        }
-
-        // Lưu
+        // Lưu thay đổi vào cơ sở dữ liệu
         return purchaseOrderRepository.save(purchaseOrder);
     }
 
+    @Override
+    public List<PurchaseOrder> searchPurchaseOrderByCode(String code) {
+        return purchaseOrderRepository.searchPurchaseOrderByCode(code);
+        
+    }
 
     // Hàm để sinh mã đơn hàng mới
     public String generateOrderCode() {

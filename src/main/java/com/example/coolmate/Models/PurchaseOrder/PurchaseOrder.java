@@ -46,11 +46,13 @@ public class PurchaseOrder extends BaseEntity {
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "purchase_order_purchase_order_detail",
-            joinColumns = @JoinColumn(name = "purchase_order_id"),
-            inverseJoinColumns = @JoinColumn(name = "purchase_order_detail_id"))
+//    @OneToMany(cascade = CascadeType.ALL)
+//    @JoinTable(name = "purchase_order_purchase_order_detail",
+//            joinColumns = @JoinColumn(name = "purchase_order_id"),
+//            inverseJoinColumns = @JoinColumn(name = "purchase_order_detail_id"))
+//    private List<PurchaseOrderDetail> purchaseOrderDetails;
+
+    @OneToMany
+    @JoinColumn(name = "purchase_order_details")
     private List<PurchaseOrderDetail> purchaseOrderDetails;
-
-
 }

@@ -20,4 +20,6 @@ public class PurchaseOrderDTO {
 
     private String status;
 
+    private int quantity;
+
 }

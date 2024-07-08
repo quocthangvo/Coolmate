@@ -43,7 +43,6 @@ public class ProductService implements IProductService {
         // Create new product
         Product newProduct = Product.builder()
                 .name(productDTO.getName())
-                .image(productDTO.getImage())
                 .description(productDTO.getDescription())
                 .categoryId(existingCategory)
                 .build();
@@ -107,11 +106,10 @@ public class ProductService implements IProductService {
     public Product updateProduct(int id, ProductDTO productDTO) throws Exception {
         Product existingProduct = getProductById(id);
         if (existingProduct != null) {
-            // Kiểm tra sự tồn tại của sản phẩm khác có cùng tên
-            if (productRepository.existsByName(productDTO.getName())) {
+            // Kiểm tra xem tên sản phẩm mới có trùng với tên sản phẩm hiện tại hay không
+            if (!existingProduct.getName().equals(productDTO.getName()) && productRepository.existsByName(productDTO.getName())) {
                 throw new DataNotFoundException("Product với tên '" + productDTO.getName() + "' bị trùng.");
             }
-
 
             Category existingCategory = categoryRepository
                     .findById(productDTO.getCategoryId())
@@ -119,9 +117,8 @@ public class ProductService implements IProductService {
                             "Không tìm thấy category với id: " + productDTO.getCategoryId()));
             existingProduct.setName(productDTO.getName());
             existingProduct.setCategoryId(existingCategory);
-
             existingProduct.setDescription(productDTO.getDescription());
-            existingProduct.setImage(productDTO.getImage());
+
             return productRepository.save(existingProduct);
         }
         throw new DataNotFoundException("Không tìm thấy product với id = " + id);
@@ -170,13 +167,6 @@ public class ProductService implements IProductService {
     @Override
     public List<ProductImage> getImageUrlByProductId(int productId) {
         return productImageRepository.findByProductId(productId);
-    }
-
-    @Override
-    public ProductImage getImageById(int id) throws DataNotFoundException {
-        return productImageRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy  id = "
-                        + id));
     }
 
 

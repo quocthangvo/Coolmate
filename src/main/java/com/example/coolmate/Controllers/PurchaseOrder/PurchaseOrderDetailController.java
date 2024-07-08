@@ -1,10 +1,13 @@
 package com.example.coolmate.Controllers.PurchaseOrder;
 
 import com.example.coolmate.Dtos.PurchaseOrderDtos.PurchaseOrderDetailDTO;
+import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
+import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrderDetail;
 import com.example.coolmate.Repositories.PurchaseOrder.PurchaseOrderDetailRepository;
+import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderDetailService;
 import jakarta.validation.Valid;
@@ -41,23 +44,23 @@ public class PurchaseOrderDetailController {
 
 
     @GetMapping("/purchase_order/{purchaseOrderId}")
-    public ResponseEntity<?> getpurchaseOrderId(@Valid @PathVariable("purchaseOrderId") int purchaseOrderId) {
-        List<PurchaseOrderDetail> purchaseOrderDetails = purchaseOrderDetailService.findPurchaseOrderById(purchaseOrderId);
-
-        return ResponseEntity.ok().body(purchaseOrderDetails);
-
-
+    public ResponseEntity<ApiResponse<List<PurchaseOrderDetail>>> findByProductId(@PathVariable PurchaseOrder purchaseOrderId) {
+        try {
+            List<PurchaseOrderDetail> purchaseOrderDetails = purchaseOrderDetailService.findByPurchaseOrderId(purchaseOrderId);
+            return ApiResponseUtil.successResponse("Successfully", purchaseOrderDetails);
+        } catch (DataNotFoundException e) {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOrderDetailById(@Valid @PathVariable("id") int id) {
+    public ResponseEntity<?> getPurchaseOrderDetailById(@PathVariable int id) {
         try {
             PurchaseOrderDetail purchaseOrderDetail = purchaseOrderDetailService.getPurchaseOrderDetailById(id);
-            return ResponseEntity.ok().body(purchaseOrderDetail);// trả về theo from đã định dạng
-            //        return ResponseEntity.ok(orderDetail);
+            return ApiResponseUtil.successResponse("Successfully", purchaseOrderDetail);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
-
         }
     }
 
@@ -72,5 +75,25 @@ public class PurchaseOrderDetailController {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
 
         }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updatePurchaseOrderDetailById(
+            @Valid @PathVariable("id") int id,
+            @RequestBody PurchaseOrderDetail updatedDetail) throws DataNotFoundException {
+        // Tìm chi tiết đơn đặt hàng theo ID
+        PurchaseOrderDetail existingDetail = purchaseOrderDetailRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng id: " + id));
+
+        // Cập nhật các trường cần thiết
+        existingDetail.setQuantity(updatedDetail.getQuantity());
+
+        existingDetail.setActive(updatedDetail.isActive());
+
+        // Lưu lại thay đổi vào cơ sở dữ liệu
+        purchaseOrderDetailRepository.save(existingDetail);
+
+        // Trả về phản hồi phù hợp
+        return ResponseEntity.ok("Chi tiết đơn đặt hàng đã được cập nhật thành công.");
     }
 }

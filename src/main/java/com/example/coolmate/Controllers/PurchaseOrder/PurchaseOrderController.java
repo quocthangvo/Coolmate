@@ -5,7 +5,6 @@ import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
-import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.PurchaseOrderResponse;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderService;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -56,20 +54,31 @@ public class PurchaseOrderController {
         }
     }
 
+//    @GetMapping("")
+//    public ResponseEntity<ApiResponse<List<PurchaseOrderResponse>>> getAllPurchaseOrders(
+//            @RequestParam("page") int page,
+//            @RequestParam("limit") int limit
+//    ) {
+//        List<PurchaseOrder> purchaseOrders = purchaseOrderService.getAllPurchaseOrders(page, limit);
+//
+//        // Chuyển đổi từ PurchaseOrder sang PurchaseOrderResponse
+//        List<PurchaseOrderResponse> purchaseOrderResponses = purchaseOrders.stream()
+//                .map(PurchaseOrderResponse::fromPurchase)
+//                .collect(Collectors.toList());
+//
+//        return ApiResponseUtil.successResponse("Successfully", purchaseOrderResponses);
+//
+//    }
+
     @GetMapping("")
-    public ResponseEntity<ApiResponse<List<PurchaseOrderResponse>>> getAllPurchaseOrders(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
-    ) {
+    public ResponseEntity<?> getAllPurchaseOrders(
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "limit") int limit) {
+
+//        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
         List<PurchaseOrder> purchaseOrders = purchaseOrderService.getAllPurchaseOrders(page, limit);
 
-        // Chuyển đổi từ PurchaseOrder sang PurchaseOrderResponse
-        List<PurchaseOrderResponse> purchaseOrderResponses = purchaseOrders.stream()
-                .map(PurchaseOrderResponse::fromPurchase)
-                .collect(Collectors.toList());
-
-        return ApiResponseUtil.successResponse("Successfully", purchaseOrderResponses);
-
+        return ApiResponseUtil.successResponse("Successfully", purchaseOrders);
     }
 
 
@@ -79,14 +88,14 @@ public class PurchaseOrderController {
         //không xóa mất đi order, mà chỉ xóa để active trở về 0
         try {
             purchaseOrderService.deletePurchaseOrder(id);
-            String message = "Xóa purchase order có ID " + id + " thành công";
+            String message = "Hủy đơn hàng có ID " + id + " thành công";
             return ResponseEntity.ok(new SuccessfulMessage(message));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updatePurchaseOrder(
             @PathVariable int id,
             @Valid @RequestBody PurchaseOrderDTO purchaseOrderDTO) {
@@ -97,6 +106,21 @@ public class PurchaseOrderController {
                     "Purchase Order Detail created successfully", purchaseOrderResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchProductByName(@RequestParam("code") String code) {
+        try {
+            List<PurchaseOrder> purchaseOrders = purchaseOrderService.searchPurchaseOrderByCode(code);
+            if (purchaseOrders.isEmpty()) {
+                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : " + code);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            }
+            return ResponseEntity.ok(purchaseOrders);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
+                    + e.getMessage()));
         }
     }
 }

@@ -47,20 +47,19 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
 
         List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
 
-        for (Integer productDetailId : purchaseOrderDetailDTO.getProductDetailId()) {
+        for (PurchaseOrderDetailDTO.ProductDetailOrder detailOrder : purchaseOrderDetailDTO.getProductDetails()) {
             // Tìm product theo id
             ProductDetail productDetail = productDetailRepository
-                    .findById(productDetailId)
+                    .findById(detailOrder.getProductDetailId())
                     .orElseThrow(() -> new DataNotFoundException(
-                            "Không tìm thấy chi tiết sản phẩm id: " + productDetailId));
+                            "Không tìm thấy chi tiết sản phẩm id: " + detailOrder.getProductDetailId()));
 
             PurchaseOrderDetail purchaseOrderDetail = PurchaseOrderDetail.builder()
                     .purchaseOrderId(purchaseOrder)
                     .productDetail(productDetail)
-                    .quantity(purchaseOrderDetailDTO.getQuantity())
-                    .price(purchaseOrderDetailDTO.getPrice())
-                    .unit(purchaseOrderDetailDTO.getUnit())
-                    .active(purchaseOrderDetailDTO.isActive())
+                    .quantity(detailOrder.getQuantity())
+                    .price(detailOrder.getPrice())
+                    .active(true)
                     .build();
 
             // Lưu vào danh sách chi tiết đơn đặt hàng
@@ -71,7 +70,6 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
         return purchaseOrderDetailRepository.saveAll(purchaseOrderDetails);
     }
 
-
     @Override
     public PurchaseOrderDetail getPurchaseOrderDetailById(int id) throws DataNotFoundException {
         return purchaseOrderDetailRepository.findById(id).orElseThrow(()
@@ -79,8 +77,12 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
     }
 
     @Override
-    public List<PurchaseOrderDetail> findPurchaseOrderById(int id) {
-        return purchaseOrderDetailRepository.findPurchaseOrderById(id);
+    public List<PurchaseOrderDetail> findByPurchaseOrderId(PurchaseOrder purchaseOrderId) throws DataNotFoundException {
+        List<PurchaseOrderDetail> purchaseOrderDetails = purchaseOrderDetailRepository.findByPurchaseOrderId(purchaseOrderId);
+        if (purchaseOrderDetails.isEmpty()) {
+            throw new DataNotFoundException("Không tìm thấy product id trong detail: " + purchaseOrderId);
+        }
+        return purchaseOrderDetails;
     }
 
     @Override
@@ -99,6 +101,15 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
 
     @Override
     public PurchaseOrderDetail updatePurchaseOrderDetail(int purchaseOrderDetailId, PurchaseOrderDetailDTO purchaseOrderDetailDTO) throws DataNotFoundException {
-        return null;
+        PurchaseOrderDetail purchaseOrderDetail = purchaseOrderDetailRepository.findById(purchaseOrderDetailId)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng với ID: " + purchaseOrderDetailId));
+
+        // Cập nhật giá và số lượng từ PurchaseOrderDetailDTO
+
+        purchaseOrderDetail.setQuantity(purchaseOrderDetailDTO.getQuantity());
+
+        // Lưu đối tượng đã cập nhật lại vào cơ sở dữ liệu
+        return purchaseOrderDetailRepository.save(purchaseOrderDetail);
+
     }
 }

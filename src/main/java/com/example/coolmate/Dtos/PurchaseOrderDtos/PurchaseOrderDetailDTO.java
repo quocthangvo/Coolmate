@@ -13,18 +13,30 @@ import java.util.List;
 @NoArgsConstructor
 public class PurchaseOrderDetailDTO {
 
-    private String unit;
+    @JsonProperty("purchase_order_id")
+    private int purchaseOrderId;
 
-    private int quantity;
-
-    private float price;
+    @JsonProperty("product_details")
+    private List<ProductDetailOrder> productDetails;
 
     private boolean active;
 
-    @JsonProperty("product_details")
-    private List<Integer> productDetailId;
+    private float price;
 
-    @JsonProperty("purchase_order_id")
-    private int purchaseOrderId;
+    private int quantity;
+
+    @Data
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ProductDetailOrder {
+        @JsonProperty("product_detail_id")
+        private Integer productDetailId;
+
+        private Integer quantity;
+
+        private Float price;
+    }
 
 }

@@ -223,15 +223,5 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/image/{id}")
-    public ResponseEntity<?> getImageById(@PathVariable("id") int id) {
-        try {
-            ProductImage existing = productService.getImageById(id);
-            return ApiResponseUtil.successResponse("successfully", existing);
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
-        }
-
-    }
+   
 }

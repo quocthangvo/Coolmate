@@ -30,6 +30,5 @@ public interface IProductService {
 
     List<ProductImage> getImageUrlByProductId(int productId);
 
-    ProductImage getImageById(int id) throws DataNotFoundException;
 
 }

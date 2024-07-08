@@ -17,8 +17,8 @@ public class PurchaseOrderDetail {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "unit")
-    private String unit;
+//    @Column(name = "unit")
+//    private String unit;
 
     @Column(name = "quantity")
     private int quantity;
@@ -39,4 +39,5 @@ public class PurchaseOrderDetail {
 
     @Column(name = "is_active")
     private boolean active;
+
 }

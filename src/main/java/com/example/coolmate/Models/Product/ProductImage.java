@@ -1,5 +1,6 @@
 package com.example.coolmate.Models.Product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,7 @@ public class ProductImage {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-//    @JsonIgnore// bỏ qua trường
+    @JsonIgnore// bỏ qua trường
     private Product product;
 
     @Column(name = "image_url", length = 250)

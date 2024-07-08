@@ -17,4 +17,6 @@ public interface IPurchaseOrderService {
     void deletePurchaseOrder(int id) throws DataNotFoundException;
 
     PurchaseOrder updatePurchaseOrder(int purchaseOrderId, PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException;
+
+    List<PurchaseOrder> searchPurchaseOrderByCode(String code);
 }
