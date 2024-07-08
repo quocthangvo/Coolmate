@@ -4,6 +4,7 @@ import com.example.coolmate.Dtos.PurchaseOrderDtos.PurchaseOrderDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IPurchaseOrderService {
@@ -19,4 +20,6 @@ public interface IPurchaseOrderService {
     PurchaseOrder updatePurchaseOrder(int purchaseOrderId, PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException;
 
     List<PurchaseOrder> searchPurchaseOrderByCode(String code);
+
+    List<PurchaseOrder> getOrderDate(LocalDate orderDate);
 }

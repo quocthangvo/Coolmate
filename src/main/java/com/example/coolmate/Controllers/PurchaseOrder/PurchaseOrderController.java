@@ -10,10 +10,12 @@ import com.example.coolmate.Responses.PurchaseOrderResponse;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -103,7 +105,7 @@ public class PurchaseOrderController {
             PurchaseOrder updatePurchaseOrder = purchaseOrderService.updatePurchaseOrder(id, purchaseOrderDTO);
             PurchaseOrderResponse purchaseOrderResponse = PurchaseOrderResponse.fromPurchase(updatePurchaseOrder);
             return ApiResponseUtil.successResponse(
-                    "Purchase Order Detail created successfully", purchaseOrderResponse);
+                    "Đơn đặt hàng đã được xác nhận", purchaseOrderResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
@@ -122,5 +124,12 @@ public class PurchaseOrderController {
             return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
                     + e.getMessage()));
         }
+    }
+
+    @GetMapping("/order_date")
+    public ResponseEntity<List<PurchaseOrder>> getOrdersByDate(
+            @RequestParam("orderDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate orderDate) {
+        List<PurchaseOrder> orders = purchaseOrderService.getOrderDate(orderDate);
+        return ResponseEntity.ok(orders);
     }
 }

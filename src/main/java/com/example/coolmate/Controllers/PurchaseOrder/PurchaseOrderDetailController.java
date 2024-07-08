@@ -12,6 +12,7 @@ import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderDetailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,15 +86,19 @@ public class PurchaseOrderDetailController {
         PurchaseOrderDetail existingDetail = purchaseOrderDetailRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng id: " + id));
 
-        // Cập nhật các trường cần thiết
+        // Lấy đối tượng PurchaseOrder từ PurchaseOrderDetail
+        PurchaseOrder purchaseOrder = existingDetail.getPurchaseOrderId();
+
+        // Kiểm tra trạng thái active của PurchaseOrder
+        if (!purchaseOrder.isActive()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không thể cập nhật chi tiết của đơn đặt hàng .");
+        }
+        // Cập nhật
         existingDetail.setQuantity(updatedDetail.getQuantity());
-
-        existingDetail.setActive(updatedDetail.isActive());
-
-        // Lưu lại thay đổi vào cơ sở dữ liệu
         purchaseOrderDetailRepository.save(existingDetail);
 
         // Trả về phản hồi phù hợp
         return ResponseEntity.ok("Chi tiết đơn đặt hàng đã được cập nhật thành công.");
     }
+
 }

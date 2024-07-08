@@ -95,15 +95,14 @@ public class PurchaseOrderService implements IPurchaseOrderService {
         Optional<PurchaseOrder> optionalPurchaseOrder = purchaseOrderRepository.findById(id);
         if (optionalPurchaseOrder.isPresent()) {
             PurchaseOrder purchaseOrder = optionalPurchaseOrder.get();
-            if (purchaseOrder.isActive()) {
+            if (purchaseOrder.isActive() && !PurchaseOrderStatus.DELIVERED.equals(purchaseOrder.getStatus())) {
                 // Đánh dấu đơn hàng là không hoạt động (active = false)
                 purchaseOrder.setActive(false);
                 purchaseOrder.setStatus(PurchaseOrderStatus.CANCELLED);
                 purchaseOrderRepository.save(purchaseOrder);
-
             } else {
-                // Nếu đơn hàng đã được đánh dấu là không hoạt động, trả về thông báo đã xóa
-                throw new DataNotFoundException("Đơn hàng có ID " + id + " đã được xóa trước đó.");
+                // Nếu đơn hàng đã được đánh dấu là không hoạt động hoặc đã được giao, trả về thông báo
+                throw new DataNotFoundException("Đơn hàng đã xóa hoặc được giao.");
             }
         } else {
             // Nếu không tìm thấy đơn đặt hàng với ID đã cung cấp, trả về thông báo lỗi
@@ -111,85 +110,37 @@ public class PurchaseOrderService implements IPurchaseOrderService {
         }
     }
 
-//    @Override
-//    public PurchaseOrder updatePurchaseOrder(int purchaseOrderId, PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException {
-//        // Tìm PurchaseOrder theo ID
-//        PurchaseOrder purchaseOrder = purchaseOrderRepository
-//                .findById(purchaseOrderId)
-//                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng với ID: " + purchaseOrderId));
-//
-//        // Kiểm tra xem trạng thái hiện tại có phải là 'đã giao hàng' không
-//        if (PurchaseOrderStatus.DELIVERED.equals(purchaseOrder.getStatus())) {
-//            throw new IllegalStateException("Đơn hàng đã được giao hàng thành công.");
-//        }
-//
-//        // Các trạng thái hợp lệ
-//        List<String> validStatuses = Arrays.asList(
-//                PurchaseOrderStatus.PENDING,
-//                PurchaseOrderStatus.PROCESSING,
-//                PurchaseOrderStatus.SHIPPING,
-//                PurchaseOrderStatus.DELIVERED,
-//                PurchaseOrderStatus.CANCELLED
-//        );
-//
-//        // Lấy trạng thái mới từ DTO
-//        String newStatus = purchaseOrderDTO.getStatus();
-//
-//        // Kiểm tra xem trạng thái mới có hợp lệ không
-//        if (!validStatuses.contains(newStatus)) {
-//            throw new IllegalArgumentException("Trạng thái không hợp lệ: " + newStatus);
-//        }
-//
-//        // Cập nhật thuộc tính trạng thái
-//        purchaseOrder.setStatus(newStatus);
-//
-//        // Nếu trạng thái mới là 'cancelled', đặt active thành false
-//        if (PurchaseOrderStatus.CANCELLED.equals(newStatus)) {
-//            purchaseOrder.setActive(false);
-//        }
-//
-//        // Nếu trạng thái mới là 'đã giao hàng', cập nhật thông tin kho
-//        if (PurchaseOrderStatus.DELIVERED.equals(newStatus)) {
-//            // Lấy thông tin chi tiết đơn hàng
-//            List<PurchaseOrderDetail> orderDetails = purchaseOrder.getPurchaseOrderDetails();
-//
-//            // Cập nhật kho tồn
-//            for (PurchaseOrderDetail orderItem : orderDetails) {
-//                ProductDetail productDetail = orderItem.getProductDetailId();
-//                int quantity = orderItem.getQuantity();
-//
-//                // Thêm sản phẩm vào kho tồn
-//                inventoryService.addToInventory(productDetail, quantity);
-//            }
-//        }
-//
-//        // Lưu
-//        return purchaseOrderRepository.save(purchaseOrder);
-//    }
 
     @Override
-    public PurchaseOrder updatePurchaseOrder(int purchaseOrderId, PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException {
+    public PurchaseOrder updatePurchaseOrder(int purchaseOrderId, PurchaseOrderDTO purchaseOrderDTO)
+            throws DataNotFoundException {
         // Tìm PurchaseOrder theo ID
         PurchaseOrder purchaseOrder = purchaseOrderRepository.findById(purchaseOrderId)
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy đơn đặt hàng với ID: " + purchaseOrderId));
 
         // Kiểm tra xem nếu đơn đặt hàng đã được hủy hoặc đã giao hàng, không cho phép thay đổi trạng thái
         if (!purchaseOrder.isActive() || PurchaseOrderStatus.DELIVERED.equals(purchaseOrder.getStatus())) {
-            throw new IllegalStateException("Không thể thay đổi trạng thái của đơn đặt hàng đã bị hủy hoặc đã giao hàng thành công.");
+            throw new IllegalStateException("Đơn đặt hàng đã bị hủy hoặc đã được giao.");
         }
-
-        // Cập nhật trạng thái thành 'delivered'
+        //cập nhật
+        purchaseOrder.setActive(false);
         purchaseOrder.setStatus(PurchaseOrderStatus.DELIVERED);
 
-        // Lưu thay đổi vào cơ sở dữ liệu
+        // Lưu
         return purchaseOrderRepository.save(purchaseOrder);
     }
 
     @Override
     public List<PurchaseOrder> searchPurchaseOrderByCode(String code) {
         return purchaseOrderRepository.searchPurchaseOrderByCode(code);
-        
+
     }
+
+    @Override
+    public List<PurchaseOrder> getOrderDate(LocalDate orderDate) {
+        return purchaseOrderRepository.findByOrderDate(orderDate);
+    }
+
 
     // Hàm để sinh mã đơn hàng mới
     public String generateOrderCode() {

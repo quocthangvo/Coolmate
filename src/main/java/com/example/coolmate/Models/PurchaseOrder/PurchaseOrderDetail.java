@@ -37,7 +37,5 @@ public class PurchaseOrderDetail {
     @JoinColumn(name = "purchase_order_id")
     private PurchaseOrder purchaseOrderId;
 
-    @Column(name = "is_active")
-    private boolean active;
 
 }

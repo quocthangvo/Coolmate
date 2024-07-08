@@ -4,7 +4,6 @@ import com.example.coolmate.Dtos.InventoryDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Models.Inventory;
-import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.InventoryService;
 import jakarta.validation.Valid;
@@ -24,9 +23,8 @@ public class InventoryController {
             @Valid @RequestBody InventoryDTO inventoryDTO) {
         try {
             Inventory createdInventory = inventoryService.createInventory(inventoryDTO);
-            ApiResponse<Inventory> response = new ApiResponse<>(
-                    "Category created successfully", createdInventory);
-            return ApiResponseUtil.successResponse("Inventory created successfully", createdInventory);
+
+            return ApiResponseUtil.successResponse("Thêm vào kho thành công ", createdInventory);
 
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));

@@ -1,8 +1,11 @@
 package com.example.coolmate.Models;
 
+import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Builder
 @Getter
@@ -20,13 +23,19 @@ public class Inventory {
     @Column(name = "quantity")
     private int quantity;
 
+    @Column(name = "price")
+    private float price;
+
+    @OneToMany()
+    @JoinColumn(name = "product_details")
+    private List<ProductDetail> productDetails;
+
     @ManyToOne
     @JoinColumn(name = "purchase_order_id")
     private PurchaseOrder purchaseOrder;
 
 //    @ManyToOne
-//    @JoinColumn(name = "product_detail_id", nullable = false)
-//    private ProductDetail productDetail;
-
+//    @JoinColumn(name = "product_details")
+//    private List<ProductDetail> productDetails;
 
 }

@@ -59,7 +59,7 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
                     .productDetail(productDetail)
                     .quantity(detailOrder.getQuantity())
                     .price(detailOrder.getPrice())
-                    .active(true)
+
                     .build();
 
             // Lưu vào danh sách chi tiết đơn đặt hàng
@@ -90,8 +90,7 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
         Optional<PurchaseOrderDetail> optionalPurchaseOrderDetail = purchaseOrderDetailRepository.findById(id);
         if (optionalPurchaseOrderDetail.isPresent()) {
             PurchaseOrderDetail purchaseOrderDetail = optionalPurchaseOrderDetail.get();
-            // Đặt trạng thái active của đơn hàng thành false
-            purchaseOrderDetail.setActive(false);
+
             purchaseOrderDetailRepository.save(purchaseOrderDetail);
         } else {
             throw new DataNotFoundException("Đơn đặt hàng có '" + id + "' không tồn tại.");
@@ -100,16 +99,24 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
 
 
     @Override
-    public PurchaseOrderDetail updatePurchaseOrderDetail(int purchaseOrderDetailId, PurchaseOrderDetailDTO purchaseOrderDetailDTO) throws DataNotFoundException {
+    public PurchaseOrderDetail updatePurchaseOrderDetail(int purchaseOrderDetailId, PurchaseOrderDetailDTO purchaseOrderDetailDTO)
+            throws DataNotFoundException {
         PurchaseOrderDetail purchaseOrderDetail = purchaseOrderDetailRepository.findById(purchaseOrderDetailId)
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng với ID: " + purchaseOrderDetailId));
 
-        // Cập nhật giá và số lượng từ PurchaseOrderDetailDTO
+        // Lấy đối tượng PurchaseOrder từ PurchaseOrderDetail
+        PurchaseOrder purchaseOrder = purchaseOrderDetail.getPurchaseOrderId();
 
+        // Kiểm tra xem đơn hàng có active là false (0) hay không
+        if (!purchaseOrder.isActive()) {
+            throw new IllegalStateException("Không thể cập nhật chi tiết đơn đặt hàng ");
+        }
+
+        // Cập nhật giá và số lượng từ PurchaseOrderDetailDTO
         purchaseOrderDetail.setQuantity(purchaseOrderDetailDTO.getQuantity());
 
         // Lưu đối tượng đã cập nhật lại vào cơ sở dữ liệu
         return purchaseOrderDetailRepository.save(purchaseOrderDetail);
-
     }
+
 }
