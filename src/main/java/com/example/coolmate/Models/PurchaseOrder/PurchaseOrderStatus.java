@@ -10,10 +10,6 @@ import lombok.Setter;
 public class PurchaseOrderStatus {
     public static final String PENDING = "Chờ xử lý";
 
-    public static final String PROCESSING = "Xác nhận";
-
-    public static final String SHIPPING = "Đang giao hàng";
-
     public static final String DELIVERED = "Đã giao hàng";
 
     public static final String CANCELLED = "Hủy";
