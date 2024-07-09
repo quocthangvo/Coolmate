@@ -23,7 +23,6 @@ public class InventoryController {
             @Valid @RequestBody InventoryDTO inventoryDTO) {
         try {
             Inventory createdInventory = inventoryService.createInventory(inventoryDTO);
-
             return ApiResponseUtil.successResponse("Thêm vào kho thành công ", createdInventory);
 
         } catch (DataNotFoundException e) {

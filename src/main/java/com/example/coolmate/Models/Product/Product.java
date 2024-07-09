@@ -21,7 +21,7 @@ public class Product extends BaseEntity {
 
     @Column(name = "name", nullable = false, length = 250)
     private String name;
-    
+
 
     @Column(name = "description")
     private String description;
@@ -37,8 +37,18 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "product_details")
     private List<ProductDetail> productDetails;
 
-
+<<<<<<< HEAD
+=======
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> productImages;
+
+//    @OneToMany
+//    @JoinColumn(name = "product_images")
+//    private List<ProductImage> productImages;
+
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ProductDetail> productDetails;
+>>>>>>> fa66ba8ea5634876d454b158dbea700db8ca17f9
+
 
 }

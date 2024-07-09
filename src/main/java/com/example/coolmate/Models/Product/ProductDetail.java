@@ -19,6 +19,7 @@ public class ProductDetail extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
 //    @JsonIgnore// bỏ qua trường này
+//    @JsonManagedReference // tránh lập vô tận
     private Product product;
 
     @ManyToOne
