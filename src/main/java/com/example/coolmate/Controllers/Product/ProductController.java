@@ -9,6 +9,7 @@ import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.Product.ProductResponse;
+import com.example.coolmate.Services.Impl.Product.IPriceService;
 import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import jakarta.validation.Valid;
@@ -26,10 +27,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/products")
@@ -39,7 +38,7 @@ import java.util.UUID;
 public class ProductController {
     private final IProductService productService;
     private final IProductDetailService productDetailService;
-
+    private final IPriceService priceService;
 
     @PostMapping("")
     public ResponseEntity<?> createProduct(
@@ -76,10 +75,33 @@ public class ProductController {
             @RequestParam(value = "page") int page,
             @RequestParam(value = "limit") int limit) {
 
-//        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
-        List<Product> productPage = productService.getAllProducts(page, limit);
+        List<Product> products = productService.getAllProducts(page, limit);
+        List<Map<String, Object>> productList = products.stream().map(product -> {
+            Map<String, Object> productMap = new HashMap<>();
+            productMap.put("createdAt", product.getCreatedAt());
+            productMap.put("updatedAt", product.getUpdatedAt());
+            productMap.put("id", product.getId());
+            productMap.put("name", product.getName());
+            productMap.put("description", product.getDescription());
+            productMap.put("categoryId", product.getCategoryId());
 
-        return ApiResponseUtil.successResponse("Successfully", productPage);
+            List<Map<String, Object>> prices = priceService.findByProduct(product).stream().map(price -> {
+                Map<String, Object> priceMap = new HashMap<>();
+                priceMap.put("price", price.getPrice());
+                priceMap.put("priceSelling", price.getPriceSelling());
+                priceMap.put("promotionPrice", price.getPromotionPrice());
+                priceMap.put("startDate", price.getStartDate());
+                priceMap.put("endDate", price.getEndDate());
+                return priceMap;
+            }).collect(Collectors.toList());
+
+            productMap.put("prices", prices);
+            productMap.put("productDetails", product.getProductDetails());
+            productMap.put("productImages", product.getProductImages());
+            return productMap;
+        }).collect(Collectors.toList());
+
+        return ApiResponseUtil.successResponse("Successfully", productList);
     }
 
 

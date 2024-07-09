@@ -11,6 +11,9 @@ import com.example.coolmate.Repositories.Product.*;
 import com.example.coolmate.Services.CategoryService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +27,7 @@ public class ProductService implements IProductService {
     private final SizeRepository sizeRepository;
     private final ColorRepository colorRepository;
     private final ProductDetailRepository productDetailRepository;
+    private final PriceRepository priceRepository;
 
     private final CategoryService categoryService;
 
@@ -70,29 +74,19 @@ public class ProductService implements IProductService {
         return newProduct;
     }
 
-//        Integer colorId = 1;
-//        Integer sizeId = 1;
-//
-//        Size size = sizeRepository.findById(sizeId).orElseThrow(() -> new DateTimeException("not found id"));
-//        Color color = colorRepository.findById(colorId).orElseThrow(() -> new DateTimeException("not found id"));
-//
-//        ProductDetail newProductDetail = ProductDetail.builder()
-//                .product(newProduct)
-//                .size(existingSize)
-//                .color(existingColor)
-//                .build();
-//
-//        productDetailRepository.save(newProductDetail);
-
-
-//
-
 
     @Override
     public List<Product> getAllProducts(int page, int limit) {
-        //láy ds sp theo page và limit
-        return productRepository.findAll();
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Product> productPage = productRepository.findAll(pageable);
+        List<Product> products = productPage.getContent();
 
+        for (Product product : products) {
+            List<Price> prices = priceRepository.findByProductDetail_Product(product);
+            product.setPrices(prices);
+        }
+
+        return products;
     }
 
     @Override

@@ -31,18 +31,14 @@ public class Product extends BaseEntity {
     private Category categoryId;
 
     @OneToMany
+    private List<Price> prices;
+
+    @OneToMany
     @JoinColumn(name = "product_details")
     private List<ProductDetail> productDetails;
 
-//    @OneToMany
-//    @JoinColumn(name = "product_images")
-//    private List<ProductImage> productImages;
-
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ProductDetail> productDetails;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> productImages;
 
-//    orphanRemoval = true xóa phan tử con
 }

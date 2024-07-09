@@ -3,6 +3,7 @@ package com.example.coolmate.Services.Impl.Product;
 import com.example.coolmate.Dtos.ProductDtos.PriceDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Product.Price;
+import com.example.coolmate.Models.Product.Product;
 
 import java.util.List;
 
@@ -16,4 +17,5 @@ public interface IPriceService {
     void deletePrice(int id) throws DataNotFoundException;
 
     Price updatePrice(int priceId, PriceDTO priceDTO) throws DataNotFoundException;
+    List<Price> findByProduct(Product product);
 }

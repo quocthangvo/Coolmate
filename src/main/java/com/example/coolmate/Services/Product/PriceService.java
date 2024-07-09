@@ -3,6 +3,7 @@ package com.example.coolmate.Services.Product;
 import com.example.coolmate.Dtos.ProductDtos.PriceDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Product.Price;
+import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Repositories.Product.PriceRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
@@ -75,6 +76,11 @@ public class PriceService implements IPriceService {
         existingPrice.setPromotionPrice(priceDTO.getPromotionPrice());
         // Lưu data mới
         return priceRepository.save(existingPrice);
+    }
+
+    @Override
+    public List<Price> findByProduct(Product product) {
+        return priceRepository.findByProductDetail_Product(product);
     }
 
 
