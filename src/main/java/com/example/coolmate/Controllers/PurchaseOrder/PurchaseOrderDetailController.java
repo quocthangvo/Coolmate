@@ -6,13 +6,13 @@ import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrderDetail;
+import com.example.coolmate.Models.PurchaseOrder.PurchaseOrderStatus;
 import com.example.coolmate.Repositories.PurchaseOrder.PurchaseOrderDetailRepository;
 import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderDetailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -82,23 +82,22 @@ public class PurchaseOrderDetailController {
     public ResponseEntity<?> updatePurchaseOrderDetailById(
             @Valid @PathVariable("id") int id,
             @RequestBody PurchaseOrderDetail updatedDetail) throws DataNotFoundException {
-        // Tìm chi tiết đơn đặt hàng theo ID
         PurchaseOrderDetail existingDetail = purchaseOrderDetailRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng id: " + id));
 
         // Lấy đối tượng PurchaseOrder từ PurchaseOrderDetail
-        PurchaseOrder purchaseOrder = existingDetail.getPurchaseOrderId();
+        PurchaseOrder purchaseOrder = existingDetail.getPurchaseOrder();
 
-        // Kiểm tra trạng thái active của PurchaseOrder
-        if (!purchaseOrder.isActive()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không thể cập nhật chi tiết của đơn đặt hàng .");
+        // Kiểm tra xem nếu đơn đặt hàng đã được giao hàng, không cho phép cập nhật chi tiết
+        if (PurchaseOrderStatus.DELIVERED.equals(purchaseOrder.getStatus())) {
+            throw new IllegalStateException("Không thể cập nhật chi tiết đơn hàng đã giao.");
         }
-        // Cập nhật
+
         existingDetail.setQuantity(updatedDetail.getQuantity());
         purchaseOrderDetailRepository.save(existingDetail);
 
-        // Trả về phản hồi phù hợp
         return ResponseEntity.ok("Chi tiết đơn đặt hàng đã được cập nhật thành công.");
     }
+
 
 }

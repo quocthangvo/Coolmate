@@ -1,6 +1,8 @@
 package com.example.coolmate.Models.Product;
 
 import com.example.coolmate.Models.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @Table(name = "product_details")
 @Entity
+@JsonIgnoreProperties("product")
 public class ProductDetail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +22,7 @@ public class ProductDetail extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
 //    @JsonIgnore// bỏ qua trường này
-//    @JsonManagedReference // tránh lập vô tận
+//    @JsonBackReference
     private Product product;
 
     @ManyToOne
@@ -29,5 +32,11 @@ public class ProductDetail extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "color_id")
     private Color color;
+
+    @JsonProperty("version_sku")
+    private String versionSku;
+
+    @Column(name = "version_name")
+    private String versionName;
 
 }

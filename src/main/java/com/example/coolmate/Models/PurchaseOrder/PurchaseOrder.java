@@ -3,6 +3,7 @@ package com.example.coolmate.Models.PurchaseOrder;
 import com.example.coolmate.Models.BaseEntity;
 import com.example.coolmate.Models.Supplier;
 import com.example.coolmate.Models.User.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,9 +36,6 @@ public class PurchaseOrder extends BaseEntity {
     @Column(name = "shipping_date")
     private LocalDate shippingDate;
 
-    @Column(name = "is_active")
-    private boolean active;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -46,13 +44,10 @@ public class PurchaseOrder extends BaseEntity {
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
-//    @OneToMany(cascade = CascadeType.ALL)
-//    @JoinTable(name = "purchase_order_purchase_order_detail",
-//            joinColumns = @JoinColumn(name = "purchase_order_id"),
-//            inverseJoinColumns = @JoinColumn(name = "purchase_order_detail_id"))
-//    private List<PurchaseOrderDetail> purchaseOrderDetails;
-
-    @OneToMany
-    @JoinColumn(name = "purchase_order_details")
+    @OneToMany(mappedBy = "purchaseOrder")
+    @JsonManagedReference
     private List<PurchaseOrderDetail> purchaseOrderDetails;
+
+    @Column(name = "version_code")
+    private String versionCode;
 }

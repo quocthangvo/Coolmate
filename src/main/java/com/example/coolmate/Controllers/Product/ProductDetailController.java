@@ -11,7 +11,6 @@ import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import com.example.coolmate.Services.Impl.Product.ISizeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -91,20 +90,20 @@ public class ProductDetailController {
         }
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<?> searchProductByName(@RequestParam("name") String name) {
-        try {
-            List<ProductDetail> productDetails = productDetailService.searchProductDetailByName(name);
-            if (productDetails.isEmpty()) {
-                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : " + name);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
-            }
-            return ResponseEntity.ok(productDetails);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
-                    + e.getMessage()));
-        }
-    }
+//    @GetMapping("/search")
+//    public ResponseEntity<?> searchProductByName(@RequestParam("name") String name) {
+//        try {
+//            List<ProductDetail> productDetails = productDetailService.searchProductDetailByName(name);
+//            if (productDetails.isEmpty()) {
+//                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : " + name);
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+//            }
+//            return ResponseEntity.ok(productDetails);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
+//                    + e.getMessage()));
+//        }
+//    }
 
     @GetMapping("/size/{sizeId}")
     public ResponseEntity<?> getProductsBySizeId(@PathVariable int sizeId) {
@@ -139,6 +138,16 @@ public class ProductDetailController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchProductDetails(@RequestParam String versionName) {
+        try {
+            List<ProductDetail> productDetails = productDetailService.searchVersionName(versionName);
+            return ApiResponseUtil.successResponse("successfully", productDetails);
+        } catch (Exception ex) {
+
+            return ResponseEntity.badRequest().body(ex);
+        }
+    }
 
 //    @GetMapping("/search_color")
 //    public ResponseEntity<?> searchProductDetailByColor(@RequestParam("color") String color) {

@@ -28,4 +28,12 @@ public class ProductDTO {
 
     @JsonProperty("colors")
     private List<Integer> colorId;
+
+    private String sku;
+
+    @JsonProperty("version_sku")
+    private String versionSku;
+
+    @JsonProperty("version_name")
+    private String versionName;
 }

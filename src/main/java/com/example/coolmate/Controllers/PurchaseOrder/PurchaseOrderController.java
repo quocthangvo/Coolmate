@@ -5,6 +5,7 @@ import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
+import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.PurchaseOrderResponse;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -56,32 +58,32 @@ public class PurchaseOrderController {
         }
     }
 
-//    @GetMapping("")
-//    public ResponseEntity<ApiResponse<List<PurchaseOrderResponse>>> getAllPurchaseOrders(
-//            @RequestParam("page") int page,
-//            @RequestParam("limit") int limit
-//    ) {
-//        List<PurchaseOrder> purchaseOrders = purchaseOrderService.getAllPurchaseOrders(page, limit);
-//
-//        // Chuyển đổi từ PurchaseOrder sang PurchaseOrderResponse
-//        List<PurchaseOrderResponse> purchaseOrderResponses = purchaseOrders.stream()
-//                .map(PurchaseOrderResponse::fromPurchase)
-//                .collect(Collectors.toList());
-//
-//        return ApiResponseUtil.successResponse("Successfully", purchaseOrderResponses);
-//
-//    }
-
     @GetMapping("")
-    public ResponseEntity<?> getAllPurchaseOrders(
-            @RequestParam(value = "page") int page,
-            @RequestParam(value = "limit") int limit) {
-
-//        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+    public ResponseEntity<ApiResponse<List<PurchaseOrderResponse>>> getAllPurchaseOrders(
+            @RequestParam("page") int page,
+            @RequestParam("limit") int limit
+    ) {
         List<PurchaseOrder> purchaseOrders = purchaseOrderService.getAllPurchaseOrders(page, limit);
 
-        return ApiResponseUtil.successResponse("Successfully", purchaseOrders);
+        // Chuyển đổi từ PurchaseOrder sang PurchaseOrderResponse
+        List<PurchaseOrderResponse> purchaseOrderResponses = purchaseOrders.stream()
+                .map(PurchaseOrderResponse::fromPurchase)
+                .collect(Collectors.toList());
+
+        return ApiResponseUtil.successResponse("Successfully", purchaseOrderResponses);
+
     }
+
+//    @GetMapping("")
+//    public ResponseEntity<?> getAllPurchaseOrders(
+//            @RequestParam(value = "page") int page,
+//            @RequestParam(value = "limit") int limit) {
+//
+////        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+//        List<PurchaseOrder> purchaseOrders = purchaseOrderService.getAllPurchaseOrders(page, limit);
+//
+//        return ApiResponseUtil.successResponse("Successfully", purchaseOrders);
+//    }
 
 
     @DeleteMapping("/delete/{id}")
@@ -127,9 +129,16 @@ public class PurchaseOrderController {
     }
 
     @GetMapping("/order_date")
-    public ResponseEntity<List<PurchaseOrder>> getOrdersByDate(
+    public ResponseEntity<ApiResponse<List<?>>> getOrdersByDate(
             @RequestParam("orderDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate orderDate) {
         List<PurchaseOrder> orders = purchaseOrderService.getOrderDate(orderDate);
-        return ResponseEntity.ok(orders);
+
+        // Map each PurchaseOrder to PurchaseOrderResponse
+        List<PurchaseOrderResponse> orderResponses = orders.stream()
+                .map(PurchaseOrderResponse::fromPurchase)
+                .collect(Collectors.toList());
+
+        return ApiResponseUtil.successResponse("Successfully", orderResponses);
+
     }
 }

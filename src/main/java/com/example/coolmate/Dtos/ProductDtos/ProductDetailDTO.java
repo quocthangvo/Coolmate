@@ -12,9 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDetailDTO {
+
     @JsonProperty("product_id")
     private int productId;
 
+    private String productName;
 
     @JsonProperty("sizes")
     private List<Integer> sizes;
@@ -23,4 +25,9 @@ public class ProductDetailDTO {
     @JsonProperty("colors")
     private List<Integer> colors;
 
+    @JsonProperty("version_sku")
+    private String versionSku;
+
+    @JsonProperty("version_name")
+    private String versionName;
 }

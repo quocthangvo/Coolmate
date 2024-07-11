@@ -27,6 +27,9 @@ public interface IProductDetailService {
 
     List<ProductDetail> findBySizeIdAndColorId(int sizeId, int colorId);
 
+
+    List<ProductDetail> searchVersionName(String versionName);
+
 //    ProductDetail updateProductDetail(int id, ProductDetailDTO productDetailDTO) throws Exception;
 //    ProductDetail getProductDetailByProductIdAndSizeId(int productId, int sizeId);
 //

@@ -2,6 +2,7 @@ package com.example.coolmate.Models.Product;
 
 import com.example.coolmate.Models.BaseEntity;
 import com.example.coolmate.Models.Category;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,19 +31,18 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Category categoryId;
 
-    @OneToMany
-    @JoinColumn(name = "product_details")
+    @OneToMany(mappedBy = "product")
+    @JsonManagedReference
     private List<ProductDetail> productDetails;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> productImages;
 
+    @Column(name = "sku")
+    private String sku;
 //    @OneToMany
 //    @JoinColumn(name = "product_images")
 //    private List<ProductImage> productImages;
-
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ProductDetail> productDetails;
 
 
 //    orphanRemoval = true xóa phan tử con

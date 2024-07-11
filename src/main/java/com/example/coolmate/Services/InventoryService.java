@@ -4,7 +4,7 @@ import com.example.coolmate.Dtos.InventoryDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Inventory;
 import com.example.coolmate.Repositories.InventoryRepository;
-import com.example.coolmate.Repositories.PurchaseOrder.PurchaseOrderRepository;
+import com.example.coolmate.Repositories.PurchaseOrder.PurchaseOrderDetailRepository;
 import com.example.coolmate.Services.Impl.IInventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class InventoryService implements IInventoryService {
     private final InventoryRepository inventoryRepository;
-    private final PurchaseOrderRepository purchaseOrderRepository;
+    private final PurchaseOrderDetailRepository purchaseOrderDetailRepository;
 
     @Override
     public Inventory createInventory(InventoryDTO inventoryDTO) throws DataNotFoundException {
@@ -35,4 +35,6 @@ public class InventoryService implements IInventoryService {
 
         return existingInventory;
     }
+
+
 }

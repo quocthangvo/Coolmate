@@ -1,5 +1,6 @@
 package com.example.coolmate.Dtos.PurchaseOrderDtos;
 
+import com.example.coolmate.Models.Product.ProductDetail;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -17,26 +18,12 @@ public class PurchaseOrderDetailDTO {
     private int purchaseOrderId;
 
     @JsonProperty("product_details")
-    private List<ProductDetailOrder> productDetails;
-
-    private boolean active;
+    private List<ProductDetail> productDetails;
 
     private float price;
 
     private int quantity;
 
-    @Data
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class ProductDetailOrder {
-        @JsonProperty("product_detail_id")
-        private Integer productDetailId;
-
-        private Integer quantity;
-
-        private Float price;
-    }
 
 }
+

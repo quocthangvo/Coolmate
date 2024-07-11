@@ -2,10 +2,8 @@ package com.example.coolmate.Services.PurchaseOrder;
 
 import com.example.coolmate.Dtos.PurchaseOrderDtos.PurchaseOrderDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
-import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrderDetail;
-import com.example.coolmate.Models.PurchaseOrder.PurchaseOrderStatus;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Repositories.PurchaseOrder.PurchaseOrderDetailRepository;
 import com.example.coolmate.Repositories.PurchaseOrder.PurchaseOrderRepository;
@@ -13,7 +11,6 @@ import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderDetailServ
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,48 +23,43 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
     private final PurchaseOrderDetailRepository purchaseOrderDetailRepository;
 
     public List<PurchaseOrderDetail> createPurchaseOrderDetail(PurchaseOrderDetailDTO purchaseOrderDetailDTO) throws DataNotFoundException {
-        // Tìm xem order có tồn tại không
-        PurchaseOrder purchaseOrder = purchaseOrderRepository
-                .findById(purchaseOrderDetailDTO.getPurchaseOrderId())
-                .orElseThrow(() -> new DataNotFoundException(
-                        "Không tìm thấy đơn đặt hàng id: " +
-                                purchaseOrderDetailDTO.getPurchaseOrderId()));
-
-        // Kiểm tra xem đơn đặt hàng có hoạt động không
-        if (!purchaseOrder.isActive()) {
-            throw new IllegalStateException(
-                    "Không thể thêm chi tiết đơn đặt hàng cho đơn hàng không hoạt động.");
-        }
-
-        // Kiểm tra xem đơn đặt hàng ở trạng thái "pending" không
-        if (!purchaseOrder.getStatus().equals(PurchaseOrderStatus.PENDING)) {
-            throw new IllegalStateException(
-                    "Không thể thêm chi tiết đơn đặt hàng cho đơn hàng không ở trạng thái pending.");
-        }
-
-        List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
-
-        for (PurchaseOrderDetailDTO.ProductDetailOrder detailOrder : purchaseOrderDetailDTO.getProductDetails()) {
-            // Tìm product theo id
-            ProductDetail productDetail = productDetailRepository
-                    .findById(detailOrder.getProductDetailId())
-                    .orElseThrow(() -> new DataNotFoundException(
-                            "Không tìm thấy chi tiết sản phẩm id: " + detailOrder.getProductDetailId()));
-
-            PurchaseOrderDetail purchaseOrderDetail = PurchaseOrderDetail.builder()
-                    .purchaseOrderId(purchaseOrder)
-                    .productDetail(productDetail)
-                    .quantity(detailOrder.getQuantity())
-                    .price(detailOrder.getPrice())
-
-                    .build();
-
-            // Lưu vào danh sách chi tiết đơn đặt hàng
-            purchaseOrderDetails.add(purchaseOrderDetail);
-        }
-
-        // Lưu tất cả các chi tiết đơn đặt hàng vào cơ sở dữ liệu
-        return purchaseOrderDetailRepository.saveAll(purchaseOrderDetails);
+//        // Tìm xem order có tồn tại không
+//        PurchaseOrder purchaseOrder = purchaseOrderRepository
+//                .findById(purchaseOrderDetailDTO.getPurchaseOrderId())
+//                .orElseThrow(() -> new DataNotFoundException(
+//                        "Không tìm thấy đơn đặt hàng id: " +
+//                                purchaseOrderDetailDTO.getPurchaseOrderId()));
+//
+//
+//        // Kiểm tra xem đơn đặt hàng ở trạng thái "pending" không
+//        if (!purchaseOrder.getStatus().equals(PurchaseOrderStatus.PENDING)) {
+//            throw new IllegalStateException(
+//                    "Không thể thêm chi tiết đơn đặt hàng cho đơn hàng không ở trạng thái pending.");
+//        }
+//
+//        List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
+//
+//        for (PurchaseOrderDetailDTO.ProductDetailOrder detailOrder : purchaseOrderDetailDTO.getProductDetails()) {
+//            // Tìm product theo id
+//            ProductDetail productDetail = productDetailRepository
+//                    .findById(detailOrder.getProductDetailId())
+//                    .orElseThrow(() -> new DataNotFoundException(
+//                            "Không tìm thấy chi tiết sản phẩm id: " + detailOrder.getProductDetailId()));
+//
+//            PurchaseOrderDetail purchaseOrderDetail = PurchaseOrderDetail.builder()
+//                    .purchaseOrder(purchaseOrder)
+//                    .productDetail(productDetail)
+//                    .quantity(detailOrder.getQuantity())
+//                    .price(detailOrder.getPrice())
+//                    .build();
+//
+//            // Lưu vào danh sách chi tiết đơn đặt hàng
+//            purchaseOrderDetails.add(purchaseOrderDetail);
+//        }
+//
+//        // Lưu tất cả các chi tiết đơn đặt hàng vào cơ sở dữ liệu
+//        return purchaseOrderDetailRepository.saveAll(purchaseOrderDetails);
+        return null;
     }
 
     @Override
@@ -78,9 +70,9 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
 
     @Override
     public List<PurchaseOrderDetail> findByPurchaseOrderId(PurchaseOrder purchaseOrderId) throws DataNotFoundException {
-        List<PurchaseOrderDetail> purchaseOrderDetails = purchaseOrderDetailRepository.findByPurchaseOrderId(purchaseOrderId);
+        List<PurchaseOrderDetail> purchaseOrderDetails = purchaseOrderDetailRepository.findByPurchaseOrder(purchaseOrderId);
         if (purchaseOrderDetails.isEmpty()) {
-            throw new DataNotFoundException("Không tìm thấy product id trong detail: " + purchaseOrderId);
+            throw new DataNotFoundException("Không tìm thấy chi tiết đơn hàng với ID: " + purchaseOrderId);
         }
         return purchaseOrderDetails;
     }
@@ -105,12 +97,7 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng với ID: " + purchaseOrderDetailId));
 
         // Lấy đối tượng PurchaseOrder từ PurchaseOrderDetail
-        PurchaseOrder purchaseOrder = purchaseOrderDetail.getPurchaseOrderId();
-
-        // Kiểm tra xem đơn hàng có active là false (0) hay không
-        if (!purchaseOrder.isActive()) {
-            throw new IllegalStateException("Không thể cập nhật chi tiết đơn đặt hàng ");
-        }
+        PurchaseOrder purchaseOrder = purchaseOrderDetail.getPurchaseOrder();
 
         // Cập nhật giá và số lượng từ PurchaseOrderDetailDTO
         purchaseOrderDetail.setQuantity(purchaseOrderDetailDTO.getQuantity());
@@ -118,5 +105,6 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
         // Lưu đối tượng đã cập nhật lại vào cơ sở dữ liệu
         return purchaseOrderDetailRepository.save(purchaseOrderDetail);
     }
+
 
 }

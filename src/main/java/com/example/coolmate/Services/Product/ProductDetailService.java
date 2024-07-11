@@ -167,6 +167,10 @@ public class ProductDetailService implements IProductDetailService {
         return List.of();
     }
 
+    @Override
+    public List<ProductDetail> searchVersionName(String versionName) {
+        return productDetailRepository.findByVersionNameContaining(versionName);
+    }
 
 //    @Override
 //    public ProductDetail getProductDetailByProductIdSizeAndColor(int productId, int sizeId, int colorId) {

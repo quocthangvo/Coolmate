@@ -39,11 +39,12 @@ public class PurchaseOrderResponse extends BaseResponse {
     @JsonProperty("phone_number")
     private String phoneNumber;
 
-    @JsonProperty("address")
-    private String address;
 
     @JsonProperty("supplier_name")
     private String supplierName;
+
+    @JsonProperty("version_code")
+    private String versionCode;
 
     public static PurchaseOrderResponse fromPurchase(PurchaseOrder purchaseOrder) {
         PurchaseOrderResponse purchaseOrderResponse = PurchaseOrderResponse.builder()
@@ -56,8 +57,8 @@ public class PurchaseOrderResponse extends BaseResponse {
                 .roleId(purchaseOrder.getUser().getRole().getId()) // Assuming you have a method to get role ID
                 .userName(purchaseOrder.getUser().getFullName())
                 .phoneNumber(purchaseOrder.getUser().getPhoneNumber())
-//                .address(purchaseOrder.getUser().getAddress())
                 .supplierName(purchaseOrder.getSupplier().getName())
+                .versionCode(purchaseOrder.getVersionCode())
                 .build();
         purchaseOrderResponse.setCreatedAt(purchaseOrder.getCreatedAt());
         purchaseOrderResponse.setUpdatedAt(purchaseOrder.getUpdatedAt());

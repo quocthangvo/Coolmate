@@ -44,6 +44,7 @@ public class ProductService implements IProductService {
         Product newProduct = Product.builder()
                 .name(productDTO.getName())
                 .description(productDTO.getDescription())
+                .sku(productDTO.getSku())
                 .categoryId(existingCategory)
                 .build();
 
@@ -63,6 +64,8 @@ public class ProductService implements IProductService {
                                 .product(newProduct)
                                 .size(existingSize)
                                 .color(existingColor)
+                                .versionSku(productDTO.getSku() + "_" + existingSize.getId() + "_" + existingColor.getId())
+                                .versionName(productDTO.getName() + "_" + existingSize.getName() + "_" + existingColor.getName())
                                 .build();
                 productDetailRepository.save(newProductDetail);
             }
@@ -90,7 +93,6 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getAllProducts(int page, int limit) {
-        //láy ds sp theo page và limit
         return productRepository.findAll();
 
     }
@@ -118,6 +120,7 @@ public class ProductService implements IProductService {
             existingProduct.setName(productDTO.getName());
             existingProduct.setCategoryId(existingCategory);
             existingProduct.setDescription(productDTO.getDescription());
+            existingProduct.setSku(productDTO.getSku());
 
             return productRepository.save(existingProduct);
         }
