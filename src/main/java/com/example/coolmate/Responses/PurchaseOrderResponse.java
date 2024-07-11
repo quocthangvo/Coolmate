@@ -46,6 +46,13 @@ public class PurchaseOrderResponse extends BaseResponse {
     @JsonProperty("version_code")
     private String versionCode;
 
+    @JsonProperty("product_detail_id")
+    private int productDetailId;
+
+    private float price;
+
+    private int quantity;
+
     public static PurchaseOrderResponse fromPurchase(PurchaseOrder purchaseOrder) {
         PurchaseOrderResponse purchaseOrderResponse = PurchaseOrderResponse.builder()
                 .id(purchaseOrder.getId())
@@ -59,6 +66,7 @@ public class PurchaseOrderResponse extends BaseResponse {
                 .phoneNumber(purchaseOrder.getUser().getPhoneNumber())
                 .supplierName(purchaseOrder.getSupplier().getName())
                 .versionCode(purchaseOrder.getVersionCode())
+                
                 .build();
         purchaseOrderResponse.setCreatedAt(purchaseOrder.getCreatedAt());
         purchaseOrderResponse.setUpdatedAt(purchaseOrder.getUpdatedAt());

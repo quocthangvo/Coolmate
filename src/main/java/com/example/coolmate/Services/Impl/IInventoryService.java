@@ -4,6 +4,8 @@ import com.example.coolmate.Dtos.InventoryDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Inventory;
 
+import java.util.List;
+
 public interface IInventoryService {
 
 
@@ -13,4 +15,5 @@ public interface IInventoryService {
 
     Inventory updateInventory(int Id, InventoryDTO inventoryDTO) throws DataNotFoundException;
 
+    List<Inventory> getAllInventories(int page, int limit);
 }

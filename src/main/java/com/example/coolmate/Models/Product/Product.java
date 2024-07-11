@@ -40,9 +40,6 @@ public class Product extends BaseEntity {
 
     @Column(name = "sku")
     private String sku;
-//    @OneToMany
-//    @JoinColumn(name = "product_images")
-//    private List<ProductImage> productImages;
 
 
 //    orphanRemoval = true xóa phan tử con

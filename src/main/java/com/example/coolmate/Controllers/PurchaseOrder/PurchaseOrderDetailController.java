@@ -94,6 +94,7 @@ public class PurchaseOrderDetailController {
         }
 
         existingDetail.setQuantity(updatedDetail.getQuantity());
+        existingDetail.setPrice(updatedDetail.getPrice());
         purchaseOrderDetailRepository.save(existingDetail);
 
         return ResponseEntity.ok("Chi tiết đơn đặt hàng đã được cập nhật thành công.");

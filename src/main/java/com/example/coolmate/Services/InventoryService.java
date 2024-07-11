@@ -9,6 +9,8 @@ import com.example.coolmate.Services.Impl.IInventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class InventoryService implements IInventoryService {
@@ -34,6 +36,11 @@ public class InventoryService implements IInventoryService {
         inventoryRepository.save(existingInventory); // Lưu dữ liệu đã được cập nhật
 
         return existingInventory;
+    }
+
+    @Override
+    public List<Inventory> getAllInventories(int page, int limit) {
+        return inventoryRepository.findAll();
     }
 
 

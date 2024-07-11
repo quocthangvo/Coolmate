@@ -101,6 +101,7 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
 
         // Cập nhật giá và số lượng từ PurchaseOrderDetailDTO
         purchaseOrderDetail.setQuantity(purchaseOrderDetailDTO.getQuantity());
+        purchaseOrderDetail.setPrice(purchaseOrderDetailDTO.getPrice());
 
         // Lưu đối tượng đã cập nhật lại vào cơ sở dữ liệu
         return purchaseOrderDetailRepository.save(purchaseOrderDetail);

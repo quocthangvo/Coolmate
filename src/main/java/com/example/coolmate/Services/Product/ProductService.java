@@ -39,7 +39,6 @@ public class ProductService implements IProductService {
                 .orElseThrow(() -> new DataNotFoundException(
                         "Không tìm thấy danh mục với ID: " + productDTO.getCategoryId()));
 
-
         // Create new product
         Product newProduct = Product.builder()
                 .name(productDTO.getName())
@@ -51,8 +50,10 @@ public class ProductService implements IProductService {
         // Save the product to the database
         newProduct = productRepository.save(newProduct);
 
+        // Lấy danh sách hình ảnh của sản phẩm
+        List<ProductImage> productImages = newProduct.getProductImages();
 
-//duyệt vòng lập để truyền list
+        // Duyệt vòng lặp để truyền list
         for (Integer size : productDTO.getSizeId()) {
             for (Integer color : productDTO.getColorId()) {
                 Size existingSize = sizeRepository.findById(size).orElseThrow(()
@@ -66,12 +67,14 @@ public class ProductService implements IProductService {
                                 .color(existingColor)
                                 .versionSku(productDTO.getSku() + "_" + existingSize.getId() + "_" + existingColor.getId())
                                 .versionName(productDTO.getName() + "_" + existingSize.getName() + "_" + existingColor.getName())
+                               
                                 .build();
                 productDetailRepository.save(newProductDetail);
             }
         }
         return newProduct;
     }
+
 
 //        Integer colorId = 1;
 //        Integer sizeId = 1;

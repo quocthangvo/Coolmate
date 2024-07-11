@@ -30,4 +30,6 @@ public class ProductDetailDTO {
 
     @JsonProperty("version_name")
     private String versionName;
+
+
 }

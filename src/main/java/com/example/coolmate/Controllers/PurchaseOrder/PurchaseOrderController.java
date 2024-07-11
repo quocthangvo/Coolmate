@@ -121,7 +121,11 @@ public class PurchaseOrderController {
                 ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : " + code);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
             }
-            return ResponseEntity.ok(purchaseOrders);
+            List<PurchaseOrderResponse> orderResponses = purchaseOrders.stream()
+                    .map(PurchaseOrderResponse::fromPurchase)
+                    .collect(Collectors.toList());
+
+            return ApiResponseUtil.successResponse("Successfully", orderResponses);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
                     + e.getMessage()));
