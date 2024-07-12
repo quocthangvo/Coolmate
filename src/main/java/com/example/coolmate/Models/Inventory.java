@@ -20,6 +20,9 @@ public class Inventory {
     @Column(name = "quantity")
     private int quantity;
 
+    @Column(name = "price")
+    private float price;
+
     @Column(name = "reserved_quantity")
     private int reservedQuantity;
 

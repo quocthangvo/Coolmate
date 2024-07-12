@@ -24,7 +24,7 @@ public class PurchaseOrderDTO {
 
     private String status;
 
-    @JsonProperty("purchase_order_detail")
+    @JsonProperty("purchase_order_details")
     private List<PurchaseOrderDetailDTO> purchaseOrderDetails;
 
     @JsonProperty("version_code")

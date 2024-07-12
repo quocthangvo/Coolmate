@@ -2,9 +2,7 @@ package com.example.coolmate.Services.Order;
 
 import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
-import com.example.coolmate.Models.Order.Order;
 import com.example.coolmate.Models.Order.OrderDetail;
-import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Repositories.Order.OrderDetailRepository;
 import com.example.coolmate.Repositories.Order.OrderRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
@@ -25,39 +23,40 @@ public class OrderDetailService implements IOrderDetailService {
     @Override
     public OrderDetail createOrderDetail(OrderDetailDTO orderDetailDTO) throws Exception {
         // Tìm xem order có tồn tại không
-        Order order = orderRepository.findById(orderDetailDTO.getOrderId())
-                .orElseThrow(() -> new DataNotFoundException(
-                        "Không tìm thấy đơn hàng với id " + orderDetailDTO.getOrderId()));
-
-        // Kiểm tra xem order có active không
-        if (!order.isActive()) {
-            throw new IllegalStateException("Không thể thêm chi tiết đơn hàng vào đơn hàng không hoạt động.");
-        }
-
-        // Tìm sản phẩm theo id
-        ProductDetail productDetail = productDetailRepository.findById(orderDetailDTO.getProductDetail())
-                .orElseThrow(() -> new DataNotFoundException(
-                        "Không tìm thấy sản phẩm với id " + orderDetailDTO.getProductDetail()));
-
-        // Kiểm tra xem sản phẩm đã tồn tại trong chi tiết đơn hàng chưa
-        OrderDetail existingOrderDetail = orderDetailRepository.findByOrderAndProductDetail(order, productDetail);
-
-        if (existingOrderDetail != null) {
-            // Nếu sản phẩm đã tồn tại trong chi tiết đơn hàng, chỉ cần tăng số lượng đặt lên
-            existingOrderDetail.setQuantity(existingOrderDetail.getQuantity() + orderDetailDTO.getQuantity());
-            existingOrderDetail.setTotalMoney(existingOrderDetail.getPrice() * existingOrderDetail.getQuantity());
-            return orderDetailRepository.save(existingOrderDetail);
-        } else {
-            // Nếu sản phẩm chưa tồn tại trong chi tiết đơn hàng, tạo một bản ghi mới
-            OrderDetail orderDetail = OrderDetail.builder()
-                    .order(order)
-                    .productDetail(productDetail)
-                    .quantity(orderDetailDTO.getQuantity())
-                    .price(orderDetailDTO.getPrice())
-                    .totalMoney(orderDetailDTO.getTotalMoney())
-                    .build();
-            return orderDetailRepository.save(orderDetail);
-        }
+//        Order order = orderRepository.findById(orderDetailDTO.getOrderId())
+//                .orElseThrow(() -> new DataNotFoundException(
+//                        "Không tìm thấy đơn hàng với id " + orderDetailDTO.getOrderId()));
+//
+//        // Kiểm tra xem order có active không
+//        if (!order.isActive()) {
+//            throw new IllegalStateException("Không thể thêm chi tiết đơn hàng vào đơn hàng không hoạt động.");
+//        }
+//
+//        // Tìm sản phẩm theo id
+//        ProductDetail productDetail = productDetailRepository.findById(orderDetailDTO.getProductDetailId())
+//                .orElseThrow(() -> new DataNotFoundException(
+//                        "Không tìm thấy sản phẩm với id " + orderDetailDTO.getProductDetailId()));
+//
+//        // Kiểm tra xem sản phẩm đã tồn tại trong chi tiết đơn hàng chưa
+//        OrderDetail existingOrderDetail = orderDetailRepository.findByOrderAndProductDetail(order, productDetail);
+//
+//        if (existingOrderDetail != null) {
+//            // Nếu sản phẩm đã tồn tại trong chi tiết đơn hàng, chỉ cần tăng số lượng đặt lên
+//            existingOrderDetail.setQuantity(existingOrderDetail.getQuantity() + orderDetailDTO.getQuantity());
+//            existingOrderDetail.setTotalMoney(existingOrderDetail.getPrice() * existingOrderDetail.getQuantity());
+//            return orderDetailRepository.save(existingOrderDetail);
+//        } else {
+//            // Nếu sản phẩm chưa tồn tại trong chi tiết đơn hàng, tạo một bản ghi mới
+//            OrderDetail orderDetail = OrderDetail.builder()
+//                    .order(order)
+//                    .productDetail(productDetail)
+//                    .quantity(orderDetailDTO.getQuantity())
+//                    .price(orderDetailDTO.getPrice())
+//                    .totalMoney(orderDetailDTO.getTotalMoney())
+//                    .build();
+//            return orderDetailRepository.save(orderDetail);
+//        }
+        return null;
     }
 
 

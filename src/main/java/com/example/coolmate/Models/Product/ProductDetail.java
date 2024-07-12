@@ -39,4 +39,5 @@ public class ProductDetail extends BaseEntity {
     @Column(name = "version_name")
     private String versionName;
 
+    
 }

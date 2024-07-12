@@ -1,6 +1,7 @@
 package com.example.coolmate.Responses;
 
 import com.example.coolmate.Models.Order.Order;
+import com.example.coolmate.Models.Product.ProductDetail;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -37,6 +38,8 @@ public class OrderResponse extends BaseResponse {
     @JsonProperty("status")
     private String status;
 
+    private ProductDetail productDetail;
+
     public static OrderResponse fromOrder(Order order) {
         OrderResponse orderResponse = OrderResponse.builder()
                 .fullname(order.getFullName())
@@ -47,6 +50,7 @@ public class OrderResponse extends BaseResponse {
                 .status(order.getStatus())
                 .totalMoney(order.getTotalMoney())
                 .paymentMethod(order.getPaymentMethod())
+                .productDetail(new ProductDetail())
                 .build();
         orderResponse.setCreatedAt(order.getCreatedAt());
         orderResponse.setUpdatedAt(order.getUpdatedAt());

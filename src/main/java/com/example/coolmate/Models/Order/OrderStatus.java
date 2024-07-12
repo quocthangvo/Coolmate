@@ -8,13 +8,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class OrderStatus {
-    public static final String PENDING = "pending";
+    public static final String PENDING = "Chờ xủ lý";
 
-    public static final String PROCESSING = "processing";
+    public static final String PROCESSING = "Xác nhận";
 
-    public static final String SHIPPING = "shipping";
+    public static final String SHIPPING = "Đang giao hàng";
 
-    public static final String DELIVERED = "delivered";
+    public static final String DELIVERED = "Đã giao hàng";
 
-    public static final String CANCELLED = "cancelled";
+    public static final String CANCELLED = "Hủy";
 }

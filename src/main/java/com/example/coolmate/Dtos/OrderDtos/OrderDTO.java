@@ -1,9 +1,11 @@
 package com.example.coolmate.Dtos.OrderDtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Getter
@@ -28,6 +30,12 @@ public class OrderDTO {
 
     private String note;
 
+    @JsonProperty("order_code")
+    private String orderCode;
+
+    @JsonProperty("order_date")
+    private LocalDateTime orderDate;
+
     @JsonProperty("total_money")
     private float totalMoney;
 
@@ -38,7 +46,7 @@ public class OrderDTO {
     private String shippingAddress;
 
     @JsonProperty("shipping_date")
-    private LocalDate shippingDate;
+    private LocalDateTime shippingDate;
 
     @JsonProperty("payment_method")
     private String paymentMethod;
@@ -47,4 +55,10 @@ public class OrderDTO {
     private boolean active;
 
     private String status;
+
+    @JsonProperty("order_details")
+    private List<OrderDetailDTO> orderDetails;
+
+    @Column(name = "version_order_code")
+    private String versionOrderCode;
 }

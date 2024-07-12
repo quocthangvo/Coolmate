@@ -2,11 +2,12 @@ package com.example.coolmate.Models.Order;
 
 import com.example.coolmate.Models.BaseEntity;
 import com.example.coolmate.Models.User.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -32,14 +33,14 @@ public class Order extends BaseEntity {
     @Column(name = "address", length = 100)
     private String address;
 
-    @Column(name = "date_of_birth")
-    private Date dateOfBirth;
-
     @Column(name = "note", length = 200)
     private String note;
 
+    @Column(name = "order_code")
+    private String orderCode;
+
     @Column(name = "order_date")
-    private Date orderDate;
+    private LocalDateTime orderDate;
 
     @Column(name = "status")
     private String status;
@@ -51,13 +52,13 @@ public class Order extends BaseEntity {
     private String shippingMethod;
 
     @Column(name = "shipping_date")
-    private LocalDate shippingDate;
+    private LocalDateTime shippingDate;
 
     @Column(name = "payment_method")
     private String paymentMethod;
 
     @Column(name = "payment_date")
-    private Date paymentDate;
+    private LocalDateTime paymentDate;
 
     @Column(name = "is_active")
     private boolean active;
@@ -65,4 +66,8 @@ public class Order extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "order")
+    @JsonManagedReference
+    private List<OrderDetail> orderDetails;
 }

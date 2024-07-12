@@ -1,20 +1,26 @@
 package com.example.coolmate.Services.Order;
 
 import com.example.coolmate.Dtos.OrderDtos.OrderDTO;
+import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Order.Order;
+import com.example.coolmate.Models.Order.OrderDetail;
 import com.example.coolmate.Models.Order.OrderStatus;
+import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Models.User.User;
+import com.example.coolmate.Repositories.Order.OrderDetailRepository;
 import com.example.coolmate.Repositories.Order.OrderRepository;
+import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Repositories.UserRepository;
 import com.example.coolmate.Services.Impl.Order.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 
@@ -24,35 +30,79 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final ProductDetailRepository productDetailRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
     @Override
     public Order createOrder(OrderDTO orderDTO) throws Exception {
-        //tìm xem userid có tồn tại hay ko
+        // Tìm xem user có tồn tại không
         User user = userRepository.findById(orderDTO.getUserId())
-                .orElseThrow(() -> new DataNotFoundException("Cannot find user with id: "
-                        + orderDTO.getUserId()));
-        //convert orderDTO-> order
-        // dùng thư viện Model Mapper
-        //tạo 1 lồng bảng ánh xạ riêng để kiểm soát việc ánh xạ
+                .orElseThrow(() -> new DataNotFoundException("Cannot find user with id: " + orderDTO.getUserId()));
+
+        // Convert từ OrderDTO sang Order sử dụng Model Mapper
         modelMapper.typeMap(OrderDTO.class, Order.class)
                 .addMappings(mapper -> mapper.skip(Order::setId));
-        //cập nhật các truòng của đơn hàng từ orderDTO
-        Order order = new Order();
-        modelMapper.map(orderDTO, order);
+        Order order = modelMapper.map(orderDTO, Order.class);
         order.setUser(user);
-        order.setOrderDate(new Date());
-        order.setStatus(OrderStatus.PENDING);
-        //kiểm tra shipping date phải > = ngày hôm nay
-        LocalDate shippingDate = orderDTO.getShippingDate() == null ? LocalDate.now() :
-                orderDTO.getShippingDate();
-        if (shippingDate.isBefore(LocalDate.now())) {
-            throw new DataNotFoundException("Date must be at least body");
+        LocalDateTime orderDateTime = LocalDateTime.now();
+        order.setOrderDate(orderDateTime);
+
+        // Thiết lập ngày giao hàng dự kiến sau 3 ngày từ ngày đặt
+        LocalDateTime expectedShippingDateTime = orderDateTime.plusDays(3);
+        order.setShippingDate(expectedShippingDateTime);
+
+        // Kiểm tra và cập nhật ngày giao hàng thực tế nếu có
+        LocalDateTime actualShippingDateTime = orderDTO.getShippingDate();
+        if (actualShippingDateTime != null) {
+            order.setShippingDate(actualShippingDateTime); // Sử dụng ngày giao hàng thực tế nếu được cung cấp
         }
-        order.setShippingDate(shippingDate);
+
+        // Tạo mã đơn hàng ngẫu nhiên với tiền tố "OR-"
+        String orderCode = generateOrderCode();
+        order.setOrderCode(orderCode); // Đảm bảo bạn có trường orderCode trong entity Order
+
+        order.setStatus(OrderStatus.PENDING);
         order.setActive(true);
-        orderRepository.save(order);
+
+        // Lưu đơn hàng vào cơ sở dữ liệu
+        order = orderRepository.save(order);
+
+        // Tạo danh sách chi tiết đơn hàng và lưu vào cơ sở dữ liệu
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        for (OrderDetailDTO detailDTO : orderDTO.getOrderDetails()) {
+            ProductDetail productDetail = productDetailRepository.findById(detailDTO.getProductDetailId())
+                    .orElseThrow(() -> new DataNotFoundException("Không tìm thấy sản phẩm với id: " + detailDTO.getProductDetailId()));
+
+            OrderDetail orderDetail = OrderDetail.builder()
+                    .order(order)
+                    .productDetail(productDetail)
+                    .quantity(detailDTO.getQuantity())
+                    .price(detailDTO.getPrice())
+                    .totalMoney(detailDTO.getTotalMoney())
+                    .versionOrderCode(orderDTO.getOrderCode())
+                    .build();
+
+            orderDetails.add(orderDetailRepository.save(orderDetail));
+        }
+
+        // Cập nhật danh sách chi tiết đơn hàng vào đơn hàng chính
+        order.setOrderDetails(orderDetails);
+
         return order;
     }
+
+    // Phương thức để tạo mã đơn hàng ngẫu nhiên
+    private String generateOrderCode() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder("OR-");
+        for (int i = 0; i < 7; i++) {
+            int index = random.nextInt(characters.length());
+            sb.append(characters.charAt(index));
+        }
+        return sb.toString();
+    }
+
 
     @Override
     public Order getOrderById(int id) throws DataNotFoundException {
@@ -66,6 +116,10 @@ public class OrderService implements IOrderService {
         return orderRepository.findByUserId(userId);
     }
 
+    @Override
+    public List<Order> getAllOrders(int page, int limit) {
+        return orderRepository.findAll();
+    }
 
     @Override
     public void deleteOrder(int id) throws DataNotFoundException {
@@ -106,7 +160,9 @@ public class OrderService implements IOrderService {
         if (!validStatuses.contains(newStatus)) {
             throw new IllegalArgumentException("Trạng thái không hợp lệ: " + newStatus);
         }
-        if (!order.isActive() || OrderStatus.DELIVERED.equals(order.getStatus())) {
+
+        // Kiểm tra nếu đơn hàng ở trạng thái đã giao hoặc đã hủy
+        if (OrderStatus.DELIVERED.equals(order.getStatus()) || OrderStatus.CANCELLED.equals(order.getStatus())) {
             throw new IllegalStateException(
                     "Không thể thay đổi trạng thái của đơn đặt hàng đã bị hủy hoặc đã giao hàng thành công.");
         }
@@ -122,4 +178,6 @@ public class OrderService implements IOrderService {
         // Lưu
         return orderRepository.save(order);
     }
+
+
 }

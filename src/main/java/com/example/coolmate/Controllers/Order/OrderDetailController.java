@@ -4,6 +4,7 @@ import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Order.OrderDetail;
+import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.OrderDetailResponse;
 import com.example.coolmate.Services.Order.OrderDetailService;
 import jakarta.validation.Valid;
@@ -16,6 +17,8 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/order_details")
 @RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
+
 public class OrderDetailController {
 
     private final OrderDetailService orderDetailService;
@@ -36,11 +39,7 @@ public class OrderDetailController {
     @GetMapping("/order/{orderId}")
     public ResponseEntity<?> getOrderDetail(@Valid @PathVariable("orderId") int orderId) {
         List<OrderDetail> orderDetails = orderDetailService.findByOrderId(orderId);
-        List<OrderDetailResponse> orderDetailResponses = orderDetails
-                .stream()
-                .map(OrderDetailResponse::fromOrderDetail)
-                .toList();
-        return ResponseEntity.ok(orderDetailResponses);
+        return ApiResponseUtil.successResponse("Successfully", orderDetails);
 
     }
 
