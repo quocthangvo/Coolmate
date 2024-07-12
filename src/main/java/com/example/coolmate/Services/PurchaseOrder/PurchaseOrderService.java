@@ -1,6 +1,7 @@
 package com.example.coolmate.Services.PurchaseOrder;
 
 import com.example.coolmate.Dtos.PurchaseOrderDtos.PurchaseOrderDTO;
+import com.example.coolmate.Dtos.PurchaseOrderDtos.PurchaseOrderDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Inventory;
 import com.example.coolmate.Models.Product.ProductDetail;
@@ -48,9 +49,14 @@ public class PurchaseOrderService implements IPurchaseOrderService {
 
     @Override
     public PurchaseOrder createPurchaseOrder(PurchaseOrderDTO purchaseOrderDTO) throws DataNotFoundException {
-        // Tìm người dùng có quyền admin
-        User user = userRepository.findByRoleId(2)
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy người dùng có quyền admin"));
+        // Tìm người dùng theo ID từ DTO
+        User user = userRepository.findById(purchaseOrderDTO.getUserId())
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy người dùng với id: " + purchaseOrderDTO.getUserId()));
+
+        // Kiểm tra quyền người dùng
+        if (user.getRole().getId() != 2) {
+            throw new DataNotFoundException("Người dùng không có quyền admin");
+        }
 
         // Ngày đặt hàng bắt đầu từ hôm nay
         LocalDateTime orderDate = LocalDateTime.now();
@@ -73,25 +79,25 @@ public class PurchaseOrderService implements IPurchaseOrderService {
                 .versionCode(purchaseOrderDTO.getVersionCode())
                 .build();
 
-        // Kiểm tra và xử lý danh sách productDetailId từ DTO
-        List<Integer> productDetailIds = purchaseOrderDTO.getProductDetailId();
-        if (productDetailIds == null || productDetailIds.isEmpty()) {
-            throw new IllegalArgumentException("Danh sách productDetailId không được để trống hoặc null.");
+        // Kiểm tra và xử lý danh sách chi tiết đơn hàng từ DTO
+        List<PurchaseOrderDetailDTO> purchaseOrderDetailDTOs = purchaseOrderDTO.getPurchaseOrderDetails();
+        if (purchaseOrderDetailDTOs == null || purchaseOrderDetailDTOs.isEmpty()) {
+            throw new IllegalArgumentException("Danh sách chi tiết đơn hàng không được để trống hoặc null.");
         }
 
-        // Tạo danh sách chi tiết đơn hàng từ danh sách productDetailId từ DTO
+        // Tạo danh sách chi tiết đơn hàng từ DTO
         List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
-        for (Integer productDetailId : productDetailIds) {
+        for (PurchaseOrderDetailDTO purchaseOrderDetailDTO : purchaseOrderDetailDTOs) {
             // Tìm product detail theo ID từ DTO
-            ProductDetail productDetail = productDetailRepository.findById(productDetailId)
-                    .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết sản phẩm id: " + productDetailId));
+            ProductDetail productDetail = productDetailRepository.findById(purchaseOrderDetailDTO.getProductDetailId())
+                    .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết sản phẩm với id: " + purchaseOrderDetailDTO.getProductDetailId()));
 
             // Tạo đối tượng PurchaseOrderDetail từ DTO
             PurchaseOrderDetail purchaseOrderDetail = PurchaseOrderDetail.builder()
                     .purchaseOrder(newPurchaseOrder)
                     .productDetail(productDetail)
-                    .quantity(purchaseOrderDTO.getQuantity()) // Sử dụng cùng một quantity cho tất cả sản phẩm trong đơn hàng
-                    .price(purchaseOrderDTO.getPrice()) // Sử dụng cùng một price cho tất cả sản phẩm trong đơn hàng
+                    .quantity(purchaseOrderDetailDTO.getQuantity())
+                    .price(purchaseOrderDetailDTO.getPrice())
                     .build();
 
             // Thêm vào danh sách chi tiết đơn hàng
@@ -101,12 +107,16 @@ public class PurchaseOrderService implements IPurchaseOrderService {
         // Lưu đơn hàng vào cơ sở dữ liệu
         newPurchaseOrder = purchaseOrderRepository.save(newPurchaseOrder);
 
-        // Lưu danh sách chi tiết đơn hàng vào cơ sở dữ liệu
+        // Liên kết danh sách chi tiết đơn hàng với đơn hàng và lưu vào cơ sở dữ liệu
+        for (PurchaseOrderDetail purchaseOrderDetail : purchaseOrderDetails) {
+            purchaseOrderDetail.setPurchaseOrder(newPurchaseOrder);
+        }
         purchaseOrderDetailRepository.saveAll(purchaseOrderDetails);
 
         // Trả về đối tượng PurchaseOrder đã được lưu
         return newPurchaseOrder;
     }
+
 
     @Override
     public PurchaseOrder getPurchaseOrderById(int id) throws DataNotFoundException {

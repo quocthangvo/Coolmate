@@ -17,19 +17,18 @@ public class PurchaseOrderDTO {
     @JsonProperty("user_id")
     private int userId;
 
+    private int roleId;
+
     @JsonProperty("supplier_id")
     private int supplierId;
 
     private String status;
 
-    private int quantity;
-
-    @JsonProperty("product_detail_id")
-    private List<Integer> productDetailId;
+    @JsonProperty("purchase_order_detail")
+    private List<PurchaseOrderDetailDTO> purchaseOrderDetails;
 
     @JsonProperty("version_code")
     private String versionCode;
 
-    private float price;
 
 }

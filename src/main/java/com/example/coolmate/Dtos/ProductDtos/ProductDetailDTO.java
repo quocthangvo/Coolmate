@@ -31,5 +31,9 @@ public class ProductDetailDTO {
     @JsonProperty("version_name")
     private String versionName;
 
+    private int quantity;
+
+    private float price;
+
 
 }
