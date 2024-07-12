@@ -92,6 +92,9 @@ public class PurchaseOrderDetailController {
         if (PurchaseOrderStatus.DELIVERED.equals(purchaseOrder.getStatus())) {
             throw new IllegalStateException("Không thể cập nhật chi tiết đơn hàng đã giao.");
         }
+        if (PurchaseOrderStatus.CANCELLED.equals(purchaseOrder.getStatus())) {
+            throw new IllegalStateException("Không thể cập nhật đơn hàng đã hủy");
+        }
 
         existingDetail.setQuantity(updatedDetail.getQuantity());
         existingDetail.setPrice(updatedDetail.getPrice());
