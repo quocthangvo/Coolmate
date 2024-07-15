@@ -12,9 +12,6 @@ import lombok.*;
 public class PurchaseOrderDetailDTO {
 
 
-//    @JsonProperty("product_details")
-//    private List<ProductDetail> productDetails;
-
     @JsonProperty("product_detail_id")
     private int productDetailId;
 

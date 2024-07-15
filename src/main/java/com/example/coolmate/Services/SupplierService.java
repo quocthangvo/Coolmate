@@ -94,4 +94,7 @@ public class SupplierService implements ISupplierService {
     }
 
 
+    public List<Supplier> searchSupplierByName(String name) {
+        return supplierRepository.findByNameContaining(name);
+    }
 }

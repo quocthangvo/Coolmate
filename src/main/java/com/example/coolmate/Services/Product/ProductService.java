@@ -47,7 +47,7 @@ public class ProductService implements IProductService {
                 .categoryId(existingCategory)
                 .build();
 
-        // Save the product to the database
+        // Save
         newProduct = productRepository.save(newProduct);
 
         // Lấy danh sách hình ảnh của sản phẩm
@@ -67,7 +67,7 @@ public class ProductService implements IProductService {
                                 .color(existingColor)
                                 .versionSku(productDTO.getSku() + "_" + existingSize.getId() + "_" + existingColor.getId())
                                 .versionName(productDTO.getName() + "_" + existingSize.getName() + "_" + existingColor.getName())
-                               
+
                                 .build();
                 productDetailRepository.save(newProductDetail);
             }

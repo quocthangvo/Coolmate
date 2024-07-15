@@ -3,11 +3,13 @@ package com.example.coolmate.Services.Order;
 import com.example.coolmate.Dtos.OrderDtos.OrderDTO;
 import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
+import com.example.coolmate.Models.Inventory;
 import com.example.coolmate.Models.Order.Order;
 import com.example.coolmate.Models.Order.OrderDetail;
 import com.example.coolmate.Models.Order.OrderStatus;
 import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Models.User.User;
+import com.example.coolmate.Repositories.InventoryRepository;
 import com.example.coolmate.Repositories.Order.OrderDetailRepository;
 import com.example.coolmate.Repositories.Order.OrderRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -32,6 +33,7 @@ public class OrderService implements IOrderService {
     private final ModelMapper modelMapper;
     private final ProductDetailRepository productDetailRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final InventoryRepository inventoryRepository;
 
     @Override
     public Order createOrder(OrderDTO orderDTO) throws Exception {
@@ -79,7 +81,6 @@ public class OrderService implements IOrderService {
                     .quantity(detailDTO.getQuantity())
                     .price(detailDTO.getPrice())
                     .totalMoney(detailDTO.getTotalMoney())
-                    .versionOrderCode(orderDTO.getOrderCode())
                     .build();
 
             orderDetails.add(orderDetailRepository.save(orderDetail));
@@ -145,35 +146,66 @@ public class OrderService implements IOrderService {
                 .findById(orderId)
                 .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết đơn đặt hàng với ID: " + orderId));
 
-        // Các trạng thái hợp lệ
-        List<String> validStatuses = Arrays.asList(
-                OrderStatus.PENDING,
-                OrderStatus.PROCESSING,
-                OrderStatus.SHIPPING,
-                OrderStatus.DELIVERED,
-                OrderStatus.CANCELLED
-        );
-
         // Lấy trạng thái mới từ DTO
-        String newStatus = orderDTO.getStatus();
+        String newStatusString = orderDTO.getStatus();
+        OrderStatus newStatus;
 
         // Kiểm tra xem trạng thái mới có hợp lệ không
-        if (!validStatuses.contains(newStatus)) {
-            throw new IllegalArgumentException("Trạng thái không hợp lệ: " + newStatus);
+        try {
+            newStatus = OrderStatus.valueOf(newStatusString);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Trạng thái không hợp lệ: " + newStatusString);
         }
 
-        // Kiểm tra nếu đơn hàng ở trạng thái đã giao hoặc đã hủy
-        if (OrderStatus.DELIVERED.equals(order.getStatus()) || OrderStatus.CANCELLED.equals(order.getStatus())) {
-            throw new IllegalStateException(
-                    "Không thể cập nhật đơn đặt hàng đã bị hủy hoặc đã giao hàng thành công.");
+        // Kiểm tra tính hợp lệ của trạng thái chuyển tiếp
+        switch (order.getStatus()) {
+            case PENDING:
+                if (newStatus != OrderStatus.CANCELLED && newStatus != OrderStatus.PROCESSING) {
+                    throw new IllegalStateException("Không thể chuyển từ 'Chờ xử lý' sang " + newStatus.getStatusName());
+                }
+                break;
+            case PROCESSING:
+                if (newStatus != OrderStatus.SHIPPING) {
+                    throw new IllegalStateException("Không thể chuyển từ 'Xác nhận' sang " + newStatus.getStatusName());
+                }
+                break;
+            case SHIPPING:
+                if (newStatus != OrderStatus.DELIVERED) {
+                    throw new IllegalStateException("Không thể chuyển từ 'Đang giao hàng' sang " + newStatus.getStatusName());
+                }
+                break;
+            default:
+                throw new IllegalStateException("Không thể cập nhật đơn hàng có trạng thái: " + order.getStatus().getStatusName());
         }
 
         // Cập nhật thuộc tính trạng thái
         order.setStatus(newStatus);
 
+        // Nếu trạng thái mới là DELIVERED, cập nhật số lượng tồn kho
+        if (newStatus == OrderStatus.PROCESSING) {
+            List<OrderDetail> orderDetails = order.getOrderDetails();
+            for (OrderDetail detail : orderDetails) {
+                ProductDetail productDetail = detail.getProductDetail();
+                int orderedQuantity = detail.getQuantity();
+
+                // Lấy thông tin kho hiện tại
+                Inventory inventory = inventoryRepository.findByProductDetail(productDetail);
+
+                // Kiểm tra nếu không có bản ghi kho cho sản phẩm này, tạo mới
+                if (inventory == null) {
+                    throw new DataNotFoundException("Không tìm thấy kho có sản phẩm: " + productDetail.getId());
+                }
+
+                // Cập nhật số lượng tồn kho
+                inventory.setInventoryQuantity(inventory.getInventoryQuantity() - orderedQuantity);
+                inventoryRepository.save(inventory);
+            }
+        }
         // Lưu
         return orderRepository.save(order);
     }
 
-
+    public List<Order> searchByOrderCode(String orderCode) {
+        return orderRepository.findByOrderCodeContaining(orderCode);
+    }
 }

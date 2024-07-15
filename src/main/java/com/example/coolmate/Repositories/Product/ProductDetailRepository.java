@@ -27,6 +27,7 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
 
     List<ProductDetail> findByVersionNameContaining(String versionName);
 
+
 //    ProductDetail findByProductIdAndSizeId(int productId, int sizeId);
 //
 //    ProductDetail findByProductIdAndSizeIdAndColorId(int productId, int sizeId, int colorId);

@@ -3,6 +3,7 @@ package com.example.coolmate.Repositories;
 import com.example.coolmate.Models.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -21,5 +22,5 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
     boolean existsByAddress(String address);
 
-
+    List<Supplier> findByNameContaining(String name);
 }

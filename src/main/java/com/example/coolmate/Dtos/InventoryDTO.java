@@ -21,6 +21,10 @@ public class InventoryDTO {
 
     private float price;
 
+    private int inventoryQuantity;
+
     @JsonProperty("purchase_order_id")
     private int purchaseOrderId;
+
+
 }

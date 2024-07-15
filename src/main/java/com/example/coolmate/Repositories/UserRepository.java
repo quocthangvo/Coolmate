@@ -4,6 +4,7 @@ import com.example.coolmate.Models.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
@@ -12,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByPhoneNumber(String phoneNumber);
 
     Optional<User> findByRoleId(@Param("roleId") int roleId);
+
+    List<User> findByFullNameContainingIgnoreCase(String fullName);
 }

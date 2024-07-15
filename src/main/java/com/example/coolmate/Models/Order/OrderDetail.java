@@ -35,7 +35,5 @@ public class OrderDetail {
     @Column(name = "total_money")
     private float totalMoney;
 
-    @Column(name = "version_order_code")
-    private String versionOrderCode;
 
 }

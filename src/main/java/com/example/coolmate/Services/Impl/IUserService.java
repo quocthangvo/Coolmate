@@ -8,6 +8,9 @@ import com.example.coolmate.Responses.User.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface IUserService {
     User createUser(UserDTO userDTO) throws Exception;
 
@@ -26,4 +29,8 @@ public interface IUserService {
     void unlockUserById(int id, UserResponse userResponse) throws DataNotFoundException;
 
     boolean changePassword(String phoneNumber, ChangePasswordDTO changePasswordDTO) throws Exception;
+
+    Optional<User> findByPhoneNumber(String phoneNumber);
+
+    List<UserResponse> searchUsersByFullName(String fullName);
 }

@@ -16,6 +16,8 @@ public interface ISupplierService {
     void deleteSupplier(int id) throws DataNotFoundException;
 
     Supplier updateSupplier(int supplierId, SupplierDTO supplierDTO) throws DataNotFoundException;
+
+    List<Supplier> searchSupplierByName(String name);
 }
 
 

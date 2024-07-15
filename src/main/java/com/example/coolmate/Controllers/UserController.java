@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +24,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("${api.prefix}/users")
@@ -150,6 +152,38 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
 
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchUserByPhoneNumber(@RequestParam("phone_number") String phoneNumber) {
+        try {
+            Optional<User> users = userService.findByPhoneNumber(phoneNumber);
+            if (users.isEmpty()) {
+                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy số điện thoại có tên : " + phoneNumber);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            }
+            return ApiResponseUtil.successResponse("successful", users);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
+                    + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/search/full_name")
+    public ResponseEntity<?> searchUsersByFullName(@RequestParam("full_name") String fullName) {
+        try {
+            List<UserResponse> users = userService.searchUsersByFullName(fullName);
+            if (users.isEmpty()) {
+                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy số điện thoại có tên : " + fullName);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            }
+            return ApiResponseUtil.successResponse("successful", users);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
+                    + e.getMessage()));
         }
     }
 

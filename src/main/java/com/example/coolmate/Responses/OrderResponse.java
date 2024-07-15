@@ -1,7 +1,7 @@
 package com.example.coolmate.Responses;
 
 import com.example.coolmate.Models.Order.Order;
-import com.example.coolmate.Models.Product.ProductDetail;
+import com.example.coolmate.Models.Order.OrderDetail;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -14,43 +14,35 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderResponse extends BaseResponse {
-    @JsonProperty("fullname")
-    private String fullname;
+    @JsonProperty("full_name")
+    private String fullName;
 
-    @JsonProperty("email")
     private String email;
 
     @JsonProperty("phone_number")
     private String phoneNumber;
 
-    @JsonProperty("address")
     private String address;
 
-    @JsonProperty("note")
     private String note;
-
-    @JsonProperty("total_money")
-    private float totalMoney;
 
     @JsonProperty("payment_method")
     private String paymentMethod;
 
-    @JsonProperty("status")
     private String status;
 
-    private ProductDetail productDetail;
+    private List<OrderDetail> orderDetails;
 
     public static OrderResponse fromOrder(Order order) {
         OrderResponse orderResponse = OrderResponse.builder()
-                .fullname(order.getFullName())
+                .fullName(order.getFullName())
                 .email(order.getEmail())
                 .phoneNumber(order.getPhoneNumber())
                 .address(order.getAddress())
                 .note(order.getNote())
-                .status(order.getStatus())
-                .totalMoney(order.getTotalMoney())
+                .status(order.getStatus().getStatusName())
                 .paymentMethod(order.getPaymentMethod())
-                .productDetail(new ProductDetail())
+                .orderDetails(order.getOrderDetails())
                 .build();
         orderResponse.setCreatedAt(order.getCreatedAt());
         orderResponse.setUpdatedAt(order.getUpdatedAt());

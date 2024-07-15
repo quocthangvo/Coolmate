@@ -21,7 +21,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -119,6 +121,7 @@ public class UserService implements IUserService {
                 .findAll(pageRequest)
                 .map(UserResponse::fromUser);
     }
+
 //    public List<User> getAllUsers(int page, int limit) {
 //        return userRepository.findAll();
 //    }
@@ -192,6 +195,16 @@ public class UserService implements IUserService {
         }
     }
 
+    public Optional<User> findByPhoneNumber(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber);
+    }
+
+    public List<UserResponse> searchUsersByFullName(String fullName) {
+        return userRepository.findByFullNameContainingIgnoreCase(fullName)
+                .stream()
+                .map(UserResponse::fromUser)
+                .collect(Collectors.toList());
+    }
 
 }
 

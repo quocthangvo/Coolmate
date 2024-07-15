@@ -32,9 +32,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PurchaseOrderService implements IPurchaseOrderService {
 
-    // Mã đơn hàng có độ dài cố định
+    // độ dài
     private static final int ORDER_CODE_LENGTH = 10;
-    // Để đảm bảo độ dài mã đơn hàng cố định, bạn có thể sử dụng prefix
+    // mã có ORD-
     private static final String ORDER_CODE_PREFIX = "ORD-";
 
 
@@ -117,6 +117,11 @@ public class PurchaseOrderService implements IPurchaseOrderService {
         return newPurchaseOrder;
     }
 
+    private String generateRandomCode() {
+        // Tạo một chuỗi ngẫu nhiên với UUID và cắt nó để đảm bảo độ dài cố định
+        String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, ORDER_CODE_LENGTH - ORDER_CODE_PREFIX.length());
+        return ORDER_CODE_PREFIX + uuid;
+    }
 
     @Override
     public PurchaseOrder getPurchaseOrderById(int id) throws DataNotFoundException {
@@ -163,11 +168,8 @@ public class PurchaseOrderService implements IPurchaseOrderService {
         if (PurchaseOrderStatus.DELIVERED.equals(purchaseOrder.getStatus())) {
             throw new IllegalStateException("Đơn đặt hàng đã được giao.");
         }
-
         // Cập nhật trạng thái đơn hàng thành DELIVERED
         purchaseOrder.setStatus(PurchaseOrderStatus.DELIVERED);
-
-        // Lưu lại đơn hàng đã được cập nhật trạng thái
         purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
 
         // Lưu chi tiết sản phẩm vào kho
@@ -175,6 +177,7 @@ public class PurchaseOrderService implements IPurchaseOrderService {
         for (PurchaseOrderDetail detail : orderDetails) {
             ProductDetail productDetail = detail.getProductDetail();
             int orderedQuantity = detail.getQuantity();
+            float purchasePrice = detail.getPrice(); // Lấy giá nhập từ chi tiết đơn hàng
 
             // Lấy thông tin kho hiện tại
             Inventory inventory = inventoryRepository.findByProductDetail(productDetail);
@@ -184,14 +187,20 @@ public class PurchaseOrderService implements IPurchaseOrderService {
                 inventory = new Inventory();
                 inventory.setProductDetail(productDetail);
                 inventory.setQuantity(0);
-                inventory.setReservedQuantity(0);
+                inventory.setInventoryQuantity(0);
+                inventory.setPrice(0);
             }
 
             // Cập nhật kho sau khi giao hàng
             inventory.setQuantity(inventory.getQuantity() + orderedQuantity);
+            inventory.setInventoryQuantity(inventory.getInventoryQuantity() + orderedQuantity); // Cập nhật số lượng tồn kho
+            inventory.setPrice(purchasePrice); // Cập nhật giá nhập hàng
+
             inventoryRepository.save(inventory);
         }
 
+        // Lưu lại đơn hàng đã được cập nhật trạng thái
+        purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
         return purchaseOrder;
     }
 
@@ -208,9 +217,4 @@ public class PurchaseOrderService implements IPurchaseOrderService {
     }
 
 
-    private String generateRandomCode() {
-        // Tạo một chuỗi ngẫu nhiên với UUID và cắt nó để đảm bảo độ dài cố định
-        String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, ORDER_CODE_LENGTH - ORDER_CODE_PREFIX.length());
-        return ORDER_CODE_PREFIX + uuid;
-    }
 }

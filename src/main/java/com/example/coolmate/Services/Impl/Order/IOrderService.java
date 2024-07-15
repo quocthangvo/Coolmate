@@ -18,4 +18,6 @@ public interface IOrderService {
     void deleteOrder(int id) throws DataNotFoundException;
 
     List<Order> getAllOrders(int page, int limit);
+
+    List<Order> searchByOrderCode(String orderCode);
 }

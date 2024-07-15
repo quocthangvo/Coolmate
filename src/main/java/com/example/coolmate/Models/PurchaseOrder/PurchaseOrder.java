@@ -50,4 +50,5 @@ public class PurchaseOrder extends BaseEntity {
 
     @Column(name = "version_code")
     private String versionCode;
+
 }

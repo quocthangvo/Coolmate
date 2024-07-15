@@ -1,12 +1,10 @@
 package com.example.coolmate.Controllers;
 
-import com.example.coolmate.Dtos.InventoryDTO;
-import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Models.Inventory;
 import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.InventoryService;
-import jakarta.validation.Valid;
+import com.example.coolmate.Services.Product.ProductDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,29 +18,8 @@ import java.util.List;
 
 public class InventoryController {
     private final InventoryService inventoryService;
+    private final ProductDetailService productDetailService;
 
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getInventoryById(@PathVariable int id) {
-        try {
-            Inventory inventory = inventoryService.getInventoryById(id);
-            return ResponseEntity.ok(inventory);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
-        }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateInventory(
-            @PathVariable int id,
-            @Valid @RequestBody InventoryDTO inventoryDTO) {
-        try {
-            Inventory updatedInventory = inventoryService.updateInventory(id, inventoryDTO);
-            return ApiResponseUtil.successResponse("Supplier updated successfully", updatedInventory);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
-        }
-    }
 
     @GetMapping("")
     public ResponseEntity<ApiResponse<List<Inventory>>> getAllInventories(
@@ -51,6 +28,12 @@ public class InventoryController {
     ) {
         List<Inventory> inventories = inventoryService.getAllInventories(page, limit);
         return ApiResponseUtil.successResponse("Successfully", inventories);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<Inventory>>> searchByProductDetailId(@RequestParam("productDetailId") int productDetailId) {
+        List<Inventory> results = inventoryService.findByProductDetailId(productDetailId);
+        return ApiResponseUtil.successResponse("Successfully", results);
 
     }
 }

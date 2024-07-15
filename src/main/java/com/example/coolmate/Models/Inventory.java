@@ -23,14 +23,11 @@ public class Inventory {
     @Column(name = "price")
     private float price;
 
-    @Column(name = "reserved_quantity")
-    private int reservedQuantity;
+    @Column(name = "inventory_quantity")
+    private int inventoryQuantity;
 
     @ManyToOne
     @JoinColumn(name = "product_detail_id")
     private ProductDetail productDetail;
 
-
-//    @OneToMany(mappedBy = "inventory")
-//    private List<ProductDetail> productDetails;
 }

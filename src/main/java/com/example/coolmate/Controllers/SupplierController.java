@@ -83,11 +83,24 @@ public class SupplierController {
             @Valid @RequestBody SupplierDTO supplierDTO) {
         try {
             Supplier updatedSupplier = supplierService.updateSupplier(id, supplierDTO);
-            return ApiResponseUtil.successResponse("Supplier updated successfully", updatedSupplier);
+            return ApiResponseUtil.successResponse("CẬp nhật nhà cung cấp thành công", updatedSupplier);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 
-
+    @GetMapping("/search")
+    public ResponseEntity<?> searchSupplierByName(@RequestParam("name") String name) {
+        try {
+            List<Supplier> suppliers = supplierService.searchSupplierByName(name);
+            if (suppliers.isEmpty()) {
+                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy nhà cung cấp có tên : " + name);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            }
+            return ApiResponseUtil.successResponse("successful ", suppliers);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
+                    + e.getMessage()));
+        }
+    }
 }

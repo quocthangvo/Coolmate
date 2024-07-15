@@ -18,7 +18,7 @@ public class OrderDTO {
     @JsonProperty("user_id")
     private int userId;
 
-    @JsonProperty("fullname")
+    @JsonProperty("full_name")
     private String fullName;
 
     private String email;
@@ -41,9 +41,6 @@ public class OrderDTO {
 
     @JsonProperty("shipping_method")
     private String shippingMethod;
-
-    @JsonProperty("shipping_address")
-    private String shippingAddress;
 
     @JsonProperty("shipping_date")
     private LocalDateTime shippingDate;

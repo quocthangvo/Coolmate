@@ -10,6 +10,7 @@ import com.example.coolmate.Responses.OrderResponse;
 import com.example.coolmate.Services.Impl.Order.IOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -100,7 +101,22 @@ public class OrderController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
-
     }
 
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchOrderCode(@RequestParam("orderCode") String orderCode) {
+        try {
+            List<Order> orders = orderService.searchByOrderCode(orderCode);
+            if (orders.isEmpty()) {
+                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : " + orderCode);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            }
+            return ApiResponseUtil.successResponse("Successfully", orders);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
+                    + e.getMessage()));
+        }
+    }
 }
