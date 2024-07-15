@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+
 public class OrderStatus {
     public static final String PENDING = "Chờ xủ lý";
 
@@ -17,4 +18,5 @@ public class OrderStatus {
     public static final String DELIVERED = "Đã giao hàng";
 
     public static final String CANCELLED = "Hủy";
+    
 }

@@ -66,25 +66,11 @@ public class OrderDetailService implements IOrderDetailService {
                 -> new DataNotFoundException("Không tìm thấy order detail id" + id));
     }
 
-//    @Override
-//    public OrderDetail updateOrderDetail(int id, OrderDetailDTO orderDetailDTO) throws DataNotFoundException {
-//        // tìm kiếm  order detail có tồn tại ko
-//        OrderDetail existingOrderDetail = orderDetailRepository.findById(id)
-//                .orElseThrow(() -> new DataNotFoundException(
-//                        "Cannot find order detail with id" + id));
-//        Order existingOrder = orderRepository.findById(orderDetailDTO.getOrderId())
-//                .orElseThrow(() -> new DataNotFoundException("Cannot find order with id" + id));
-//        Product existingProduct = productRepository.findById(orderDetailDTO.getProductId())
-//                .orElseThrow(() -> new DataNotFoundException(
-//                        "Cannot find product with id" + orderDetailDTO.getProductId()));
-//        existingOrderDetail.setPrice(orderDetailDTO.getPrice());
-//        existingOrderDetail.setQuantity(orderDetailDTO.getQuantity());
-//        existingOrderDetail.setTotalMoney(orderDetailDTO.getTotalMoney());
-//        existingOrderDetail.setColor(orderDetailDTO.getColor());
-//        existingOrderDetail.setOrder(existingOrder);
-//        existingOrderDetail.setProduct(existingProduct);
-//        return orderDetailRepository.save(existingOrderDetail);
-//    }
+    @Override
+    public OrderDetail updateOrderDetail(int id, OrderDetailDTO orderDetailDTO) throws DataNotFoundException {
+        return null;
+    }
+
 
     @Override
     public void deleteOrderDetail(int id) {

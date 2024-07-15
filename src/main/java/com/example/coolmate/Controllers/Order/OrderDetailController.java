@@ -7,6 +7,7 @@ import com.example.coolmate.Models.Order.OrderDetail;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.OrderDetailResponse;
 import com.example.coolmate.Services.Order.OrderDetailService;
+import com.example.coolmate.Services.Order.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.List;
 public class OrderDetailController {
 
     private final OrderDetailService orderDetailService;
+    private final OrderService orderService;
 
     @PostMapping("")
     public ResponseEntity<?> createOrderDetail(
@@ -55,18 +57,18 @@ public class OrderDetailController {
         }
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<?> updateOrderDetail(
-//            @Valid @PathVariable("id") int id,
-//            @RequestBody OrderDetailDTO orderDetailDTO
-//    ) {
-//        try {
-//            OrderDetail orderDetail = orderDetailService.updateOrderDetail(id, orderDetailDTO);
-//            return ResponseEntity.ok().body(orderDetail);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateOrderDetail(
+            @PathVariable int id,
+            @Valid @RequestBody OrderDetailDTO orderDetailDTO) {
+        try {
+            OrderDetail updatedOrderDetail = orderDetailService.updateOrderDetail(id, orderDetailDTO);
+            return ApiResponseUtil.successResponse("Successfully", updatedOrderDetail);
+   
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+        }
+    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteOrderDetailById(

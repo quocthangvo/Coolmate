@@ -75,15 +75,15 @@ public class OrderController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updatePurchaseOrder(
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateOrder(
             @PathVariable int id,
             @Valid @RequestBody OrderDTO orderDTO) {
         try {
             Order updateOrder = orderService.updateOrder(id, orderDTO);
             OrderResponse orderResponse = OrderResponse.fromOrder(updateOrder);
             return ApiResponseUtil.successResponse(
-                    "Purchase Order Detail created successfully", orderResponse);
+                    "Đon hàng đã được giao thành công", orderResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }

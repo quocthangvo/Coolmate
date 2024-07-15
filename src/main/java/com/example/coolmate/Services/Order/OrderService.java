@@ -131,7 +131,8 @@ public class OrderService implements IOrderService {
             throw new IllegalStateException("Đơn hàng đã bị xóa.");
         }
 
-        // Không xóa cứng, chỉ xóa mềm
+        // Cập nhật trạng thái thành "cancelled" và đặt active thành false
+        order.setStatus(OrderStatus.CANCELLED);
         order.setActive(false);
         orderRepository.save(order);
     }
@@ -164,16 +165,11 @@ public class OrderService implements IOrderService {
         // Kiểm tra nếu đơn hàng ở trạng thái đã giao hoặc đã hủy
         if (OrderStatus.DELIVERED.equals(order.getStatus()) || OrderStatus.CANCELLED.equals(order.getStatus())) {
             throw new IllegalStateException(
-                    "Không thể thay đổi trạng thái của đơn đặt hàng đã bị hủy hoặc đã giao hàng thành công.");
+                    "Không thể cập nhật đơn đặt hàng đã bị hủy hoặc đã giao hàng thành công.");
         }
 
         // Cập nhật thuộc tính trạng thái
         order.setStatus(newStatus);
-
-        // Nếu trạng thái mới là 'cancelled', đặt active thành false
-        if (OrderStatus.CANCELLED.equals(newStatus)) {
-            order.setActive(false);
-        }
 
         // Lưu
         return orderRepository.save(order);
