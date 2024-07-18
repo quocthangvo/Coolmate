@@ -6,6 +6,7 @@ import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
+import com.example.coolmate.Responses.Product.ProductDetailResponse;
 import com.example.coolmate.Services.Impl.Product.IColorService;
 import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
@@ -67,9 +68,9 @@ public class ProductDetailController {
     }
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<ApiResponse<List<ProductDetail>>> findByProductId(@PathVariable int productId) {
+    public ResponseEntity<ApiResponse<List<ProductDetailResponse>>> findByProductId(@PathVariable int productId) {
         try {
-            List<ProductDetail> productDetails = productDetailService.findByProductId(productId);
+            List<ProductDetailResponse> productDetails = productDetailService.findByProductId(productId);
             return ApiResponseUtil.successResponse("Successfully", productDetails);
         } catch (DataNotFoundException e) {
 //            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
@@ -90,20 +91,6 @@ public class ProductDetailController {
         }
     }
 
-//    @GetMapping("/search")
-//    public ResponseEntity<?> searchProductByName(@RequestParam("name") String name) {
-//        try {
-//            List<ProductDetail> productDetails = productDetailService.searchProductDetailByName(name);
-//            if (productDetails.isEmpty()) {
-//                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : " + name);
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
-//            }
-//            return ResponseEntity.ok(productDetails);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
-//                    + e.getMessage()));
-//        }
-//    }
 
     @GetMapping("/size/{sizeId}")
     public ResponseEntity<?> getProductsBySizeId(@PathVariable int sizeId) {
@@ -146,6 +133,16 @@ public class ProductDetailController {
         } catch (Exception ex) {
 
             return ResponseEntity.badRequest().body(ex);
+        }
+    }
+
+    @GetMapping("/last_price/{id}")
+    public ResponseEntity<?> getProductDetailLastPrice(@PathVariable int id) {
+        try {
+            ProductDetailResponse detailResponse = productDetailService.getProductDetailLastPrice(id);
+            return ApiResponseUtil.successResponse("Successfully", detailResponse);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 

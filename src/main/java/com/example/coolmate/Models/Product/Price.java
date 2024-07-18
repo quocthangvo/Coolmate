@@ -1,5 +1,6 @@
 package com.example.coolmate.Models.Product;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,10 +18,7 @@ public class Price {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "price", nullable = false, length = 200)
-    private float price; // giá gốc
-
-    @Column(name = "price_selling", nullable = false, length = 200)
+    @Column(name = "price_selling", length = 200)
     private float priceSelling; // giá bán
 
     @Column(name = "promotion_price", length = 200)
@@ -33,6 +31,9 @@ public class Price {
     private LocalDateTime endDate;
 
     @ManyToOne
-    @JoinColumn(name = "product_detail_id", nullable = false)
+    @JoinColumn(name = "product_detail_id")
+    @JsonBackReference
     private ProductDetail productDetail;
+
+ 
 }

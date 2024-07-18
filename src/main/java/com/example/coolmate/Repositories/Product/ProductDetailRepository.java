@@ -2,6 +2,7 @@ package com.example.coolmate.Repositories.Product;
 
 
 import com.example.coolmate.Models.Product.Color;
+import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductDetail;
 import com.example.coolmate.Models.Product.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,6 +27,16 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
     List<ProductDetail> findBySizeAndColor(Size size, Color color);
 
     List<ProductDetail> findByVersionNameContaining(String versionName);
+
+    @Query("SELECT pd FROM ProductDetail pd JOIN FETCH pd.prices WHERE pd.product = :product")
+    List<ProductDetail> findByProductWithPrices(@Param("product") Product product);
+
+
+    @Query("SELECT pd FROM ProductDetail pd " +
+            "LEFT JOIN FETCH pd.prices p " +
+            "WHERE pd.id = :productDetailId " +
+            "ORDER BY p.startDate DESC")
+    ProductDetail findProductDetailWithLatestPrice(@Param("productDetailId") int productDetailId);
 
 
 //    ProductDetail findByProductIdAndSizeId(int productId, int sizeId);

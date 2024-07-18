@@ -2,9 +2,12 @@ package com.example.coolmate.Models.Product;
 
 import com.example.coolmate.Models.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Builder
 @Getter
@@ -39,5 +42,8 @@ public class ProductDetail extends BaseEntity {
     @Column(name = "version_name")
     private String versionName;
 
-    
+    @OneToMany(mappedBy = "productDetail")
+    @JsonManagedReference
+    private List<Price> prices;
+
 }

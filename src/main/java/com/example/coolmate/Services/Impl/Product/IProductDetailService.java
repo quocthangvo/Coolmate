@@ -2,6 +2,7 @@ package com.example.coolmate.Services.Impl.Product;
 
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Product.ProductDetail;
+import com.example.coolmate.Responses.Product.ProductDetailResponse;
 
 import java.util.List;
 
@@ -12,14 +13,12 @@ public interface IProductDetailService {
 
     ProductDetail getProductDetailById(int productDetailId) throws Exception;
 
-    List<ProductDetail> findByProductId(int productId) throws DataNotFoundException;
+    List<ProductDetailResponse> findByProductId(int productId) throws DataNotFoundException;
 
 
     void deleteProductDetail(int id) throws DataNotFoundException;
 
     ProductDetail updateProductDetail(ProductDetail productDetail) throws Exception;
-
-    List<ProductDetail> searchProductDetailByName(String name);
 
     List<ProductDetail> findBySizeId(int sizeId);
 
@@ -30,6 +29,7 @@ public interface IProductDetailService {
 
     List<ProductDetail> searchVersionName(String versionName);
 
+    ProductDetailResponse getProductDetailLastPrice(int productDetailId) throws Exception;
 //    ProductDetail updateProductDetail(int id, ProductDetailDTO productDetailDTO) throws Exception;
 //    ProductDetail getProductDetailByProductIdAndSizeId(int productId, int sizeId);
 //

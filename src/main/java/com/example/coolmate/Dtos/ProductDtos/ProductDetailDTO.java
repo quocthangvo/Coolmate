@@ -33,7 +33,7 @@ public class ProductDetailDTO {
 
     private int quantity;
 
-    private float price;
+    private List<PriceDTO> prices;
 
 
 }

@@ -188,20 +188,6 @@ public class ProductController {
         return contentType != null || contentType.startsWith("image/");
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<?> searchProductByName(@RequestParam("name") String name) {
-        try {
-            List<Product> products = productService.searchProductByName(name);
-            if (products.isEmpty()) {
-                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : " + name);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
-            }
-            return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
-                    + e.getMessage()));
-        }
-    }
 
     @GetMapping("/images/{productId}")
     public ResponseEntity<?> getProductImagesByProductId(
@@ -223,5 +209,5 @@ public class ProductController {
         }
     }
 
-   
+
 }

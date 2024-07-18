@@ -1,7 +1,6 @@
 package com.example.coolmate.Responses.Product;
 
 import com.example.coolmate.Models.Product.ProductDetail;
-import com.example.coolmate.Responses.BaseResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -10,13 +9,13 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDetailResponse extends BaseResponse {
+public class ProductDetailResponse {
 
     @JsonProperty("product_id")
     private int productId;
 
-    @JsonProperty("product_name")
-    private String productName;
+    @JsonProperty("version_name")
+    private String versionName;
 
     @JsonProperty("color_id")
     private int colorId;
@@ -30,20 +29,26 @@ public class ProductDetailResponse extends BaseResponse {
     @JsonProperty("size_name")
     private String sizeName;
 
+    @JsonProperty("price")
+    private PriceResponse latestPrice; // Thay đổi thành PriceResponse
+
     public static ProductDetailResponse fromProductDetail(ProductDetail productDetail) {
-        String productName = productDetail.getProduct().getName();
+
         String colorName = productDetail.getColor().getName();
         String sizeName = productDetail.getSize().getName();
 
-        String nameDescription = String.format("%s - %s - %s", productName, sizeName, colorName);
+
+        PriceResponse latestPrice = PriceResponse.fromPriceList(productDetail.getPrices());
 
         return ProductDetailResponse.builder()
                 .productId(productDetail.getProduct().getId())
-                .productName(nameDescription)
+                .versionName(productDetail.getVersionName())
                 .colorId(productDetail.getColor().getId())
                 .colorName(colorName)
                 .sizeId(productDetail.getSize().getId())
                 .sizeName(sizeName)
+                .latestPrice(latestPrice)
                 .build();
     }
+
 }

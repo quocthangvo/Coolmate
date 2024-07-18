@@ -8,11 +8,13 @@ import com.example.coolmate.Repositories.Product.ColorRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Repositories.Product.ProductRepository;
 import com.example.coolmate.Repositories.Product.SizeRepository;
+import com.example.coolmate.Responses.Product.ProductDetailResponse;
 import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -77,12 +79,15 @@ public class ProductDetailService implements IProductDetailService {
     }
 
     @Override
-    public List<ProductDetail> findByProductId(int productId) throws DataNotFoundException {
+    public List<ProductDetailResponse> findByProductId(int productId) throws DataNotFoundException {
         List<ProductDetail> productDetails = productDetailRepository.findProductDetailsByProductId(productId);
         if (productDetails.isEmpty()) {
             throw new DataNotFoundException("Không tìm thấy product id trong detail: " + productId);
         }
-        return productDetails;
+        return productDetails.stream()
+                .map(ProductDetailResponse::fromProductDetail)
+                .collect(Collectors.toList());
+
     }
 
 
@@ -128,11 +133,6 @@ public class ProductDetailService implements IProductDetailService {
         return null;
     }
 
-    @Override
-    public List<ProductDetail> searchProductDetailByName(String name) {
-        return productDetailRepository.findByNameContaining(name);
-    }
-
 
     @Override
     public List<ProductDetail> findBySizeId(int sizeId) {
@@ -171,6 +171,16 @@ public class ProductDetailService implements IProductDetailService {
     public List<ProductDetail> searchVersionName(String versionName) {
         return productDetailRepository.findByVersionNameContaining(versionName);
     }
+
+
+    @Override
+    public ProductDetailResponse getProductDetailLastPrice(int productDetailId) throws Exception {
+        return productDetailRepository.findById(productDetailId)
+                .map(ProductDetailResponse::fromProductDetail)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy user Id = "
+                        + productDetailId));
+    }
+
 
 //    @Override
 //    public ProductDetail getProductDetailByProductIdSizeAndColor(int productId, int sizeId, int colorId) {

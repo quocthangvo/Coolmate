@@ -35,7 +35,7 @@ public class PurchaseOrderController {
             PurchaseOrder purchaseOrder = purchaseOrderService.createPurchaseOrder(purchaseOrderDTO);
             PurchaseOrderResponse purchaseOrderResponse = PurchaseOrderResponse.fromPurchase(purchaseOrder);
             return ApiResponseUtil.successResponse(
-                    "Purchase Order Detail created successfully", purchaseOrderResponse);
+                    "Tạo đơn đặt haàng thành công", purchaseOrderResponse);
         } catch (DataNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         } catch (Exception e) {
