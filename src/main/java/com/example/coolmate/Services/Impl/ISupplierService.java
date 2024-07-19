@@ -3,6 +3,7 @@ package com.example.coolmate.Services.Impl;
 import com.example.coolmate.Dtos.SupplierDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Supplier;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface ISupplierService {
 
     Supplier getSupplierById(int id);
 
-    List<Supplier> getAllSuppliers(int page, int limit);
+    Page<Supplier> getAllSuppliers(int page, int limit);
 
     void deleteSupplier(int id) throws DataNotFoundException;
 

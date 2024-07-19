@@ -210,5 +210,9 @@ public class ProductController {
         }
     }
 
-
+    @GetMapping("/search")
+    public List<Product> searchProductByName(
+            @RequestParam String name) {
+        return productService.searchProductByName(name);
+    }
 }

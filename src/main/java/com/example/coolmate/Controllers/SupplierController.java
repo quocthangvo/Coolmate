@@ -10,6 +10,7 @@ import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.Impl.ISupplierService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -45,11 +46,11 @@ public class SupplierController {
 
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<List<Supplier>>> getAllSuppliers(
+    public ResponseEntity<ApiResponse<Page<Supplier>>> getAllSuppliers(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<Supplier> suppliers = supplierService.getAllSuppliers(page, limit);
+        Page<Supplier> suppliers = supplierService.getAllSuppliers(page, limit);
         return ApiResponseUtil.successResponse("Successfully", suppliers);
 
     }

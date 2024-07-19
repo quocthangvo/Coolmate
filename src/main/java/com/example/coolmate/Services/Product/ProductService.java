@@ -98,7 +98,7 @@ public class ProductService implements IProductService {
 
 
     public Page<Product> getAllProducts(int page, int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
+        Pageable pageable = PageRequest.of(page - 1, limit);
         return productRepository.findAll(pageable);
     }
 

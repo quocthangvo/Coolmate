@@ -6,6 +6,7 @@ import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Services.InventoryService;
 import com.example.coolmate.Services.Product.ProductDetailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +23,11 @@ public class InventoryController {
 
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<List<Inventory>>> getAllInventories(
+    public ResponseEntity<ApiResponse<Page<Inventory>>> getAllInventories(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<Inventory> inventories = inventoryService.getAllInventories(page, limit);
+        Page<Inventory> inventories = inventoryService.getAllInventories(page, limit);
         return ApiResponseUtil.successResponse("Successfully", inventories);
     }
 

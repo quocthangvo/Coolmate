@@ -6,6 +6,9 @@ import com.example.coolmate.Models.Supplier;
 import com.example.coolmate.Repositories.SupplierRepository;
 import com.example.coolmate.Services.Impl.ISupplierService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,8 +53,9 @@ public class SupplierService implements ISupplierService {
     }
 
     @Override
-    public List<Supplier> getAllSuppliers(int page, int limit) {
-        return supplierRepository.findAll();
+    public Page<Supplier> getAllSuppliers(int page, int limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        return supplierRepository.findAll(pageable);
     }
 
     @Override
