@@ -92,7 +92,7 @@ public class UserController {
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+        PageRequest pageRequest = PageRequest.of(page - 1, limit, Sort.by("createdAt").descending());
         Page<UserResponse> userPage = userService.getAllUsers(pageRequest);
         int totalPages = userPage.getTotalPages();
         List<UserResponse> users = userPage.getContent();
@@ -100,6 +100,7 @@ public class UserController {
         return ResponseEntity.ok(UserListResponse.builder()
                 .users(users).totalPage(totalPages).build());
     }
+
 //    @GetMapping("")
 //    public ResponseEntity<ApiResponse<List<User>>> getAllUsers(
 //            @RequestParam("page") int page,
