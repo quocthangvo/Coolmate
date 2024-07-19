@@ -10,6 +10,7 @@ import com.example.coolmate.Responses.OrderResponse;
 import com.example.coolmate.Services.Impl.Order.IOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -46,11 +47,11 @@ public class OrderController {
     }
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<List<Order>>> getAllOrders(
+    public ResponseEntity<ApiResponse<Page<Order>>> getAllOrders(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<Order> orders = orderService.getAllOrders(page, limit);
+        Page<Order> orders = orderService.getAllOrders(page, limit);
         return ApiResponseUtil.successResponse("Successfully", orders);
     }
 

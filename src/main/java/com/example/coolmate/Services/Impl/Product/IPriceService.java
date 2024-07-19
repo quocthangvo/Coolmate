@@ -2,17 +2,15 @@ package com.example.coolmate.Services.Impl.Product;
 
 import com.example.coolmate.Dtos.ProductDtos.PriceDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
-import com.example.coolmate.Models.Product.Price;
 import com.example.coolmate.Responses.Product.PriceResponse;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface IPriceService {
     PriceResponse createPrice(PriceDTO priceDTO) throws DataNotFoundException;
 
     PriceResponse getPriceById(int id);
 
-    List<Price> getAllPrices(int page, int limit);
+    Page<PriceResponse> getAllPrices(int page, int limit) throws DataNotFoundException;
 
     void deletePrice(int id) throws DataNotFoundException;
 
@@ -20,7 +18,7 @@ public interface IPriceService {
 
     PriceResponse getPricesByProductDetailId(int productDetailId) throws DataNotFoundException;
 
-    List<PriceResponse> getAllDistinctPricesByProductDetailId();
+    Page<PriceResponse> getAllDistinctPricesByProductDetailId(int page, int limit);
 
     PriceResponse updatePrice(int id, PriceDTO priceDTO) throws DataNotFoundException;
 }

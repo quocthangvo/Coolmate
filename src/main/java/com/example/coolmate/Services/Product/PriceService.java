@@ -9,6 +9,10 @@ import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Responses.Product.PriceResponse;
 import com.example.coolmate.Services.Impl.Product.IPriceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,7 +43,7 @@ public class PriceService implements IPriceService {
                 .endDate(priceDTO.getEndDate())
                 .build();
 
-        // Save the new price entry to the database
+
         Price savedPrice = priceRepository.save(newPrice);
 
         // Construct and return a PriceResponse object with the saved price details
@@ -68,12 +72,29 @@ public class PriceService implements IPriceService {
                 .endDate(price.getEndDate())
                 .productDetail(price.getProductDetail())
                 .build();
+
     }
 
 
+    // all gia
     @Override
-    public List<Price> getAllPrices(int page, int limit) {
-        return priceRepository.findAll();
+    public Page<PriceResponse> getAllPrices(int page, int limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        Page<Price> pricePage = priceRepository.findAll(pageable);
+
+        return pricePage.map(this::convertToPriceResponse);
+    }
+
+
+    private PriceResponse convertToPriceResponse(Price price) {
+        return PriceResponse.builder()
+                .priceId(price.getId())
+                .priceSelling(price.getPriceSelling())
+                .promotionPrice(price.getPromotionPrice())
+                .startDate(price.getStartDate())
+                .endDate(price.getEndDate())
+                .productDetail(price.getProductDetail())
+                .build();
     }
 
     @Override
@@ -121,8 +142,9 @@ public class PriceService implements IPriceService {
     }
 
     @Override
-    public List<PriceResponse> getAllDistinctPricesByProductDetailId() {
-        List<Price> prices = priceRepository.findAll();
+    public Page<PriceResponse> getAllDistinctPricesByProductDetailId(int page, int limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        List<Price> prices = priceRepository.findAll(); // Fetch all prices first
 
         // Sử dụng Map để lọc các giá có startDate mới nhất cho mỗi productDetailId
         Map<ProductDetail, Price> latestPrices = prices.stream()
@@ -134,9 +156,19 @@ public class PriceService implements IPriceService {
                 ));
 
         // Chuyển đổi từ Map values (Collection<Price>) sang List<PriceResponse>
-        return latestPrices.values().stream()
+        List<PriceResponse> priceResponses = latestPrices.values().stream()
                 .map(price -> PriceResponse.fromPriceList(List.of(price)))
                 .collect(Collectors.toList());
+
+        // Tính toán vị trí bắt đầu và kết thúc của trang
+        int start = (page - 1) * limit;
+        int end = Math.min(start + limit, priceResponses.size());
+
+        // Lấy danh sách con cho trang hiện tại
+        List<PriceResponse> pageContent = priceResponses.subList(start, end);
+
+        // Tạo đối tượng Page<PriceResponse> và trả về
+        return new PageImpl<>(pageContent, pageable, priceResponses.size());
     }
 
     @Override

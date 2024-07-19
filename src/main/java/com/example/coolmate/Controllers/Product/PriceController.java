@@ -4,18 +4,16 @@ import com.example.coolmate.Dtos.ProductDtos.PriceDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
-import com.example.coolmate.Models.Product.Price;
 import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.Product.PriceResponse;
 import com.example.coolmate.Services.Impl.Product.IPriceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/prices")
@@ -42,13 +40,12 @@ public class PriceController {
 
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<List<Price>>> getAllPrices(
+    public ResponseEntity<ApiResponse<Page<PriceResponse>>> getAllPrices(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
-    ) {
-        List<Price> prices = priceService.getAllPrices(page, limit);
+    ) throws DataNotFoundException {
+        Page<PriceResponse> prices = priceService.getAllPrices(page, limit);
         return ApiResponseUtil.successResponse("thành công", prices);
-
     }
 
     @GetMapping("/{id}")
@@ -101,9 +98,9 @@ public class PriceController {
     }
 
     @GetMapping("/price_distinct")
-    public ResponseEntity<ApiResponse<List<?>>> getAllDistinctPricesByProductDetailId() {
+    public ResponseEntity<ApiResponse<Page<?>>> getAllDistinctPricesByProductDetailId(int page, int limit) {
 //        return priceService.getAllDistinctPricesByProductDetailId();
-        List<PriceResponse> price = priceService.getAllDistinctPricesByProductDetailId();
+        Page<PriceResponse> price = priceService.getAllDistinctPricesByProductDetailId(page, limit);
         return ApiResponseUtil.successResponse("thành công", price);
 
     }

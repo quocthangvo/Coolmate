@@ -19,6 +19,9 @@ import com.example.coolmate.Repositories.UserRepository;
 import com.example.coolmate.Services.Impl.IInventoryService;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -131,8 +134,9 @@ public class PurchaseOrderService implements IPurchaseOrderService {
     }
 
     @Override
-    public List<PurchaseOrder> getAllPurchaseOrders(int page, int limit) {
-        return purchaseOrderRepository.findAll();
+    public Page<PurchaseOrder> getAllPurchaseOrders(int page, int limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        return purchaseOrderRepository.findAll(pageable);
     }
 
 

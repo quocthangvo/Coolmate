@@ -88,7 +88,7 @@ public class UserController {
     }
 
     @GetMapping("")
-    public ResponseEntity<UserListResponse> getAllCategories(
+    public ResponseEntity<UserListResponse> getAllUsers(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {

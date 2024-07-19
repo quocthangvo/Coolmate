@@ -17,6 +17,9 @@ import com.example.coolmate.Repositories.UserRepository;
 import com.example.coolmate.Services.Impl.Order.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -117,9 +120,10 @@ public class OrderService implements IOrderService {
         return orderRepository.findByUserId(userId);
     }
 
-    @Override
-    public List<Order> getAllOrders(int page, int limit) {
-        return orderRepository.findAll();
+
+    public Page<Order> getAllOrders(int page, int limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit); // PageRequest uses 0-based index
+        return orderRepository.findAll(pageable);
     }
 
     @Override

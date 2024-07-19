@@ -11,6 +11,9 @@ import com.example.coolmate.Repositories.Product.*;
 import com.example.coolmate.Services.CategoryService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -94,10 +97,9 @@ public class ProductService implements IProductService {
 //
 
 
-    @Override
-    public List<Product> getAllProducts(int page, int limit) {
-        return productRepository.findAll();
-
+    public Page<Product> getAllProducts(int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        return productRepository.findAll(pageable);
     }
 
     @Override

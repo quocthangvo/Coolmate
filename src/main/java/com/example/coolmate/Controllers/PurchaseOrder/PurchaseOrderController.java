@@ -11,6 +11,7 @@ import com.example.coolmate.Responses.PurchaseOrderResponse;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,20 +60,18 @@ public class PurchaseOrderController {
     }
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<List<PurchaseOrderResponse>>> getAllPurchaseOrders(
+    public ResponseEntity<ApiResponse<Page<PurchaseOrderResponse>>> getAllPurchaseOrders(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        List<PurchaseOrder> purchaseOrders = purchaseOrderService.getAllPurchaseOrders(page, limit);
+        Page<PurchaseOrder> purchaseOrdersPage = purchaseOrderService.getAllPurchaseOrders(page, limit); // page từ 0
 
         // Chuyển đổi từ PurchaseOrder sang PurchaseOrderResponse
-        List<PurchaseOrderResponse> purchaseOrderResponses = purchaseOrders.stream()
-                .map(PurchaseOrderResponse::fromPurchase)
-                .collect(Collectors.toList());
+        Page<PurchaseOrderResponse> purchaseOrderResponsesPage = purchaseOrdersPage.map(PurchaseOrderResponse::fromPurchase);
 
-        return ApiResponseUtil.successResponse("Successfully", purchaseOrderResponses);
-
+        return ApiResponseUtil.successResponse("Successfully", purchaseOrderResponsesPage);
     }
+
 
 //    @GetMapping("")
 //    public ResponseEntity<?> getAllPurchaseOrders(

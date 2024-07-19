@@ -13,6 +13,7 @@ import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -77,7 +78,7 @@ public class ProductController {
             @RequestParam(value = "limit") int limit) {
 
 //        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
-        List<Product> productPage = productService.getAllProducts(page, limit);
+        Page<Product> productPage = productService.getAllProducts(page, limit);
 
         return ApiResponseUtil.successResponse("Successfully", productPage);
     }
