@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -164,12 +165,21 @@ public class ProductService implements IProductService {
         return productImageRepository.save(newProductImage);
     }
 
-    public List<Product> findByCategoryId(int categoryId) {
+
+    public Page<Product> findByCategoryId(int categoryId, int page, int limit) {
+        // Convert page index from 1-based to 0-based
+        int pageIndex = page - 1;
+        // Create PageRequest with the adjusted page index
+        Pageable pageable = PageRequest.of(pageIndex, limit, Sort.by("id").ascending()); // Optional sorting by ID or any field
+
+        // Find category by ID
         Category category = categoryRepository.findById(categoryId).orElse(null);
+
         if (category != null) {
-            return productRepository.findByCategoryId(category);
+            return productRepository.findByCategoryId(category, pageable);
         }
-        return List.of();
+
+        return Page.empty();
     }
 
     @Override

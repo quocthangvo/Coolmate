@@ -24,6 +24,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -56,18 +57,18 @@ public class UserController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @Valid @RequestBody UserLoginDTO userLoginDTO) {
-        //kt thông tin đăng nhập và tạo token
-        try {
-            String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
-            return ApiResponseUtil.successResponse("Login successful", token);
-//            return ResponseEntity.ok(token);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
-        }
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(
+//            @Valid @RequestBody UserLoginDTO userLoginDTO) {
+//        //kt thông tin đăng nhập và tạo token
+//        try {
+//            String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
+//            return ApiResponseUtil.successResponse("Login successful", token);
+////            return ResponseEntity.ok(token);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
+//        }
+//    }
 
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassWord(@RequestBody ChangePasswordDTO changePasswordDTO
@@ -185,6 +186,20 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
                     + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
+        try {
+            // Đăng nhập và nhận token và vai trò của người dùng
+            Map<String, Object> loginResponse = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
+
+            // Tạo phản hồi thành công
+            return ApiResponseUtil.successResponse("Đăng nhập thành công", loginResponse);
+        } catch (Exception e) {
+            // Tạo phản hồi lỗi
+            return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
 

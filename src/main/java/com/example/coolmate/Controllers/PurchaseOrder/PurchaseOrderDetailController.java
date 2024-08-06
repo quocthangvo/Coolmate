@@ -10,6 +10,7 @@ import com.example.coolmate.Models.PurchaseOrder.PurchaseOrderStatus;
 import com.example.coolmate.Repositories.PurchaseOrder.PurchaseOrderDetailRepository;
 import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
+import com.example.coolmate.Responses.PurchaseOrders.PurchaseOrderDetailResponse;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderDetailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,9 +46,9 @@ public class PurchaseOrderDetailController {
 
 
     @GetMapping("/purchase_order/{purchaseOrderId}")
-    public ResponseEntity<ApiResponse<List<PurchaseOrderDetail>>> findByProductId(@PathVariable PurchaseOrder purchaseOrderId) {
+    public ResponseEntity<ApiResponse<List<PurchaseOrderDetailResponse>>> findByProductId(@PathVariable PurchaseOrder purchaseOrderId) {
         try {
-            List<PurchaseOrderDetail> purchaseOrderDetails = purchaseOrderDetailService.findByPurchaseOrderId(purchaseOrderId);
+            List<PurchaseOrderDetailResponse> purchaseOrderDetails = purchaseOrderDetailService.findByPurchaseOrderId(purchaseOrderId);
             return ApiResponseUtil.successResponse("Successfully", purchaseOrderDetails);
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(404).body(null);

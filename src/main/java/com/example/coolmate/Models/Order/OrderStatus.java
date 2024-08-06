@@ -8,11 +8,11 @@ import lombok.Getter;
 @AllArgsConstructor
 
 public enum OrderStatus {
-    PENDING("Chờ xử lý"),
-    PROCESSING("Xác nhận"),
-    SHIPPING("Đang giao hàng"),
-    DELIVERED("Đã giao hàng"),
-    CANCELLED("Hủy");
+    PENDING("PENDING"),
+    PROCESSING("PROCESSING"),
+    SHIPPING("SHIPPING"),
+    DELIVERED("DELIVERED"),
+    CANCELLED("CANCELLED");
 
     private final String statusName;
 }

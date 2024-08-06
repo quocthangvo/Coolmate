@@ -7,12 +7,14 @@ import com.example.coolmate.Models.PurchaseOrder.PurchaseOrderDetail;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Repositories.PurchaseOrder.PurchaseOrderDetailRepository;
 import com.example.coolmate.Repositories.PurchaseOrder.PurchaseOrderRepository;
+import com.example.coolmate.Responses.PurchaseOrders.PurchaseOrderDetailResponse;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,13 +71,21 @@ public class PurchaseOrderDetailService implements IPurchaseOrderDetailService {
     }
 
     @Override
-    public List<PurchaseOrderDetail> findByPurchaseOrderId(PurchaseOrder purchaseOrderId) throws DataNotFoundException {
-        List<PurchaseOrderDetail> purchaseOrderDetails = purchaseOrderDetailRepository.findByPurchaseOrder(purchaseOrderId);
+    public List<PurchaseOrderDetailResponse> findByPurchaseOrderId(PurchaseOrder purchaseOrder) throws DataNotFoundException {
+        // Fetch purchase order details by purchaseOrder
+        List<PurchaseOrderDetail> purchaseOrderDetails = purchaseOrderDetailRepository.findByPurchaseOrder(purchaseOrder);
+
+        // Check if no details are found and throw exception if needed
         if (purchaseOrderDetails.isEmpty()) {
-            throw new DataNotFoundException("Không tìm thấy chi tiết đơn hàng với ID: " + purchaseOrderId);
+            throw new DataNotFoundException("Không tìm thấy chi tiết đơn hàng với ID: " + purchaseOrder.getId());
         }
-        return purchaseOrderDetails;
+
+        // Convert each PurchaseOrderDetail entity to PurchaseOrderDetailResponse
+        return purchaseOrderDetails.stream()
+                .map(PurchaseOrderDetailResponse::fromPurchaseOrderDetail)
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public void deletePurchaseOrderDetail(int id) throws DataNotFoundException {

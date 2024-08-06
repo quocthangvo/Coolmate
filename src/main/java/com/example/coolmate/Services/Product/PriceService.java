@@ -200,5 +200,29 @@ public class PriceService implements IPriceService {
                 .build();
     }
 
+    @Override
+    public List<PriceResponse> searchPricesByVersionName(String versionName) {
+        // Lấy danh sách các đối tượng Price dựa trên versionName
+        List<Price> prices = priceRepository.findByProductDetailVersionNameContainingIgnoreCase(versionName);
+
+        // Sử dụng Map để loại bỏ các bản sao dựa trên productDetail.id
+        Map<Integer, Price> uniquePricesMap = prices.stream()
+                .collect(Collectors.toMap(
+                        price -> price.getProductDetail().getId(), // Key là ID của ProductDetail
+                        price -> price, // Value là đối tượng Price
+                        (existing, replacement) -> existing)); // Nếu trùng lặp, giữ lại bản sao đầu tiên
+
+        // Chuyển đổi các Price thành PriceResponse
+        return uniquePricesMap.values().stream()
+                .map(price -> PriceResponse.builder()
+                        .priceId(price.getId())
+                        .productDetail(price.getProductDetail())
+                        .priceSelling(price.getPriceSelling())
+                        .promotionPrice(price.getPromotionPrice())
+                        .startDate(price.getStartDate())
+                        .endDate(price.getEndDate())
+                        .build())
+                .collect(Collectors.toList());
+    }
 
 }

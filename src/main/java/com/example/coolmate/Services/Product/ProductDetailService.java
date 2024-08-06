@@ -71,11 +71,11 @@ public class ProductDetailService implements IProductDetailService {
         return productDetailRepository.findAll();
     }
 
-    @Override
-    public ProductDetail getProductDetailById(int productDetailId) throws Exception {
-        return productDetailRepository.findById(productDetailId)
-                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy product detail id = "
-                        + productDetailId));
+    public ProductDetailResponse getProductDetailById(int productDetailId) throws Exception {
+        ProductDetail productDetail = productDetailRepository.findById(productDetailId)
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy product detail id = " + productDetailId));
+
+        return ProductDetailResponse.fromProductDetail(productDetail);
     }
 
     @Override
@@ -168,10 +168,12 @@ public class ProductDetailService implements IProductDetailService {
     }
 
     @Override
-    public List<ProductDetail> searchVersionName(String versionName) {
-        return productDetailRepository.findByVersionNameContaining(versionName);
+    public List<ProductDetailResponse> searchVersionName(String versionName) {
+        List<ProductDetail> productDetails = productDetailRepository.findByVersionNameContaining(versionName);
+        return productDetails.stream()
+                .map(ProductDetailResponse::fromProductDetail)
+                .collect(Collectors.toList());
     }
-
 
     @Override
     public ProductDetailResponse getProductDetailLastPrice(int productDetailId) throws Exception {

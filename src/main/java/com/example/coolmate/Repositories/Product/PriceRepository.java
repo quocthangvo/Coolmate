@@ -11,5 +11,5 @@ public interface PriceRepository extends JpaRepository<Price, Integer> {
 
     List<Price> findByProductDetail(ProductDetail productDetail);
 
-
+    List<Price> findByProductDetailVersionNameContainingIgnoreCase(String versionName);
 }

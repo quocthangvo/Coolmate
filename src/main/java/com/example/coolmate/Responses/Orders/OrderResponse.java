@@ -1,7 +1,7 @@
-package com.example.coolmate.Responses;
+package com.example.coolmate.Responses.Orders;
 
 import com.example.coolmate.Models.Order.Order;
-import com.example.coolmate.Models.Order.OrderDetail;
+import com.example.coolmate.Responses.BaseResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderResponse extends BaseResponse {
+    private int id;
+
     @JsonProperty("full_name")
     private String fullName;
 
@@ -31,10 +33,14 @@ public class OrderResponse extends BaseResponse {
 
     private String status;
 
-    private List<OrderDetail> orderDetails;
+    private List<OrderDetailResponse> orderDetails;
 
     public static OrderResponse fromOrder(Order order) {
+        List<OrderDetailResponse> orderDetailResponses = order.getOrderDetails().stream()
+                .map(OrderDetailResponse::fromOrderDetail) // Convert each OrderDetail to OrderDetailResponse
+                .collect(Collectors.toList());
         OrderResponse orderResponse = OrderResponse.builder()
+                .id(order.getId())
                 .fullName(order.getFullName())
                 .email(order.getEmail())
                 .phoneNumber(order.getPhoneNumber())
@@ -42,7 +48,9 @@ public class OrderResponse extends BaseResponse {
                 .note(order.getNote())
                 .status(order.getStatus().getStatusName())
                 .paymentMethod(order.getPaymentMethod())
-                .orderDetails(order.getOrderDetails())
+                .orderDetails(orderDetailResponses)
+
+
                 .build();
         orderResponse.setCreatedAt(order.getCreatedAt());
         orderResponse.setUpdatedAt(order.getUpdatedAt());

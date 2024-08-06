@@ -3,6 +3,7 @@ package com.example.coolmate.Controllers;
 import com.example.coolmate.Models.Inventory;
 import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
+import com.example.coolmate.Responses.InventoryResponse;
 import com.example.coolmate.Services.InventoryService;
 import com.example.coolmate.Services.Product.ProductDetailService;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,11 @@ public class InventoryController {
 
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<Page<Inventory>>> getAllInventories(
+    public ResponseEntity<ApiResponse<Page<InventoryResponse>>> getAllInventories(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        Page<Inventory> inventories = inventoryService.getAllInventories(page, limit);
+        Page<InventoryResponse> inventories = inventoryService.getAllInventories(page, limit);
         return ApiResponseUtil.successResponse("Successfully", inventories);
     }
 

@@ -199,14 +199,16 @@ public class ProductController {
 
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<?> getProductsByCategoryId(@PathVariable int categoryId) {
+    public ResponseEntity<?> getProductsByCategoryId(
+            @PathVariable int categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit) {
         try {
-            List<Product> products = productService.findByCategoryId(categoryId);
+            Page<Product> products = productService.findByCategoryId(categoryId, page, limit);
             return ApiResponseUtil.successResponse("successfully", products);
 
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex);
-
         }
     }
 
@@ -215,4 +217,6 @@ public class ProductController {
             @RequestParam String name) {
         return productService.searchProductByName(name);
     }
+
+   
 }

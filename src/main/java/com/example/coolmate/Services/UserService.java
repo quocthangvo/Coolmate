@@ -21,7 +21,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -89,31 +91,31 @@ public class UserService implements IUserService {
     }
 
 
-    @Override
-    public String login(String phoneNumber, String password) throws Exception {
-        Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
-        if (optionalUser.isEmpty()) {
-            throw new DataNotFoundException("Tài khoản hoặc mật khẩu không tồn tại");
-        }
-        User existingUser = optionalUser.get();
-        // Kiểm tra trạng thái hoạt động của người dùng
-        if (!existingUser.isActive()) {
-            throw new DisabledException("Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ với quản trị viên.");
-        }
-        //kiểm tra password nếu không dùng gg account
-        if (existingUser.getGoogleAccountId() == 0) {
-            if (!passwordEncoder.matches(password, existingUser.getPassword())) {
-                throw new BadCredentialsException("Mật khẩu không chính xác");
-            }
-        }
-
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                phoneNumber, password,
-                existingUser.getAuthorities());
-        //authentication with java spring security
-        authenticationManager.authenticate(authenticationToken);
-        return jwtTokenUtil.generateToken(existingUser);
-    }
+//    @Override
+//    public String login(String phoneNumber, String password) throws Exception {
+//        Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
+//        if (optionalUser.isEmpty()) {
+//            throw new DataNotFoundException("Tài khoản hoặc mật khẩu không tồn tại");
+//        }
+//        User existingUser = optionalUser.get();
+//        // Kiểm tra trạng thái hoạt động của người dùng
+//        if (!existingUser.isActive()) {
+//            throw new DisabledException("Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ với quản trị viên.");
+//        }
+//        //kiểm tra password nếu không dùng gg account
+//        if (existingUser.getGoogleAccountId() == 0) {
+//            if (!passwordEncoder.matches(password, existingUser.getPassword())) {
+//                throw new BadCredentialsException("Mật khẩu không chính xác");
+//            }
+//        }
+//
+//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+//                phoneNumber, password,
+//                existingUser.getAuthorities());
+//        //authentication with java spring security
+//        authenticationManager.authenticate(authenticationToken);
+//        return jwtTokenUtil.generateToken(existingUser);
+//    }
 
     @Override
     public Page<UserResponse> getAllUsers(PageRequest pageRequest) {
@@ -205,6 +207,44 @@ public class UserService implements IUserService {
                 .map(UserResponse::fromUser)
                 .collect(Collectors.toList());
     }
+
+
+    @Override
+    public Map<String, Object> login(String phoneNumber, String password) throws Exception {
+        Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
+        if (optionalUser.isEmpty()) {
+            throw new DataNotFoundException("Tài khoản hoặc mật khẩu không tồn tại");
+        }
+        User existingUser = optionalUser.get();
+
+        // Kiểm tra trạng thái hoạt động của người dùng
+        if (!existingUser.isActive()) {
+            throw new DisabledException("Tài khoản của bạn đã bị vô hiệu hóa.");
+        }
+
+        // Kiểm tra mật khẩu nếu không sử dụng tài khoản Google
+        if (existingUser.getGoogleAccountId() == 0) {
+            if (!passwordEncoder.matches(password, existingUser.getPassword())) {
+                throw new BadCredentialsException("Mật khẩu không chính xác");
+            }
+        }
+
+        // Tạo Authentication với Spring Security
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                phoneNumber, password, existingUser.getAuthorities());
+        authenticationManager.authenticate(authenticationToken);
+
+        // Tạo token JWT
+        String token = jwtTokenUtil.generateToken(existingUser);
+
+        // Chuẩn bị map trả về
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", UserResponse.fromUser(existingUser)); // Sử dụng UserResponse để chứa thông tin người dùng
+
+        return response;
+    }
+
 
 }
 

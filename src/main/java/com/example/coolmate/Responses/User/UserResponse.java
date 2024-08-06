@@ -1,5 +1,6 @@
 package com.example.coolmate.Responses.User;
 
+import com.example.coolmate.Models.User.Role;
 import com.example.coolmate.Models.User.User;
 import com.example.coolmate.Responses.BaseResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,7 +30,8 @@ public class UserResponse extends BaseResponse {
 
     private String status;
 
-    private String roleName;
+
+    private Role role;
 
     public static UserResponse fromUser(User user) {
         UserResponse userResponse = UserResponse.builder()
@@ -38,7 +40,7 @@ public class UserResponse extends BaseResponse {
                 .phoneNumber(user.getPhoneNumber())
                 .googleAccountId(user.getGoogleAccountId())
                 .active(user.isActive())
-                .roleName(user.getRole().getName())
+                .role(user.getRole())
                 .build();
         userResponse.setStatus(user.isActive() ? "Đang hoạt động" : "Vô hiệu hóa");
         userResponse.setCreatedAt(user.getCreatedAt());

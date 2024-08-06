@@ -30,7 +30,7 @@ public class SizeController {
             @Valid @RequestBody SizeDTO sizeDTO, BindingResult result) {
         try {
             Size createSize = sizeService.createSize(sizeDTO);
-            return ApiResponseUtil.successResponse("Size created successfully", createSize);
+            return ApiResponseUtil.successResponse("Thêm kích thước thành công", createSize);
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
         } catch (Exception e) {

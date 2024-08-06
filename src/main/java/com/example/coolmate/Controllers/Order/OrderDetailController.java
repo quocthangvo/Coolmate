@@ -5,7 +5,7 @@ import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Order.OrderDetail;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
-import com.example.coolmate.Responses.OrderDetailResponse;
+import com.example.coolmate.Responses.Orders.OrderDetailResponse;
 import com.example.coolmate.Services.Order.OrderDetailService;
 import com.example.coolmate.Services.Order.OrderService;
 import jakarta.validation.Valid;
@@ -40,7 +40,7 @@ public class OrderDetailController {
 
     @GetMapping("/order/{orderId}")
     public ResponseEntity<?> getOrderDetail(@Valid @PathVariable("orderId") int orderId) {
-        List<OrderDetail> orderDetails = orderDetailService.findByOrderId(orderId);
+        List<OrderDetailResponse> orderDetails = orderDetailService.findByOrderId(orderId);
         return ApiResponseUtil.successResponse("Successfully", orderDetails);
 
     }
@@ -64,7 +64,7 @@ public class OrderDetailController {
         try {
             OrderDetail updatedOrderDetail = orderDetailService.updateOrderDetail(id, orderDetailDTO);
             return ApiResponseUtil.successResponse("Successfully", updatedOrderDetail);
-   
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }

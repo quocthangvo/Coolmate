@@ -9,12 +9,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IUserService {
     User createUser(UserDTO userDTO) throws Exception;
 
-    String login(String phoneNumber, String password) throws Exception;
+//    String login(String phoneNumber, String password) throws Exception;
 
     Page<UserResponse> getAllUsers(PageRequest pageRequest);
 
@@ -33,4 +34,6 @@ public interface IUserService {
     Optional<User> findByPhoneNumber(String phoneNumber);
 
     List<UserResponse> searchUsersByFullName(String fullName);
+
+    Map<String, Object> login(String phoneNumber, String password) throws Exception;
 }

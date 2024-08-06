@@ -12,7 +12,7 @@ import lombok.*;
 @Table(name = "product_images")
 @Entity
 public class ProductImage {
-    public static final int MAXIMUM_IMAGES_PER_PRODUCT = 5;//chọn nhiều ảnh giới hạn là 5
+    public static final int MAXIMUM_IMAGES_PER_PRODUCT = 6;//chọn nhiều ảnh giới hạn là 5
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

@@ -3,6 +3,7 @@ package com.example.coolmate.Services.Impl.Order;
 import com.example.coolmate.Dtos.OrderDtos.OrderDetailDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Order.OrderDetail;
+import com.example.coolmate.Responses.Orders.OrderDetailResponse;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ public interface IOrderDetailService {
 
     void deleteOrderDetail(int id) throws DataNotFoundException;
 
-    List<OrderDetail> findByOrderId(int orderId);
+    List<OrderDetailResponse> findByOrderId(int orderId);
 }

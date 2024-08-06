@@ -6,12 +6,14 @@ import com.example.coolmate.Models.Order.OrderDetail;
 import com.example.coolmate.Repositories.Order.OrderDetailRepository;
 import com.example.coolmate.Repositories.Order.OrderRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
+import com.example.coolmate.Responses.Orders.OrderDetailResponse;
 import com.example.coolmate.Services.Impl.Order.IOrderDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -84,7 +86,10 @@ public class OrderDetailService implements IOrderDetailService {
     }
 
     @Override
-    public List<OrderDetail> findByOrderId(int orderId) {
-        return orderDetailRepository.findByOrderId(orderId);
+    public List<OrderDetailResponse> findByOrderId(int orderId) {
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
+        return orderDetails.stream()
+                .map(OrderDetailResponse::fromOrderDetail)
+                .collect(Collectors.toList());
     }
 }

@@ -11,7 +11,7 @@ public interface IProductDetailService {
 
     List<ProductDetail> getAllProductDetails(int page, int limit);
 
-    ProductDetail getProductDetailById(int productDetailId) throws Exception;
+    ProductDetailResponse getProductDetailById(int productDetailId) throws Exception;
 
     List<ProductDetailResponse> findByProductId(int productId) throws DataNotFoundException;
 
@@ -27,7 +27,7 @@ public interface IProductDetailService {
     List<ProductDetail> findBySizeIdAndColorId(int sizeId, int colorId);
 
 
-    List<ProductDetail> searchVersionName(String versionName);
+    List<ProductDetailResponse> searchVersionName(String versionName);
 
     ProductDetailResponse getProductDetailLastPrice(int productDetailId) throws Exception;
 //    ProductDetail updateProductDetail(int id, ProductDetailDTO productDetailDTO) throws Exception;

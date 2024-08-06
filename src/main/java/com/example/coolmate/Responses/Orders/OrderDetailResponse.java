@@ -1,6 +1,7 @@
-package com.example.coolmate.Responses;
+package com.example.coolmate.Responses.Orders;
 
 import com.example.coolmate.Models.Order.OrderDetail;
+import com.example.coolmate.Responses.Product.ProductDetailResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -15,8 +16,8 @@ public class OrderDetailResponse {
     @JsonProperty("order_id")
     private int orderId;
 
-    @JsonProperty("product_id")
-    private int productId;
+    @JsonProperty("product_detail_id")
+    private ProductDetailResponse productDetailId;
 
     private float price;
 
@@ -33,7 +34,7 @@ public class OrderDetailResponse {
                 .builder()
                 .id(orderDetail.getId())
                 .orderId(orderDetail.getOrder().getId())
-                
+                .productDetailId(ProductDetailResponse.fromProductDetail(orderDetail.getProductDetail()))
                 .quantity(orderDetail.getQuantity())
                 .totalMoney(orderDetail.getTotalMoney())
                 .build();

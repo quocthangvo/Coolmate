@@ -6,7 +6,7 @@ import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Order.Order;
 import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
-import com.example.coolmate.Responses.OrderResponse;
+import com.example.coolmate.Responses.Orders.OrderResponse;
 import com.example.coolmate.Services.Impl.Order.IOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class OrderController {
                 return ResponseEntity.badRequest().body(errorMessages);
             }
             Order orderResponse = orderService.createOrder(orderDTO);
-            return ApiResponseUtil.successResponse("Order created successfully", orderResponse);
+            return ApiResponseUtil.successResponse("Đặt hàng thành công", orderResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
 
@@ -71,7 +71,8 @@ public class OrderController {
         try {
             List<Order> orders = orderService.findByUserId(userId);
             List<OrderResponse> response = OrderResponse.fromOrderList(orders);
-            return ResponseEntity.ok(response);
+            return ApiResponseUtil.successResponse("Successfully", response);
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }

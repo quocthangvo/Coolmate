@@ -26,7 +26,7 @@ public interface IProductService {
             int productId,
             ProductImageDTO productImageDTO) throws Exception;
 
-    List<Product> findByCategoryId(int categoryId);
+    Page<Product> findByCategoryId(int categoryId, int page, int limit);
 
 
     List<ProductImage> getImageUrlByProductId(int productId);

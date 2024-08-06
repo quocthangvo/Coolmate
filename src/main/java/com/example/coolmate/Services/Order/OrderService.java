@@ -76,7 +76,7 @@ public class OrderService implements IOrderService {
         List<OrderDetail> orderDetails = new ArrayList<>();
         for (OrderDetailDTO detailDTO : orderDTO.getOrderDetails()) {
             ProductDetail productDetail = productDetailRepository.findById(detailDTO.getProductDetailId())
-                    .orElseThrow(() -> new DataNotFoundException("Không tìm thấy sản phẩm với id: " + detailDTO.getProductDetailId()));
+                    .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết sản phẩm với id: " + detailDTO.getProductDetailId()));
 
             OrderDetail orderDetail = OrderDetail.builder()
                     .order(order)

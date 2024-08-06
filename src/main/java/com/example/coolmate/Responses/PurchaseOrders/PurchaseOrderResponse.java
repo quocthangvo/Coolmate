@@ -1,6 +1,7 @@
-package com.example.coolmate.Responses;
+package com.example.coolmate.Responses.PurchaseOrders;
 
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
+import com.example.coolmate.Responses.BaseResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import lombok.*;
@@ -66,7 +67,7 @@ public class PurchaseOrderResponse extends BaseResponse {
                 .phoneNumber(purchaseOrder.getUser().getPhoneNumber())
                 .supplierName(purchaseOrder.getSupplier().getName())
                 .versionCode(purchaseOrder.getVersionCode())
-                
+
                 .build();
         purchaseOrderResponse.setCreatedAt(purchaseOrder.getCreatedAt());
         purchaseOrderResponse.setUpdatedAt(purchaseOrder.getUpdatedAt());

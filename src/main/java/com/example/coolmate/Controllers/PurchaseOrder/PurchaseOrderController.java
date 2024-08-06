@@ -7,7 +7,7 @@ import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.PurchaseOrder.PurchaseOrder;
 import com.example.coolmate.Responses.ApiResponses.ApiResponse;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
-import com.example.coolmate.Responses.PurchaseOrderResponse;
+import com.example.coolmate.Responses.PurchaseOrders.PurchaseOrderResponse;
 import com.example.coolmate.Services.Impl.PurchaseOrder.IPurchaseOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

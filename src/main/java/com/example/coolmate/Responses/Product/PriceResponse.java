@@ -31,7 +31,7 @@ public class PriceResponse {
     @JsonProperty("end_date")
     private LocalDateTime endDate;
 
-    @JsonProperty("product_detail")
+    @JsonProperty("product_detail_id")
     private ProductDetail productDetail;
 
     // Chuyển đổi danh sách giá từ List<Price> sang PriceResponse

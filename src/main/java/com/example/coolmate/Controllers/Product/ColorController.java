@@ -30,7 +30,7 @@ public class ColorController {
             @Valid @RequestBody ColorDTO colorDTO, BindingResult result) {
         try {
             Color createColor = colorService.createColor(colorDTO);
-            return ApiResponseUtil.successResponse("Color created successfully", createColor);
+            return ApiResponseUtil.successResponse("Thêm màu sắc thành công", createColor);
 
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));

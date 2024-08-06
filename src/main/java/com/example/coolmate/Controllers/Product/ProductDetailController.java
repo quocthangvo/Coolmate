@@ -47,7 +47,7 @@ public class ProductDetailController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductDetailById(@PathVariable int id) {
         try {
-            ProductDetail productDetail = productDetailService.getProductDetailById(id);
+            ProductDetailResponse productDetail = productDetailService.getProductDetailById(id);
             return ApiResponseUtil.successResponse("Successfully", productDetail);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
@@ -128,7 +128,7 @@ public class ProductDetailController {
     @GetMapping("/search")
     public ResponseEntity<?> searchProductDetails(@RequestParam String versionName) {
         try {
-            List<ProductDetail> productDetails = productDetailService.searchVersionName(versionName);
+            List<ProductDetailResponse> productDetails = productDetailService.searchVersionName(versionName);
             return ApiResponseUtil.successResponse("successfully", productDetails);
         } catch (Exception ex) {
 

@@ -30,7 +30,7 @@ public class CategoryController {
             @Valid @RequestBody CategoryDTO categoryDTO, BindingResult result) {
         try {
             Category createdCategory = categoryService.createCategory(categoryDTO);
-            return ApiResponseUtil.successResponse("Color created successfully", createdCategory);
+            return ApiResponseUtil.successResponse("Thêm danh mục thành công", createdCategory);
 
         } catch (DataNotFoundException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(e.getMessage()));
