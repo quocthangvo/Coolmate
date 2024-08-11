@@ -50,6 +50,9 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "address", length = 200)
     private String address;
 
+    @Column(name = "profile_picture")
+    private String profilePicture;
+
 
 //    @Column(name = "date_of_birth")
 //    private Date dateOfBirth;

@@ -11,16 +11,17 @@ import com.example.coolmate.Services.Impl.Product.IPriceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api/v1/prices")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+
 
 public class PriceController {
     private final IPriceService priceService;
@@ -120,10 +121,19 @@ public class PriceController {
         }
     }
 
+
     @GetMapping("/search")
-    public List<PriceResponse> searchPricesByVersionName(@RequestParam("versionName") String versionName) {
-        return priceService.searchPricesByVersionName(versionName);
+    public ResponseEntity<ApiResponse<Page<PriceResponse>>> searchPricesByVersionName(
+            @RequestParam String versionName,
+            @RequestParam int page,
+            @RequestParam int limit) {
+
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<PriceResponse> pricePage = priceService.searchPricesByVersionName(versionName, pageable);
+
+        return ApiResponseUtil.successResponse("thành công", pricePage);
     }
+
 }
 
 

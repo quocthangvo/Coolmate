@@ -30,7 +30,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("${api.prefix}/users")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
 
 public class UserController {
 
@@ -50,7 +50,7 @@ public class UserController {
                 return ResponseEntity.badRequest().body(errorMessages);
             }
             User createUser = userService.createUser(userDTO);
-            return ApiResponseUtil.successResponse("User created successfully", createUser);
+            return ApiResponseUtil.successResponse("Đăng ký tài khoản thành công", createUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
 
@@ -202,5 +202,13 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
         }
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody UserDTO userDTO) {
+        User updatedUser = userService.updateUser(id, userDTO);
+
+        return ApiResponseUtil.successResponse("Cập nhật thành công", updatedUser);
+    }
+
 
 }

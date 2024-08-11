@@ -17,4 +17,5 @@ public interface IOrderDetailService {
     void deleteOrderDetail(int id) throws DataNotFoundException;
 
     List<OrderDetailResponse> findByOrderId(int orderId);
+
 }

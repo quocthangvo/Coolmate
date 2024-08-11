@@ -41,8 +41,9 @@ public class UserDTO {
     private String address;
 
 
-//    @JsonProperty("date_of_birth")
+    //    @JsonProperty("date_of_birth")
 //    private Date dateOfBirth;
+    private String profilePicture;
 
 
 }

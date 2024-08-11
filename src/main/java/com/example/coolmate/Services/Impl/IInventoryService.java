@@ -1,5 +1,6 @@
 package com.example.coolmate.Services.Impl;
 
+import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Inventory;
 import com.example.coolmate.Responses.InventoryResponse;
 import org.springframework.data.domain.Page;
@@ -13,4 +14,6 @@ public interface IInventoryService {
 
 
     List<Inventory> findByProductDetailId(int productDetailId);
+
+    void deleteInventory(int id) throws DataNotFoundException;
 }

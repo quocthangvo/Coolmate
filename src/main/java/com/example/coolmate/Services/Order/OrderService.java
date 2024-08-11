@@ -14,12 +14,15 @@ import com.example.coolmate.Repositories.Order.OrderDetailRepository;
 import com.example.coolmate.Repositories.Order.OrderRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Repositories.UserRepository;
+import com.example.coolmate.Responses.Product.PriceResponse;
+import com.example.coolmate.Responses.Product.ProductDetailResponse;
 import com.example.coolmate.Services.Impl.Order.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -56,15 +59,14 @@ public class OrderService implements IOrderService {
         LocalDateTime expectedShippingDateTime = orderDateTime.plusDays(3);
         order.setShippingDate(expectedShippingDateTime);
 
-        // Kiểm tra và cập nhật ngày giao hàng thực tế nếu có
-        LocalDateTime actualShippingDateTime = orderDTO.getShippingDate();
-        if (actualShippingDateTime != null) {
-            order.setShippingDate(actualShippingDateTime); // Sử dụng ngày giao hàng thực tế nếu được cung cấp
+        // Cập nhật ngày giao hàng thực tế nếu có
+        if (orderDTO.getShippingDate() != null) {
+            order.setShippingDate(orderDTO.getShippingDate());
         }
 
         // Tạo mã đơn hàng ngẫu nhiên với tiền tố "OR-"
         String orderCode = generateOrderCode();
-        order.setOrderCode(orderCode); // Đảm bảo bạn có trường orderCode trong entity Order
+        order.setOrderCode(orderCode);
 
         order.setStatus(OrderStatus.PENDING);
         order.setActive(true);
@@ -76,14 +78,16 @@ public class OrderService implements IOrderService {
         List<OrderDetail> orderDetails = new ArrayList<>();
         for (OrderDetailDTO detailDTO : orderDTO.getOrderDetails()) {
             ProductDetail productDetail = productDetailRepository.findById(detailDTO.getProductDetailId())
-                    .orElseThrow(() -> new DataNotFoundException("Không tìm thấy chi tiết sản phẩm với id: " + detailDTO.getProductDetailId()));
+                    .orElseThrow(() -> new DataNotFoundException("Cannot find product detail with id: " + detailDTO.getProductDetailId()));
+
+            // Calculate totalMoney
+            float totalMoney = calculateTotalMoney(productDetail, detailDTO.getQuantity());
 
             OrderDetail orderDetail = OrderDetail.builder()
                     .order(order)
                     .productDetail(productDetail)
                     .quantity(detailDTO.getQuantity())
-                    .price(detailDTO.getPrice())
-                    .totalMoney(detailDTO.getTotalMoney())
+                    .totalMoney(totalMoney) // Set the calculated totalMoney
                     .build();
 
             orderDetails.add(orderDetailRepository.save(orderDetail));
@@ -94,6 +98,20 @@ public class OrderService implements IOrderService {
 
         return order;
     }
+
+    // Method to calculate total money based on product detail and quantity
+    private float calculateTotalMoney(ProductDetail productDetail, int quantity) {
+        // Retrieve the latest price
+        PriceResponse latestPrice = ProductDetailResponse.fromProductDetail(productDetail).getLatestPrice();
+        float price = latestPrice.getPriceSelling(); // Default to selling price
+
+        if (latestPrice.getPromotionPrice() > 0) {
+            price = latestPrice.getPromotionPrice(); // Use promotional price if available
+        }
+
+        return price * quantity; // Calculate total money
+    }
+
 
     // Phương thức để tạo mã đơn hàng ngẫu nhiên
     private String generateOrderCode() {
@@ -122,7 +140,8 @@ public class OrderService implements IOrderService {
 
 
     public Page<Order> getAllOrders(int page, int limit) {
-        Pageable pageable = PageRequest.of(page - 1, limit); // PageRequest uses 0-based index
+
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "orderDate"));
         return orderRepository.findAll(pageable);
     }
 

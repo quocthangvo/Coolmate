@@ -246,6 +246,22 @@ public class UserService implements IUserService {
     }
 
 
+    @Override
+    public User updateUser(int id, UserDTO userDTO) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setFullName(userDTO.getFullName());
+        user.setAddress(userDTO.getAddress());
+        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
+            user.setPassword(encodedPassword);
+        }
+        user.setProfilePicture(userDTO.getProfilePicture()); // Cập nhật ảnh đại diện
+
+        return userRepository.save(user);
+    }
+
+
 }
 
 

@@ -36,4 +36,7 @@ public interface IUserService {
     List<UserResponse> searchUsersByFullName(String fullName);
 
     Map<String, Object> login(String phoneNumber, String password) throws Exception;
+
+    User updateUser(int id, UserDTO userDTO);
+
 }

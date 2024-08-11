@@ -16,7 +16,6 @@ public class OrderDetailDTO {
     @JsonProperty("product_detail_id")
     private int productDetailId;
 
-    private float price;
 
     @JsonProperty("quantity")
     private int quantity;

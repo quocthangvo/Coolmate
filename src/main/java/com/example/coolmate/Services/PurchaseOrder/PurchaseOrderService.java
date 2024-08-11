@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -135,7 +136,7 @@ public class PurchaseOrderService implements IPurchaseOrderService {
 
     @Override
     public Page<PurchaseOrder> getAllPurchaseOrders(int page, int limit) {
-        Pageable pageable = PageRequest.of(page - 1, limit);
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "orderDate"));
         return purchaseOrderRepository.findAll(pageable);
     }
 

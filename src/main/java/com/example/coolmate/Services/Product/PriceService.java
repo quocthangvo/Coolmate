@@ -9,10 +9,7 @@ import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Responses.Product.PriceResponse;
 import com.example.coolmate.Services.Impl.Product.IPriceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -79,7 +76,8 @@ public class PriceService implements IPriceService {
     // all gia
     @Override
     public Page<PriceResponse> getAllPrices(int page, int limit) {
-        Pageable pageable = PageRequest.of(page - 1, limit);
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "startDate"));
+
         Page<Price> pricePage = priceRepository.findAll(pageable);
 
         return pricePage.map(this::convertToPriceResponse);
@@ -143,7 +141,7 @@ public class PriceService implements IPriceService {
 
     @Override
     public Page<PriceResponse> getAllDistinctPricesByProductDetailId(int page, int limit) {
-        Pageable pageable = PageRequest.of(page - 1, limit);
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "startDate"));
         List<Price> prices = priceRepository.findAll(); // Fetch all prices first
 
         // Sử dụng Map để lọc các giá có startDate mới nhất cho mỗi productDetailId
@@ -201,19 +199,19 @@ public class PriceService implements IPriceService {
     }
 
     @Override
-    public List<PriceResponse> searchPricesByVersionName(String versionName) {
-        // Lấy danh sách các đối tượng Price dựa trên versionName
-        List<Price> prices = priceRepository.findByProductDetailVersionNameContainingIgnoreCase(versionName);
+    public Page<PriceResponse> searchPricesByVersionName(String versionName, Pageable pageable) {
+        // Lấy danh sách các đối tượng Price dựa trên versionName với phân trang
+        Page<Price> pricePage = priceRepository.findByProductDetailVersionNameContainingIgnoreCase(versionName, pageable);
 
         // Sử dụng Map để loại bỏ các bản sao dựa trên productDetail.id
-        Map<Integer, Price> uniquePricesMap = prices.stream()
+        Map<Integer, Price> uniquePricesMap = pricePage.getContent().stream()
                 .collect(Collectors.toMap(
                         price -> price.getProductDetail().getId(), // Key là ID của ProductDetail
                         price -> price, // Value là đối tượng Price
                         (existing, replacement) -> existing)); // Nếu trùng lặp, giữ lại bản sao đầu tiên
 
         // Chuyển đổi các Price thành PriceResponse
-        return uniquePricesMap.values().stream()
+        List<PriceResponse> priceResponses = uniquePricesMap.values().stream()
                 .map(price -> PriceResponse.builder()
                         .priceId(price.getId())
                         .productDetail(price.getProductDetail())
@@ -223,6 +221,10 @@ public class PriceService implements IPriceService {
                         .endDate(price.getEndDate())
                         .build())
                 .collect(Collectors.toList());
+
+        // Trả về Page<PriceResponse>
+        return new PageImpl<>(priceResponses, pageable, pricePage.getTotalElements());
     }
+
 
 }

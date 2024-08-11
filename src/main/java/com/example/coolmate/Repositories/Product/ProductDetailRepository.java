@@ -32,13 +32,6 @@ public interface ProductDetailRepository extends JpaRepository<ProductDetail, In
     List<ProductDetail> findByProductWithPrices(@Param("product") Product product);
 
 
-    @Query("SELECT pd FROM ProductDetail pd " +
-            "LEFT JOIN FETCH pd.prices p " +
-            "WHERE pd.id = :productDetailId " +
-            "ORDER BY p.startDate DESC")
-    ProductDetail findProductDetailWithLatestPrice(@Param("productDetailId") int productDetailId);
-
-
 //    ProductDetail findByProductIdAndSizeId(int productId, int sizeId);
 //
 //    ProductDetail findByProductIdAndSizeIdAndColorId(int productId, int sizeId, int colorId);

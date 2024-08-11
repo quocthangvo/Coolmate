@@ -22,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/orders")
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+
 
 public class OrderController {
     private final IOrderService orderService;
@@ -47,19 +48,21 @@ public class OrderController {
     }
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<Page<Order>>> getAllOrders(
+    public ResponseEntity<ApiResponse<Page<?>>> getAllOrders(
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
         Page<Order> orders = orderService.getAllOrders(page, limit);
-        return ApiResponseUtil.successResponse("Successfully", orders);
+        Page<OrderResponse> orderResponses = orders.map(OrderResponse::fromOrder);
+        return ApiResponseUtil.successResponse("Successfully", orderResponses);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable("id") int orderId) {
         try {
             Order existingOrder = orderService.getOrderById(orderId);
-            return ApiResponseUtil.successResponse("Successfully", existingOrder);
+            OrderResponse orderResponse = OrderResponse.fromOrder(existingOrder);
+            return ApiResponseUtil.successResponse("Successfully", orderResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorMessage(e.getMessage()));
 

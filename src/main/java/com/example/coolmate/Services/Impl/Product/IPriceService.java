@@ -4,8 +4,7 @@ import com.example.coolmate.Dtos.ProductDtos.PriceDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Responses.Product.PriceResponse;
 import org.springframework.data.domain.Page;
-
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface IPriceService {
     PriceResponse createPrice(PriceDTO priceDTO) throws DataNotFoundException;
@@ -24,6 +23,6 @@ public interface IPriceService {
 
     PriceResponse updatePrice(int id, PriceDTO priceDTO) throws DataNotFoundException;
 
-    List<PriceResponse> searchPricesByVersionName(String versionName);
+    Page<PriceResponse> searchPricesByVersionName(String versionName, Pageable pageable);
 
 }

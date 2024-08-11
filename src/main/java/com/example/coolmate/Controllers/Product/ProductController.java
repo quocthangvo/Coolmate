@@ -7,9 +7,9 @@ import com.example.coolmate.Exceptions.Message.ErrorMessage;
 import com.example.coolmate.Exceptions.Message.SuccessfulMessage;
 import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
+import com.example.coolmate.Repositories.Product.ProductImageRepository;
 import com.example.coolmate.Responses.ApiResponses.ApiResponseUtil;
 import com.example.coolmate.Responses.Product.ProductResponse;
-import com.example.coolmate.Services.Impl.Product.IProductDetailService;
 import com.example.coolmate.Services.Impl.Product.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +35,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/v1/products")
 @RequiredArgsConstructor
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+
 
 public class ProductController {
     private final IProductService productService;
-    private final IProductDetailService productDetailService;
+    private final ProductImageRepository productImageRepository;
 
 
     @PostMapping("")
@@ -125,30 +126,40 @@ public class ProductController {
             @ModelAttribute("files") List<MultipartFile> files) {
         try {
             Product existingProduct = productService.getProductById(productId);
-            // biến files kt có null ko, nếu null tạo 1 ds rỗng mới
+
             files = files == null ? new ArrayList<MultipartFile>() : files;
-            //số lượng ảnh dc up 1 lần -> 5 ảnh
+
             if (files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
-                return ResponseEntity.badRequest().body("you can only upload more than 5 images");
+                return ResponseEntity.badRequest().body("You can only upload up to 5 images.");
             }
+
+            // **Delete old images before uploading new ones**
+            List<ProductImage> existingImages = productImageRepository.findByProductId(productId);
+            for (ProductImage image : existingImages) {
+                deleteFile(image.getImageUrl()); // Delete the old image file from the storage
+                productImageRepository.delete(image); // Delete the image record from the database
+            }
+
             List<ProductImage> productImages = new ArrayList<>();
 
             for (MultipartFile file : files) {
                 if (file.getSize() == 0) {
                     continue;
                 }
-                // kiểm tra kích thước file định dạng
+
                 if (file.getSize() > 10 * 1024 * 1024) {
                     return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
                             .body("File is too large? Maximum size is 10MB");
                 }
+
                 String contentType = file.getContentType();
                 if (contentType == null || !contentType.startsWith("image/")) {
                     return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                             .body("File must be an image");
                 }
+
                 String filename = storeFile(file);
-                //lưu vào đối tượng trên database
+
                 ProductImage productImage = productService.createProductImage(
                         existingProduct.getId(),
                         ProductImageDTO.builder()
@@ -156,13 +167,20 @@ public class ProductController {
                                 .build());
                 productImages.add(productImage);
             }
-            return ApiResponseUtil.successResponse("successfully", productImages);
+
+            return ApiResponseUtil.successResponse("Images uploaded successfully", productImages);
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
+
+    private void deleteFile(String filename) throws IOException {
+        Path uploadDir = Paths.get("uploads");
+        Path filePath = uploadDir.resolve(filename);
+        Files.deleteIfExists(filePath); // Delete the file if it exists
+    }
+
 
     private String storeFile(MultipartFile file) throws IOException {
         if (!isImageFile(file) || file.getOriginalFilename() == null) {
@@ -218,5 +236,5 @@ public class ProductController {
         return productService.searchProductByName(name);
     }
 
-   
+
 }

@@ -22,6 +22,9 @@ public class UserResponse extends BaseResponse {
     @JsonProperty("phone_number")
     private String phoneNumber;
 
+    @JsonProperty("password")
+    private String password;
+
     @JsonProperty("google_account_id")
     private int googleAccountId;
 
@@ -38,6 +41,7 @@ public class UserResponse extends BaseResponse {
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .phoneNumber(user.getPhoneNumber())
+                .password(user.getPassword())
                 .googleAccountId(user.getGoogleAccountId())
                 .active(user.isActive())
                 .role(user.getRole())
