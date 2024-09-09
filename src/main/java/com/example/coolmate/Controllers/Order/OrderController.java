@@ -112,16 +112,18 @@ public class OrderController {
     @GetMapping("/search")
     public ResponseEntity<?> searchOrderCode(@RequestParam("orderCode") String orderCode) {
         try {
-            List<Order> orders = orderService.searchByOrderCode(orderCode);
-            if (orders.isEmpty()) {
-                ErrorMessage errorMessage = new ErrorMessage("Không tìm thấy sản phẩm có tên : " + orderCode);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            List<OrderResponse> orderResponses = orderService.searchByOrderCode(orderCode);
+
+            if (orderResponses.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorMessage("Không tìm thấy đơn hàng với mã: " + orderCode));
             }
-            return ApiResponseUtil.successResponse("Successfully", orders);
+
+            return ResponseEntity.ok(orderResponses);
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm tên sản phẩm : "
-                    + e.getMessage()));
+            return ResponseEntity.badRequest()
+                    .body(new ErrorMessage("Đã xảy ra lỗi khi tìm kiếm đơn hàng: " + e.getMessage()));
         }
     }
 }

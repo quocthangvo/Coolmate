@@ -14,6 +14,7 @@ import com.example.coolmate.Repositories.Order.OrderDetailRepository;
 import com.example.coolmate.Repositories.Order.OrderRepository;
 import com.example.coolmate.Repositories.Product.ProductDetailRepository;
 import com.example.coolmate.Repositories.UserRepository;
+import com.example.coolmate.Responses.Orders.OrderResponse;
 import com.example.coolmate.Responses.Product.PriceResponse;
 import com.example.coolmate.Responses.Product.ProductDetailResponse;
 import com.example.coolmate.Services.Impl.Order.IOrderService;
@@ -228,7 +229,8 @@ public class OrderService implements IOrderService {
         return orderRepository.save(order);
     }
 
-    public List<Order> searchByOrderCode(String orderCode) {
-        return orderRepository.findByOrderCodeContaining(orderCode);
+    public List<OrderResponse> searchByOrderCode(String orderCode) {
+        List<Order> orders = orderRepository.findByOrderCodeContaining(orderCode);
+        return OrderResponse.fromOrderList(orders);
     }
 }

@@ -6,6 +6,7 @@ import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Product.Product;
 import com.example.coolmate.Models.Product.ProductImage;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface IProductService {
 
     void deleteProduct(int id) throws DataNotFoundException;
 
-    List<Product> searchProductByName(String name);
+    Page<Product> searchProductByName(String name, Pageable pageable);
 
     ProductImage createProductImage(
             int productId,

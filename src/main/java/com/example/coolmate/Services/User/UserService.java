@@ -1,4 +1,4 @@
-package com.example.coolmate.Services;
+package com.example.coolmate.Services.User;
 
 import com.example.coolmate.Components.JwtTokenUtil;
 import com.example.coolmate.Dtos.UserDtos.ChangePasswordDTO;

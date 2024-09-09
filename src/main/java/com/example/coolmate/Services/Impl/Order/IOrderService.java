@@ -3,6 +3,7 @@ package com.example.coolmate.Services.Impl.Order;
 import com.example.coolmate.Dtos.OrderDtos.OrderDTO;
 import com.example.coolmate.Exceptions.DataNotFoundException;
 import com.example.coolmate.Models.Order.Order;
+import com.example.coolmate.Responses.Orders.OrderResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -20,5 +21,5 @@ public interface IOrderService {
 
     Page<Order> getAllOrders(int page, int limit);
 
-    List<Order> searchByOrderCode(String orderCode);
+    List<OrderResponse> searchByOrderCode(String orderCode);
 }

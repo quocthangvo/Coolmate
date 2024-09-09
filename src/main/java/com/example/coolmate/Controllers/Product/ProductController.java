@@ -14,6 +14,8 @@ import com.example.coolmate.Services.Impl.Product.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -231,9 +233,12 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public List<Product> searchProductByName(
-            @RequestParam String name) {
-        return productService.searchProductByName(name);
+    public Page<Product> searchProductByName(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productService.searchProductByName(name, pageable);
     }
 
 
